@@ -10,7 +10,6 @@
 
 
     <artifactId>GameEngine</artifactId>
-    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -26,15 +25,39 @@
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx-platform</artifactId>
-            <version>1.13.0</version>
+            <version>${libgdx.version}</version>
             <classifier>natives-desktop</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.badlogicgames.ashley</groupId>
+            <artifactId>ashley</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>dk.ee.zg</groupId>
+            <artifactId>Player</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
 
+
     <build>
         <plugins>
-            <!-- Maven Shade Plugin for creating the executable JAR -->
+            <!-- Ensure the Main-Class attribute is added to the manifest -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Main-Class>dk.ee.zg.Game</Main-Class> <!-- Your main class here -->
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- Maven Shade Plugin to bundle all dependencies into a single JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -45,32 +68,19 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <finalName>game-engine</finalName>
-                </configuration>
-            </plugin>
-
-            <!-- Maven Exec Plugin to run with JVM arguments -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
                         <configuration>
-                            <mainClass>dk.ee.zg.Game.GameEngine</mainClass>
-                            <arguments>
-                                <argument>--add-modules=gdx.backend.lwjgl3,gdx.platform</argument>
-                            </arguments>
+                            <transformers>
+                                <!-- Make sure to set the main class of the game -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>dk.ee.zg.Game</mainClass> <!-- Update this to your main class -->
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
+
     </build>
+
 </project>

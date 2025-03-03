@@ -10,23 +10,34 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Main-Class>dk.ee.zg.Game</Main-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>
             <goals>
               <goal>shade</goal>
             </goals>
+            <configuration>
+              <transformers>
+                <transformer>
+                  <mainClass>dk.ee.zg.Game</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <transformers>
-            <transformer>
-              <mainClass>dk.ee.zg.Game</mainClass>
-            </transformer>
-          </transformers>
-        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -7,6 +7,8 @@
 
   <modules>
     <module>GameEngine</module>
+    <module>Player</module>
+    <module>Common</module>
 
   </modules>
 
@@ -18,60 +20,19 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Common dependencies for all modules -->
+      <!-- Common dependencies, e.g., LibGDX, Ashley ECS -->
       <dependency>
-        <groupId>com.badlogicgames.gdx</groupId>
-        <artifactId>gdx</artifactId>
-        <version>${libgdx.version}</version> <!-- Or the latest version -->
-        <scope>compile</scope>
+        <groupId>com.badlogicgames.libgdx</groupId>
+        <artifactId>libgdx</artifactId>
+        <version>1.10.0</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.badlogicgames.ashley</groupId>
+        <artifactId>ashley</artifactId>
+        <version>1.7.2</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
-
-  <build>
-    <plugins>
-      <!-- Maven Shade Plugin (same as before) -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.1</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <transformers>
-            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-              <mainClass>dk.ee.zg.Game</mainClass>
-            </transformer>
-          </transformers>
-        </configuration>
-      </plugin>
-
-      <!-- Maven Exec Plugin to run with JVM arguments -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>3.5.0</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>java</goal>
-            </goals>
-            <configuration>
-              <mainClass>dk.ee.zg.Game</mainClass>
-              <arguments>
-                <argument>--add-modules=gdx.backend.lwjgl3,gdx.platform</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
   </project>
