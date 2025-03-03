@@ -22,10 +22,12 @@ public class Game implements ApplicationListener {
     public void create() {
         // Game initialization logic
         batch = new SpriteBatch();
+        System.out.println("Serviceloader start");
         ServiceLoader<IEntity> loader = ServiceLoader.load(IEntity.class);
-        for (IEntity p : loader) {
+        for (IEntity entity : loader) {
+            System.out.println("Class found");
             // Since we know there's only one implementation, we can just take the first one
-            player = p;
+            player = entity;
             break;
         }
         // Create a player and load a sprite from the game-player module
@@ -44,8 +46,10 @@ public class Game implements ApplicationListener {
         batch.begin();
 
         // Draw the player's sprite at position (100, 100)
-        player.getSprite().setPosition(100, 100);
-        player.getSprite().draw(batch);
+        if (player != null) {
+            player.getSprite().setPosition(100, 100);
+            player.getSprite().draw(batch);
+        }
 
         // End drawing
         batch.end();
