@@ -1,38 +1,108 @@
-<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>dk.ee.zg</groupId>
-  <artifactId>Game</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>dk.ee.zg</groupId>
+    <artifactId>Game</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>GameEngine</module>
-    <module>Player</module>
-    <module>Common</module>
+    <modules>
+        <module>GameEngine</module>
+        <module>Player</module>
+        <module>Common</module>
 
-  </modules>
+    </modules>
 
-  <properties>
-    <libgdx.version>1.13.0</libgdx.version>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-  </properties>
+    <properties>
+        <libgdx.version>1.13.0</libgdx.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <!-- Common dependencies, e.g., LibGDX, Ashley ECS -->
-      <dependency>
-        <groupId>com.badlogicgames.libgdx</groupId>
-        <artifactId>libgdx</artifactId>
-        <version>1.10.0</version>
-      </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Common dependencies, e.g., LibGDX, Ashley ECS -->
+            <dependency>
+                <groupId>com.badlogicgames.libgdx</groupId>
+                <artifactId>libgdx</artifactId>
+                <version>1.10.0</version>
+            </dependency>
 
-      <dependency>
-        <groupId>com.badlogicgames.ashley</groupId>
-        <artifactId>ashley</artifactId>
-        <version>1.7.2</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  </project>
+            <dependency>
+                <groupId>com.badlogicgames.ashley</groupId>
+                <artifactId>ashley</artifactId>
+                <version>1.7.2</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.4.0</version>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>parent-project</id>
+            <activation>
+                <file>
+                    <missing>src</missing>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.4.0</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>libs</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>child-project</id>
+            <activation>
+                <file>
+                    <exists>src</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-installed</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${project.groupId}</groupId>
+                                            <artifactId>${project.artifactId}</artifactId>
+                                            <version>${project.version}</version>
+                                            <type>jar</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>../mods-mvn</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

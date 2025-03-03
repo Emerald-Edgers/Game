@@ -22,10 +22,8 @@ public class Game implements ApplicationListener {
     public void create() {
         // Game initialization logic
         batch = new SpriteBatch();
-        System.out.println("Serviceloader start");
         ServiceLoader<IEntity> loader = ServiceLoader.load(IEntity.class);
         for (IEntity entity : loader) {
-            System.out.println("Class found");
             // Since we know there's only one implementation, we can just take the first one
             player = entity;
             break;
