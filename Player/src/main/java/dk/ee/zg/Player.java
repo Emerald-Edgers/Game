@@ -1,6 +1,13 @@
 package dk.ee.zg;
 
-public class Player {
+import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.map.data.Entity;
+import dk.ee.zg.common.map.data.EntityType;
+
+import java.util.UUID;
+
+public class Player extends Entity {
+    //Essentials
 
 
 
@@ -24,10 +31,11 @@ public class Player {
     public Player(int maxHP, int attackDamage, int attackSpeed, int moveSpeed,
                   int critChance, int critDamage, int defense, int lifesteal, int penetration,
                   int range, int evasion, int healthRegen) {
-        MaxHP = maxHP;
-        AttackDamage = attackDamage;
-        AttackSpeed = attackSpeed;
-        MoveSpeed = moveSpeed;
+        super(new Vector2(), 0, new Vector2(1,1), "player.png", EntityType.Player);
+        this.MaxHP = maxHP;
+        this.AttackDamage = attackDamage;
+        this.AttackSpeed = attackSpeed;
+        this.MoveSpeed = moveSpeed;
         this.hp = maxHP;
         this.critChance = critChance;
         this.critDamage = critDamage;
@@ -37,13 +45,6 @@ public class Player {
         this.range = range;
         this.evasion = evasion;
         this.healthRegen = healthRegen;
-    }
-
-    public Player(int maxHP, int attackDamage, int attackSpeed, int moveSpeed) {
-        this.MaxHP = maxHP;
-        this.AttackDamage = attackDamage;
-        this.AttackSpeed = attackSpeed;
-        this.MoveSpeed = moveSpeed;
     }
 
 
