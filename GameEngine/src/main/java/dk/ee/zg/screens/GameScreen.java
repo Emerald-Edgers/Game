@@ -1,6 +1,7 @@
 package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Screen;
+import dk.ee.zg.common.data.GameData;
 
 public class GameScreen implements Screen {
 
@@ -13,6 +14,9 @@ public class GameScreen implements Screen {
     public void render(float v) {
         update();
         draw();
+
+
+        GameData.getInstance().getGameKey().checkJustPressed();
     }
 
     /**
