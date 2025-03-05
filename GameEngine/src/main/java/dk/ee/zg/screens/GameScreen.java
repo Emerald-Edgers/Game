@@ -19,6 +19,8 @@ public class GameScreen implements Screen {
      * Update loop, part of the main game loop. Is called before {@code draw()}
      */
     private void update() {
+
+
     }
 
     /**

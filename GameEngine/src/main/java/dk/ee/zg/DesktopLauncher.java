@@ -22,8 +22,8 @@ public class DesktopLauncher {
 
     private static void initOptions() {
        GameData gameData = GameData.getInstance();
-       gameData.setDisplayWidth(1920);
-       gameData.setDisplayHeight(1080);
+       gameData.setDisplayWidth(800);
+       gameData.setDisplayHeight(600);
        gameData.setMaxFps(30);
     }
 }
