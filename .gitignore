@@ -4,3 +4,12 @@
 /target/
 /libs
 /mods-mvn
+
+.settings/
+**/.settings/
+
+.classpath
+.project
+
+**/.classpath
+**/.project

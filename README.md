@@ -48,3 +48,7 @@ java -cp "mods-mvn/*" dk.ee.zg.Game
 #### Intellij IDEA
 If using Intellij IDEA it is possible to setup a [Run Configuration](https://www.jetbrains.com/help/idea/run-debug-configuration.html) which automatically runs a shell script.
 For convenience this project provides a preconfigured configuration at [.intellij-game-run](.intellij-game-run).
+
+### Defining interface implementations
+If a module implements an interface from another module it should be defined under META-INF/services/_path-to-interface-from-module-root_
+Inside the file, define which class implements said interface in the same manner.

@@ -15,7 +15,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Main-Class>dk.ee.zg.Game</Main-Class>
+              <Main-Class>dk.ee.zg.DesktopLauncher</Main-Class>
             </manifestEntries>
           </archive>
         </configuration>
@@ -32,7 +32,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>dk.ee.zg.Game</mainClass>
+                  <mainClass>dk.ee.zg.DesktopLauncher</mainClass>
                 </transformer>
               </transformers>
             </configuration>
