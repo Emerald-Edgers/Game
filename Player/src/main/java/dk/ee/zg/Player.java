@@ -1,13 +1,43 @@
 package dk.ee.zg;
 
 public class Player {
+
+
+
     //non-increasing base primary stats
     private final int MaxHP;
     private final int AttackDamage;
     private final int AttackSpeed;
     private final int MoveSpeed;
 
-    //
+    //increasing base secondary stats
+    private int hp;
+    private int critChance;
+    private int critDamage;
+    private int defense;
+    private int lifesteal;
+    private int penetration;
+    private int range;
+    private int evasion;
+    private int healthRegen;
+
+    public Player(int maxHP, int attackDamage, int attackSpeed, int moveSpeed,
+                  int critChance, int critDamage, int defense, int lifesteal, int penetration,
+                  int range, int evasion, int healthRegen) {
+        MaxHP = maxHP;
+        AttackDamage = attackDamage;
+        AttackSpeed = attackSpeed;
+        MoveSpeed = moveSpeed;
+        this.hp = maxHP;
+        this.critChance = critChance;
+        this.critDamage = critDamage;
+        this.defense = defense;
+        this.lifesteal = lifesteal;
+        this.penetration = penetration;
+        this.range = range;
+        this.evasion = evasion;
+        this.healthRegen = healthRegen;
+    }
 
     public Player(int maxHP, int attackDamage, int attackSpeed, int moveSpeed) {
         this.MaxHP = maxHP;
@@ -34,4 +64,75 @@ public class Player {
     }
 
 
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getCritChance() {
+        return critChance;
+    }
+
+    public void setCritChance(int critChance) {
+        this.critChance = critChance;
+    }
+
+    public int getCritDamage() {
+        return critDamage;
+    }
+
+    public void setCritDamage(int critDamage) {
+        this.critDamage = critDamage;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getLifesteal() {
+        return lifesteal;
+    }
+
+    public void setLifesteal(int lifesteal) {
+        this.lifesteal = lifesteal;
+    }
+
+    public int getPenetration() {
+        return penetration;
+    }
+
+    public void setPenetration(int penetration) {
+        this.penetration = penetration;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public int getEvasion() {
+        return evasion;
+    }
+
+    public void setEvasion(int evasion) {
+        this.evasion = evasion;
+    }
+
+    public int getHealthRegen() {
+        return healthRegen;
+    }
+
+    public void setHealthRegen(int healthRegen) {
+        this.healthRegen = healthRegen;
+    }
 }
