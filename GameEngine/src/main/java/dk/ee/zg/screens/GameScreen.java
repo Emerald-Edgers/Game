@@ -84,7 +84,6 @@ public class GameScreen implements Screen {
         com.badlogic.gdx.Gdx.gl.glClearColor(0, 0, 0, 1); // Set background color
         com.badlogic.gdx.Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
         batch.begin(); // Begin drawing
-
         for (Entity entity : world.getEntities()){
             entity.draw(batch);
         }
@@ -95,6 +94,8 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+        gameData.setDisplayWidth(width);
+        gameData.setDisplayHeight(height);
     }
 
     @Override
