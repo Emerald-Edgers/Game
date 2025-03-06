@@ -16,7 +16,7 @@ public class GameKey {
     private HashMap<Integer,Boolean> keys = new HashMap<Integer,Boolean>();
     //just pressed
     private HashMap<Integer,Boolean> pkeys = new HashMap<Integer,Boolean>();
-    
+
 
     public GameKey(){
         for (int i = 0; i < Input.Keys.MAX_KEYCODE; i++) {

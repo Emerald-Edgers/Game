@@ -9,9 +9,9 @@
 
     <modules>
         <module>GameEngine</module>
-        <module>Player</module>
         <module>Common</module>
         <module>CommonMap</module>
+        <module>Player</module>
     </modules>
 
     <properties>
