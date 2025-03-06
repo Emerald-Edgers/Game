@@ -10,7 +10,6 @@ import dk.ee.zg.common.map.services.IGamePluginService;
 
 public class PlayerPlugin implements IGamePluginService {
     Player player;
-    Sprite sprite;
 
     @Override
     public void start(World world) {
