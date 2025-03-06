@@ -14,16 +14,21 @@ public class DesktopLauncher {
         GameData gameData = GameData.getInstance();
         initOptions();
         config.setTitle("Emerald Edgers");
-        config.setWindowedMode(gameData.getDisplayWidth(), gameData.getDisplayHeight());
+
+        // Launch Game in windowed fullscreen
+//        config.setWindowedMode(Lwjgl3ApplicationConfiguration.getDisplayMode().width, Lwjgl3ApplicationConfiguration.getDisplayMode().height);
+
+        // Launch the Game in 1080p
+        config.setWindowedMode(1920, 1080);
+
         config.setForegroundFPS(gameData.getMaxFps());
         config.setIdleFPS(gameData.getMaxFps());
+
         return config;
     }
 
     private static void initOptions() {
-       GameData gameData = GameData.getInstance();
-       gameData.setDisplayWidth(800);
-       gameData.setDisplayHeight(600);
-       gameData.setMaxFps(30);
+        GameData gameData = GameData.getInstance();
+        gameData.setMaxFps(30);
     }
 }
