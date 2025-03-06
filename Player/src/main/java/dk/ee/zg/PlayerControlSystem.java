@@ -52,7 +52,7 @@ public class PlayerControlSystem implements IEntityProcessService {
             dirVec.add(0,-1);
         }
         dirVec.nor(); // normalize if diagonal to get no speed boost
-        System.out.println(dirVec);
+        
         for (Entity player : world.getEntities(Player.class)){
             move((Player) player,dirVec);
         }
