@@ -1,5 +1,8 @@
 package dk.ee.zg.common.map.data;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.UUID;
@@ -13,6 +16,15 @@ public class Entity {
     private Vector2 scale;
     private String sprite_path;
 
+    private Sprite sprite;
+
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+
+
     public Entity(Vector2 position, float rotation, Vector2 scale, String sprite_path, EntityType entityType) {
         this.id = UUID.randomUUID();
         this.position = position;
@@ -20,6 +32,9 @@ public class Entity {
         this.scale = scale;
         this.sprite_path = sprite_path;
         this.entityType = entityType;
+        Texture img = new Texture(sprite_path); // Load texture from file
+        this.sprite = new Sprite(img); // Create a sprite from the texture
+        sprite.setScale(scale.x,scale.y);
     }
 
     public UUID getId() {
@@ -62,6 +77,10 @@ public class Entity {
         this.sprite_path = sprite_path;
     }
 
+    public void draw(SpriteBatch batch) {
 
+        sprite.setPosition(position.x, position.y);
+        sprite.draw(batch); // Draw the sprite
 
+    }
 }
