@@ -1,5 +1,6 @@
 package dk.ee.zg.managers;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import dk.ee.zg.common.data.GameData;
 
