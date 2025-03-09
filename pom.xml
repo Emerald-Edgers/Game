@@ -12,6 +12,7 @@
         <module>Common</module>
         <module>CommonMap</module>
         <module>Player</module>
+        <module>Map</module>
     </modules>
 
     <properties>

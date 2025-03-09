@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.World;
+import dk.ee.zg.common.map.interfaces.IMap;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
 
@@ -19,6 +20,7 @@ public class GameScreen implements Screen {
     private final GameData gameData;
     private OrthographicCamera camera;
     private Viewport viewport;
+    private IMap map;
 
     public GameScreen() {
         gameData = GameData.getInstance();
@@ -34,7 +36,24 @@ public class GameScreen implements Screen {
         for (IGamePluginService entity : ServiceLoader.load(IGamePluginService.class)){
             entity.start(world);
         }
-        initCamera(16, 9); // Does not need to be 16:9 !!
+
+        initCamera(20, 20); // Does not need to be 16:9 !!
+        initMap("main-map.tmx", 1 / 32f); // Sets the unitscale to 1 / 32. This means 1 unit = 32 pixels.
+    }
+
+    /**
+     * Loads the first implementation of {@link IMap} that the {@link ServiceLoader} finds.
+     * Sets the local variable {@code map} to found implementation.
+     * @param mapPath The name of the map. Use relative path from the resource folder of implementing class.
+     * @param unitScale The amount of pixels a singular unit represents. If set to 1/32, 1 unit = 32 px.
+     */
+    private void initMap(String mapPath, float unitScale) {
+        for (IMap mapImpl : ServiceLoader.load(IMap.class)){
+            if (map == null) {
+                map = mapImpl;
+                map.loadMap(mapPath, unitScale);
+            }
+        }
     }
 
     /**
@@ -83,12 +102,14 @@ public class GameScreen implements Screen {
     private void draw() {
         com.badlogic.gdx.Gdx.gl.glClearColor(0, 0, 0, 1); // Set background color
         com.badlogic.gdx.Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
+
+        map.renderMap(); // Render the map
+
         batch.begin(); // Begin drawing
         for (Entity entity : world.getEntities()){
             entity.draw(batch);
         }
         batch.end(); // End drawing
-
     }
 
     @Override

@@ -22,7 +22,7 @@ public class DesktopLauncher {
        //config.setWindowedMode(Lwjgl3ApplicationConfiguration.getDisplayMode().width, Lwjgl3ApplicationConfiguration.getDisplayMode().height);
 
         // Launch the Game in 1080p
-        //config.setWindowedMode(1920, 1080);
+//        config.setWindowedMode(1920, 1080);
 
         config.setForegroundFPS(gameData.getMaxFps());
         config.setIdleFPS(gameData.getMaxFps());
