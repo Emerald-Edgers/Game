@@ -10,6 +10,8 @@
     </parent>
 
     <artifactId>Player</artifactId>
+    <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>

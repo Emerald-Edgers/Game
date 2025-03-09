@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>Map</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
