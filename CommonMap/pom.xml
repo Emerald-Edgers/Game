@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>CommonMap</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

@@ -10,6 +10,7 @@
 
 
     <artifactId>GameEngine</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

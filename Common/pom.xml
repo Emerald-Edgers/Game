@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>Common</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
