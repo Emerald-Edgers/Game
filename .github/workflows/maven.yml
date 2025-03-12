@@ -35,7 +35,7 @@ jobs:
       run: mvn test --batch-mode
       # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
-      run: mvn depgraph:graph -DoutputDirectory=target/dependency-graphs
+      run: mvn depgraph:graph -DoutputDirectory=target/dependency-graphs --fail-at-end
     - name: Upload Dependency Graph as Artifact
       uses: actions/upload-artifact@v4
       with:
