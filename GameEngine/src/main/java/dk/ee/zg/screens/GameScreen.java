@@ -163,7 +163,9 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
-        map.renderMap(); // Render the map
+        if (map != null) {
+            map.renderMap(); // Render the map
+        }
 
         batch.begin(); // Begin drawing
         for (Entity entity : world.getEntities()) {
