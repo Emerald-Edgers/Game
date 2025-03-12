@@ -9,6 +9,9 @@ import java.util.UUID;
 
 public class Entity {
 
+    /**
+     * id for entity.
+     */
     private final UUID id;
     private final EntityType entityType;
     private Vector2 position;
