@@ -41,5 +41,3 @@ jobs:
       with:
         name: dependency-graph
         path: target/dependency-graphs/
-    - name: Submit Dependency Graph to GitHub
-      uses: advanced-security/maven-dependency-submission-action@v2
