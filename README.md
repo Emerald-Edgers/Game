@@ -52,3 +52,12 @@ For convenience this project provides a preconfigured configuration at [.intelli
 ### Defining interface implementations
 If a module implements an interface from another module it should be defined under META-INF/services/_path-to-interface-from-module-root_
 Inside the file, define which class implements said interface in the same manner.
+
+
+### Generating Dependcy graphs
+```sh
+mvn depgraph:graph -DoutputDirectory=target/dependency-graphs
+``` 
+using this command can build .cdot dependency graphs for all modules
+e.g
+![img.png](img.png)
