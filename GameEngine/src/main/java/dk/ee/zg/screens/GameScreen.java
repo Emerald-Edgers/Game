@@ -3,8 +3,10 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
+import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.World;
 import dk.ee.zg.common.map.interfaces.IMap;
 import dk.ee.zg.common.map.services.IEntityProcessService;
@@ -52,19 +54,20 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 5;
+    private static final float VIEWPORT_WIDTH = 8;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 5;
+    private static final float VIEWPORT_HEIGHT = 8;
 
     /**
      * The amount of pixels a singular unit represents.
      * (E.g.) set to 1/32, 1 unit = 32 px.
      */
     private static final float UNIT_SCALE = 1 / 32f;
+
 
     /**
      * Constructor for GameScreen.
@@ -122,11 +125,40 @@ public class GameScreen implements Screen {
         viewport.apply();
 
         // Set the camera to the middle of the screen
-        camera.position.set(camera.viewportWidth / 2f,
-                camera.viewportHeight / 2f, 0);
+        camera.position.set(VIEWPORT_WIDTH / 2f, VIEWPORT_HEIGHT/ 2f, 0);
         camera.update();
 
         gameData.setCamera(camera);
+    }
+
+    private void checkBounds() {
+        System.out.println("Camera position:" + camera.position.x + " " + camera.position.y);
+
+        float effectiveViewportWidth = VIEWPORT_WIDTH / 2;
+        float effectiveViewportHeight = VIEWPORT_HEIGHT / 2;
+
+        // Left boundary
+        if (camera.position.x < effectiveViewportWidth) {
+            camera.position.x = effectiveViewportWidth;
+        }
+
+        // Right boundary
+        if (camera.position.x > 960 * UNIT_SCALE - effectiveViewportWidth) {
+            camera.position.x = 960 * UNIT_SCALE - effectiveViewportWidth;
+        }
+
+        // Bottom boundary
+        if (camera.position.y < effectiveViewportHeight) {
+            camera.position.y = effectiveViewportHeight;
+        }
+
+        // Top boundary
+        if (camera.position.y > 960 * UNIT_SCALE - effectiveViewportHeight) {
+            camera.position.y = 960 * UNIT_SCALE - effectiveViewportHeight;
+        }
+
+
+        camera.update();
     }
 
     /**
@@ -151,6 +183,13 @@ public class GameScreen implements Screen {
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(world);
         }
+        for (Entity entity : world.getEntities()) {
+            if (entity.getEntityType() == EntityType.Player) {
+                camera.position.set(entity.getPosition().x + entity.getSprite().getWidth() / 2,
+                        entity.getPosition().y + entity.getSprite().getHeight() /2, 0);
+                checkBounds();
+            }
+        }
         camera.update();
     }
 
@@ -167,6 +206,7 @@ public class GameScreen implements Screen {
             map.renderMap(); // Render the map
         }
 
+        batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
         for (Entity entity : world.getEntities()) {
             entity.draw(batch);
@@ -217,6 +257,5 @@ public class GameScreen implements Screen {
      */
     @Override
     public void dispose() {
-
     }
 }

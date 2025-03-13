@@ -81,7 +81,7 @@ public class Entity {
     }
 
     public void draw(SpriteBatch batch) {
-
+        sprite.setScale(scale.x,scale.y);
         sprite.setPosition(position.x, position.y);
         sprite.draw(batch); // Draw the sprite
 
