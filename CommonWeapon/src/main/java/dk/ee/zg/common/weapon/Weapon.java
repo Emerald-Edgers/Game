@@ -7,21 +7,55 @@ import java.util.UUID;
 
 public abstract class Weapon {
 
+    /**
+     * UUID {@link UUID} defining the objects' id.
+     */
     private final UUID id = UUID.randomUUID();
 
-    protected String sprite_path;
+    /**
+     * String defining the path to sprite, in the modules resources.
+     */
+    protected String spritePath;
 
+    /**
+     * Sprite {@link Sprite} defining the sprite object for the weapon.
+     */
     protected Sprite sprite;
+    /**
+     * float defining the sprite rotation for the weapon.
+     */
     protected float rotation;
-
+    /**
+     * Vector2 {@link Vector2} defining the sprite scale x and y for the weapon.
+     */
     protected Vector2 scale;
 
     //non-increasing base primary stats
-    protected int MaxHP;
-    protected int AttackDamage;
-    protected int AttackSpeed;
-    protected int MoveSpeed;
+    /**
+     * maxHP is the max amount of HP, a player can have (the HP Stat).
+     * used to calculate regeneration, and take damage.
+     */
+    protected int maxHP;
+    /**
+     * attackDamage is the amount of base damage, a player inflicts.
+     * used to calculate actual damage to inflict upon enemy.
+     */
+    protected int attackDamage;
+    /**
+     * attackSpeed is the speed at which, a player attacks.
+     * used to calculate attack cooldown.
+     */
+    protected int attackSpeed;
+    /**
+     * moveSpeed is the speed at which, a player moves.
+     * used to calculate a players' movement.
+     */
+    protected int moveSpeed;
 
+    /**
+     * basic attack method.
+     * left empty to require implementation on specific weapon.
+     */
     public void attack() {
 
     }
@@ -31,8 +65,8 @@ public abstract class Weapon {
         return id;
     }
 
-    public String getSprite_path() {
-        return sprite_path;
+    public String getSpritePath() {
+        return spritePath;
     }
 
     public Sprite getSprite() {
@@ -49,18 +83,18 @@ public abstract class Weapon {
     }
 
     public int getMaxHP() {
-        return MaxHP;
+        return maxHP;
     }
 
     public int getAttackDamage() {
-        return AttackDamage;
+        return attackDamage;
     }
 
     public int getAttackSpeed() {
-        return AttackSpeed;
+        return attackSpeed;
     }
 
     public int getMoveSpeed() {
-        return MoveSpeed;
+        return moveSpeed;
     }
 }

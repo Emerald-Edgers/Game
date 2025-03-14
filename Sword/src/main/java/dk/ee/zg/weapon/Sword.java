@@ -7,22 +7,26 @@ import dk.ee.zg.common.weapon.Weapon;
 
 public class Sword extends Weapon {
 
-    public Sword(){
-        this.sprite_path = "sword.png";
+    /**
+     * constructor for Sword, initializes and sets all Weapon variables.
+     * {@link Weapon}
+     */
+    public Sword() {
+        this.spritePath = "sword.png";
         this.rotation = 0;
-        this.scale = new Vector2(1,1);
-        Texture img = new Texture(sprite_path); // Load texture from file
+        this.scale = new Vector2(1, 1);
+        Texture img = new Texture(spritePath); // Load texture from file
         this.sprite = new Sprite(img); // Create a sprite from the texture
 
         //stats
-        this.MaxHP = 100;
-        this.AttackDamage = 10;
-        this.AttackSpeed = 10;
-        this.MoveSpeed = 10;
+        this.maxHP = 100;
+        this.attackDamage = 10;
+        this.attackSpeed = 10;
+        this.moveSpeed = 10;
     }
 
     @Override
-    public void attack(){
+    public void attack() {
 
     }
 

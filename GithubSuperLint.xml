@@ -104,7 +104,9 @@
     <module name="JavadocType"/>
     <module name="JavadocVariable"/>
     <module name="JavadocStyle"/>
-    <module name="MissingJavadocMethod"/>
+    <module name="MissingJavadocMethod">
+      <property name="excludedNames" value="^get.*|^set.*"/>
+    </module>
 
     <!-- Checks for Naming Conventions.                  -->
     <!-- See https://checkstyle.org/checks/naming/index.html -->
@@ -173,12 +175,12 @@
 
     <!-- Checks for class design                         -->
     <!-- See https://checkstyle.org/checks/design/index.html -->
-    <module name="DesignForExtension"/>
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
-    <module name="VisibilityModifier"/>
-
+    <module name="VisibilityModifier">
+      <property name="protectedAllowed" value="true"/>
+    </module>
     <!-- Miscellaneous other checks.                   -->
     <!-- See https://checkstyle.org/checks/misc/index.html -->
     <module name="ArrayTypeStyle"/>
