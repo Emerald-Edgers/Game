@@ -3,19 +3,20 @@ package dk.ee.zg;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
+import dk.ee.zg.common.weapon.Weapon;
 
 import java.util.UUID;
 
 public class Player extends Entity {
     //Essentials
-
+    Weapon weapon;
 
 
     //non-increasing base primary stats
-    private final int MaxHP;
-    private final int AttackDamage;
-    private final int AttackSpeed;
-    private final int MoveSpeed;
+    private int MaxHP;
+    private int AttackDamage;
+    private int AttackSpeed;
+    private int MoveSpeed;
 
     //increasing base secondary stats
     private int hp;
@@ -45,6 +46,21 @@ public class Player extends Entity {
         this.range = range;
         this.evasion = evasion;
         this.healthRegen = healthRegen;
+
+    }
+
+    /**
+     * loads primary stats from weapon, if weapon is not null
+     * {@link Weapon}
+     */
+    public void loadStatsFromWeapon(){
+        if (weapon != null){
+            this.MaxHP = weapon.getMaxHP();
+            this.AttackDamage = weapon.getAttackDamage();
+            this.AttackSpeed = weapon.getAttackSpeed();
+            this.MoveSpeed = weapon.getMoveSpeed();
+            this.hp = this.MaxHP;
+        }
     }
 
 
@@ -136,4 +152,6 @@ public class Player extends Entity {
     public void setHealthRegen(int healthRegen) {
         this.healthRegen = healthRegen;
     }
+
+
 }
