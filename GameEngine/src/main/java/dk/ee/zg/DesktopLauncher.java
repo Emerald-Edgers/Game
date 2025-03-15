@@ -5,10 +5,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import dk.ee.zg.common.data.GameData;
 
 public final class DesktopLauncher {
-    /**
-     * The maximum fps the game should run at.
-     */
-    private static final int MAXFPS = 30;
 
     private DesktopLauncher() {
 
@@ -26,29 +22,23 @@ public final class DesktopLauncher {
         Lwjgl3ApplicationConfiguration config =
                 new Lwjgl3ApplicationConfiguration();
         GameData gameData = GameData.getInstance();
-        initOptions();
         config.setTitle("Emerald Edgers");
 
         //Launch game in fullscreen mode
-        config.setFullscreenMode(
-                Lwjgl3ApplicationConfiguration.getDisplayMode());
+//        config.setFullscreenMode(
+//                Lwjgl3ApplicationConfiguration.getDisplayMode());
 
         // Launch Game in windowed fullscreen
         //config.setWindowedMode(Lwjgl3ApplicationConfiguration
         // .getDisplayMode().width, Lwjgl3ApplicationConfiguration
         // .getDisplayMode().height);
 
-        // Launch the Game in 1080p
-//        config.setWindowedMode(1920, 1080);
+//         Launch the Game in 1080p
+        config.setWindowedMode(1920, 1080);
 
-        config.setForegroundFPS(gameData.getMaxFps());
-        config.setIdleFPS(gameData.getMaxFps());
+        config.setForegroundFPS(gameData.getMAXFPS());
+        config.setIdleFPS(gameData.getMAXFPS());
 
         return config;
-    }
-
-    private static void initOptions() {
-        GameData gameData = GameData.getInstance();
-        gameData.setMaxFps(MAXFPS);
     }
 }

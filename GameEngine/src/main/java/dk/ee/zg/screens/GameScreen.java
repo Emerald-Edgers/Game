@@ -3,7 +3,6 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
@@ -15,7 +14,6 @@ import dk.ee.zg.common.map.services.IGamePluginService;
 import java.util.ServiceLoader;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
@@ -25,15 +23,20 @@ public class GameScreen implements Screen {
     private final GameData gameData;
 
     /**
+     * Instance of {@link World} used for interacting with entities.
+     */
+    private final World world;
+
+    /**
      * Instance of {@link OrthographicCamera} used by the game.
      * Is also saved to {@link GameData}
      */
-    private OrthographicCamera camera;
+    private final OrthographicCamera camera;
 
     /**
      * Instance of {@link Viewport} used by the camera.
      */
-    private Viewport viewport;
+    private final Viewport viewport;
 
     /**
      * Instance of {@link IMap} currently loaded.
@@ -46,36 +49,14 @@ public class GameScreen implements Screen {
     private SpriteBatch batch;
 
     /**
-     * Instance of {@link World} used for interacting with entities.
-     */
-    private final World world;
-
-    /**
-     * The width of the viewport in world units.
-     * This is how much of the x-axis the player should see at once.
-     */
-    private static final float VIEWPORT_WIDTH = 8;
-
-    /**
-     * The height of the viewport in world units.
-     * This is how much of the y-axis the player should see at once.
-     */
-    private static final float VIEWPORT_HEIGHT = 8;
-
-    /**
-     * The amount of pixels a singular unit represents.
-     * (E.g.) set to 1/32, 1 unit = 32 px.
-     */
-    private static final float UNIT_SCALE = 1 / 32f;
-
-
-    /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
     public GameScreen() {
         gameData = GameData.getInstance();
         world = new World();
+        camera = gameData.getCamera();
+        viewport = gameData.getViewport();
     }
 
 
@@ -87,12 +68,10 @@ public class GameScreen implements Screen {
     public void show() {
         batch = new SpriteBatch(); // Create SpriteBatch
 
-        for (IGamePluginService entity
-                : ServiceLoader.load(IGamePluginService.class)) {
+        for (IGamePluginService entity : ServiceLoader.load(IGamePluginService.class)) {
             entity.start(world);
         }
 
-        initCamera();
         initMap("main-map.tmx");
     }
 
@@ -108,34 +87,14 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, UNIT_SCALE);
+                map.loadMap(mapPath, gameData.getUNIT_SCALE());
             }
         }
     }
 
-    /**
-     * Creates an {@link OrthographicCamera} and a {@link FitViewport} to
-     * manage the game rendering area.
-     * The viewport ensures that the visible game world is consistent across
-     * aspect ratios, will draw black bars to achieve this.
-     */
-    private void initCamera() {
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera);
-        viewport.apply();
-
-        // Set the camera to the middle of the screen
-        camera.position.set(VIEWPORT_WIDTH / 2f, VIEWPORT_HEIGHT/ 2f, 0);
-        camera.update();
-
-        gameData.setCamera(camera);
-    }
-
     private void checkBounds() {
-        System.out.println("Camera position:" + camera.position.x + " " + camera.position.y);
-
-        float effectiveViewportWidth = VIEWPORT_WIDTH / 2;
-        float effectiveViewportHeight = VIEWPORT_HEIGHT / 2;
+        float effectiveViewportWidth = camera.viewportWidth / 2;
+        float effectiveViewportHeight = camera.viewportWidth / 2;
 
         // Left boundary
         if (camera.position.x < effectiveViewportWidth) {
@@ -143,8 +102,8 @@ public class GameScreen implements Screen {
         }
 
         // Right boundary
-        if (camera.position.x > 960 * UNIT_SCALE - effectiveViewportWidth) {
-            camera.position.x = 960 * UNIT_SCALE - effectiveViewportWidth;
+        if (camera.position.x > 960 * gameData.getUNIT_SCALE() - effectiveViewportWidth) {
+            camera.position.x = 960 * gameData.getUNIT_SCALE() - effectiveViewportWidth;
         }
 
         // Bottom boundary
@@ -153,8 +112,8 @@ public class GameScreen implements Screen {
         }
 
         // Top boundary
-        if (camera.position.y > 960 * UNIT_SCALE - effectiveViewportHeight) {
-            camera.position.y = 960 * UNIT_SCALE - effectiveViewportHeight;
+        if (camera.position.y > 960 * gameData.getUNIT_SCALE() - effectiveViewportHeight) {
+            camera.position.y = 960 * gameData.getUNIT_SCALE() - effectiveViewportHeight;
         }
 
 
@@ -179,14 +138,12 @@ public class GameScreen implements Screen {
      * Handles logic related to updating the game.
      */
     private void update() {
-        for (IEntityProcessService entity
-                : ServiceLoader.load(IEntityProcessService.class)) {
+        for (IEntityProcessService entity : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(world);
         }
         for (Entity entity : world.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
-                camera.position.set(entity.getPosition().x + entity.getSprite().getWidth() / 2,
-                        entity.getPosition().y + entity.getSprite().getHeight() /2, 0);
+                camera.position.set(entity.getPosition().x + entity.getSprite().getWidth() / 2, entity.getPosition().y + entity.getSprite().getHeight() / 2, 0);
                 checkBounds();
             }
         }
@@ -257,5 +214,7 @@ public class GameScreen implements Screen {
      */
     @Override
     public void dispose() {
+        batch.dispose();
+        map.getRenderer().dispose();
     }
 }
