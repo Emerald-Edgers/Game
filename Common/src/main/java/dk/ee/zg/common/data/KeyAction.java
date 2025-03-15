@@ -6,5 +6,5 @@ public enum KeyAction {
     MOVE_DOWN,
     MOVE_LEFT,
     MOVE_RIGHT,
-
+    SELECT,
 }
