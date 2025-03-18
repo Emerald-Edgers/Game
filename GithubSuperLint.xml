@@ -105,7 +105,7 @@
     <module name="JavadocVariable"/>
     <module name="JavadocStyle"/>
     <module name="MissingJavadocMethod">
-      <property name="excludedNames" value="^get.*|^set.*"/>
+      <property name="allowMissingPropertyJavadoc" value="true"/>
     </module>
 
     <!-- Checks for Naming Conventions.                  -->
