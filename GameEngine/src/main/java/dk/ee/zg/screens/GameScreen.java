@@ -53,28 +53,31 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private final float VIEWPORT_WIDTH;
+    private static final float VIEWPORT_WIDTH = 8;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private final float VIEWPORT_HEIGHT;
+    private static final float VIEWPORT_HEIGHT = 8;
 
     /**
      * The amount of pixels a singular unit represents.
      * (E.g.) set to 1/32, 1 unit = 32 px.
      */
-    private final float UNIT_SCALE;
+    private static final float UNIT_SCALE = 1 / 32f;
+
+    /**
+     * The width of the map in pixels.
+     * Should eventually be capable of calculating this based upon the map.
+     */
+    private static final int MAP_WIDTH_PIXELS = 960;
 
     /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
     public GameScreen() {
-        VIEWPORT_WIDTH = 8;
-        VIEWPORT_HEIGHT = 8;
-        UNIT_SCALE = 1 / 32f;
         gameData = GameData.getInstance();
         world = new World();
     }
@@ -88,7 +91,8 @@ public class GameScreen implements Screen {
     public void show() {
         batch = new SpriteBatch(); // Create SpriteBatch
 
-        for (IGamePluginService entity : ServiceLoader.load(IGamePluginService.class)) {
+        for (IGamePluginService entity
+                : ServiceLoader.load(IGamePluginService.class)) {
             entity.start(world);
         }
 
@@ -114,7 +118,8 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Creates an {@link OrthographicCamera} and a {@link com.badlogic.gdx.utils.viewport.FitViewport} to
+     * Creates an {@link OrthographicCamera}
+     * and a {@link com.badlogic.gdx.utils.viewport.FitViewport} to
      * manage the game rendering area.
      * The viewport ensures that the visible game world is consistent across
      * aspect ratios, will draw black bars to achieve this.
@@ -125,7 +130,7 @@ public class GameScreen implements Screen {
         viewport.apply();
 
         // Set the camera to the middle of the screen
-        camera.position.set(VIEWPORT_WIDTH / 2f, VIEWPORT_HEIGHT/ 2f, 0);
+        camera.position.set(VIEWPORT_WIDTH / 2f, VIEWPORT_HEIGHT / 2f, 0);
         camera.update();
 
         gameData.setCamera(camera);
@@ -141,8 +146,10 @@ public class GameScreen implements Screen {
         }
 
         // Right boundary
-        if (camera.position.x > 960 * UNIT_SCALE - effectiveViewportWidth) {
-            camera.position.x = 960 * UNIT_SCALE - effectiveViewportWidth;
+        if (camera.position.x
+                > MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportWidth) {
+            camera.position.x =
+                    MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportWidth;
         }
 
         // Bottom boundary
@@ -151,8 +158,10 @@ public class GameScreen implements Screen {
         }
 
         // Top boundary
-        if (camera.position.y > 960 * UNIT_SCALE - effectiveViewportHeight) {
-            camera.position.y = 960 * UNIT_SCALE - effectiveViewportHeight;
+        if (camera.position.y
+                > MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
+            camera.position.y =
+                    MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight;
         }
 
         camera.update();
@@ -176,12 +185,17 @@ public class GameScreen implements Screen {
      * Handles logic related to updating the game.
      */
     private void update() {
-        for (IEntityProcessService entity : ServiceLoader.load(IEntityProcessService.class)) {
+        for (IEntityProcessService entity
+                : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(world);
         }
         for (Entity entity : world.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
-                camera.position.set(entity.getPosition().x + entity.getSprite().getWidth() / 2, entity.getPosition().y + entity.getSprite().getHeight() / 2, 0);
+                float cameraX = entity.getPosition().x
+                        + entity.getSprite().getWidth() / 2;
+                float cameraY = entity.getPosition().y
+                        + entity.getSprite().getHeight() / 2;
+                camera.position.set(cameraX, cameraY, 0);
                 checkBounds();
             }
         }

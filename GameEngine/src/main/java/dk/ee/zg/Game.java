@@ -1,18 +1,18 @@
 package dk.ee.zg;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import dk.ee.zg.managers.InputManager;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.managers.ScreenManager;
 
 public class Game extends com.badlogic.gdx.Game {
+    /**
+     * Local reference to {@link GameData}.
+     */
     private final GameData gameData = GameData.getInstance();
 
     /**
-     * Game initialization logic, runs once on game start
+     * Game initialization logic, runs once on game start.
      */
     @Override
     public void create() {
@@ -25,8 +25,8 @@ public class Game extends com.badlogic.gdx.Game {
 
         // Set active Screen
         ScreenManager screenManager = new ScreenManager();
-        String SCREEN_NAME = "startscreen";
-        screenManager.switchScreen(SCREEN_NAME);
+        String screenName = "startscreen";
+        screenManager.switchScreen(screenName);
         this.setScreen(screenManager.getActiveScreen());
     }
 }
