@@ -10,7 +10,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Align;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.data.KeyAction;
 import dk.ee.zg.common.weapon.Weapon;
@@ -43,9 +49,40 @@ public class StartScreen implements Screen {
     private final List<Weapon> loadedWeapons;
 
     /**
+     * The ui element which structures the selection view.
+     */
+    private Table weaponSelectTable;
+
+    /**
+     * The index of the currently selected weapons in {@code loadedWeapons}.
+     */
+    private int selectedWeaponIndex;
+
+    /**
      * Constant:    Padding to add to the sides of the table.
      */
-    private final static int PADDING = 20;
+    private static final int PADDING = 20;
+
+    /**
+     * Constant:    The speed of the blinking animation.
+     */
+    private static final float ANIMATION_SPEED = 1.25f;
+
+    /**
+     * Constant:    The width of the root table.
+     */
+    private static final int COLUMN_WIDTH = 3;
+
+    /**
+     * Constant:    The size of bold text.
+     */
+    private static final int BOLD_FONT_SIZE = 74;
+
+    /**
+     * Constant:    The size of regular text.
+     */
+    private static final int REGULAR_FONT_SIZE = 56;
+
 
     /**
      * Constructor for StartScreen.
@@ -53,7 +90,8 @@ public class StartScreen implements Screen {
      */
     public StartScreen() {
         gameData = GameData.getInstance();
-        loadedWeapons = new ArrayList<>();
+        loadedWeapons = loadWeapons();
+        selectedWeaponIndex = 0;
     }
 
     /**
@@ -74,7 +112,8 @@ public class StartScreen implements Screen {
         stage.addActor(table);
 
 //        Texture bgTexture = new Texture("background.png");
-//        TextureRegionDrawable bgDrawable = new TextureRegionDrawable(bgTexture);
+//        TextureRegionDrawable bgDrawable = new TextureRegionDrawable
+//        (bgTexture);
 //
 //        table.setBackground(bgDrawable);
 
@@ -84,65 +123,105 @@ public class StartScreen implements Screen {
         Label playLabel = createLabel("Hit Enter to play", skin,
                 "regular", Color.RED);
 
+        Label leftLabel = createLabel("<<", skin,
+                "bold", Color.RED);
+        leftLabel.setAlignment(Align.center);
+
+        Label rightLabel = createLabel(">>", skin,
+                "bold", Color.RED);
+        rightLabel.setAlignment(Align.center);
+
         playLabel.addAction(Actions.forever(
                 Actions.sequence(
-                        Actions.fadeIn(1.25f),
-                        Actions.fadeOut(1.25f)
+                        Actions.fadeIn(ANIMATION_SPEED),
+                        Actions.fadeOut(ANIMATION_SPEED)
                 )
         ));
 
-        ScrollPane scrollPane = createWeaponSelect();
 
-        table.add(headLabel).expand().top().padTop(PADDING).row();
+        if (loadedWeapons.isEmpty()) {
+            weaponSelectTable = noWeaponsFound();
+        } else {
+            weaponSelectTable =
+                    createWeaponTable(loadedWeapons.get(selectedWeaponIndex));
+        }
 
-        table.add(scrollPane).row();
+        table.add(headLabel).colspan(COLUMN_WIDTH)
+                .expand().top().padTop(PADDING).row();
 
-        table.add(playLabel).expand().bottom().padBottom(PADDING).row();
 
+        table.add(leftLabel).pad(PADDING);
+        table.add(weaponSelectTable).pad(PADDING);
+        table.add(rightLabel).pad(PADDING).row();
+
+        table.add(playLabel).colspan(COLUMN_WIDTH)
+                .expand().bottom().padBottom(PADDING);
     }
 
-    private void setupStyles(Skin skin) {
+    /**
+     * Load all instances which extend {@link Weapon}.
+     *
+     * @return A list of found instances. Empty if none is found.
+     */
+    private List<Weapon> loadWeapons() {
+        List<Weapon> weapons = new ArrayList<>();
+        for (Weapon weapon : ServiceLoader.load(Weapon.class)) {
+            weapons.add(weapon);
+        }
+        return weapons;
+    }
+
+    /**
+     * Method for separating the setup of various styles for ui components.
+     * Adds the styles to the given {@link Skin}.
+     *
+     * @param baseSkin instance to populate with styles.
+     */
+    private void setupStyles(final Skin baseSkin) {
         Label.LabelStyle regularLabel = new Label.LabelStyle();
-        regularLabel.font = skin.getFont("regular");
-        skin.add("regular", regularLabel);
+        regularLabel.font = baseSkin.getFont("regular");
+        baseSkin.add("regular", regularLabel);
 
         Label.LabelStyle boldLabel = new Label.LabelStyle();
-        boldLabel.font = skin.getFont("bold");
-        skin.add("bold", boldLabel);
+        boldLabel.font = baseSkin.getFont("bold");
+        baseSkin.add("bold", boldLabel);
 
-        ScrollPane.ScrollPaneStyle scrollStyle = new ScrollPane.ScrollPaneStyle();
-        skin.add("regular", scrollStyle);
+        ScrollPane.ScrollPaneStyle scrollStyle =
+                new ScrollPane.ScrollPaneStyle();
+        baseSkin.add("regular", scrollStyle);
     }
 
     /**
      * Loads fonts for use with various text objects in the scene.
      * Fonts are added to the local instance of {@link Skin}
      *
-     * @param skin instance which fonts should be saved to.
+     * @param baseSkin instance which fonts should be saved to.
      */
-    private void loadFonts(Skin skin) {
+    private void loadFonts(final Skin baseSkin) {
         FreeTypeFontGenerator fontGenerator;
         fontGenerator = new FreeTypeFontGenerator(
-                new FileHandle("GameEngine/src/main/resources/CinzelDecorative-Regular.ttf")
+                new FileHandle("GameEngine/src/main/resources"
+                        + "/CinzelDecorative-Regular.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter regularParams
                 = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        regularParams.size = 56;
+        regularParams.size = REGULAR_FONT_SIZE;
 
         BitmapFont font = fontGenerator.generateFont(regularParams);
 
-        skin.add("regular", font, BitmapFont.class);
+        baseSkin.add("regular", font, BitmapFont.class);
 
         fontGenerator = new FreeTypeFontGenerator(
-                new FileHandle("GameEngine/src/main/resources/CinzelDecorative-Bold.ttf")
+                new FileHandle("GameEngine/src/main/resources"
+                        + "/CinzelDecorative-Bold.ttf")
         );
         FreeTypeFontGenerator.FreeTypeFontParameter boldParams
                 = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        boldParams.size = 74;
+        boldParams.size = BOLD_FONT_SIZE;
 
         BitmapFont boldFont = fontGenerator.generateFont(boldParams);
 
-        skin.add("bold", boldFont, BitmapFont.class);
+        baseSkin.add("bold", boldFont, BitmapFont.class);
 
         fontGenerator.dispose();
     }
@@ -151,61 +230,51 @@ public class StartScreen implements Screen {
      * Wrapper method to create consistent labels.
      *
      * @param text      displayed by the label.
-     * @param skin      skin which the label should use.
+     * @param baseSkin      skin which the label should use.
      * @param styleName which is should be used by the label.
      *                  Must be saved in skin already.
-     * @param color of the text to be displayed.
+     * @param color     of the text to be displayed.
      * @return new instance of label.
      */
-    private Label createLabel(String text, Skin skin, String styleName, Color color) {
-        Label label = new Label(text, skin, styleName);
+    private Label createLabel(final String text, final Skin baseSkin,
+                              final String styleName, final Color color) {
+        Label label = new Label(text, baseSkin, styleName);
         label.setColor(color);
         return label;
     }
 
+
     /**
-     * Creates the {@link ScrollPane} which contains a selection of
-     * all the available weapons. Recovers if no weapons are found.
-     * @return  a {@link ScrollPane} containing tables of weapons.
+     * Creates and adds labels displaying no
+     * weapons have been found to a given table.
+     *
+     * @return Table with labels describing no weapons have been found.
      */
-    private ScrollPane createWeaponSelect() {
-        Table selectTable = new Table();
-        selectTable.top().left();
-
-        for (Weapon weapon : ServiceLoader.load(Weapon.class)) {
-            loadedWeapons.add(weapon);
-            Table itemTable = createWeaponTable(weapon);
-
-            selectTable.add(itemTable).pad(PADDING);
-        }
-
-        if (loadedWeapons.isEmpty()) {
-            Label label = createLabel("No Weapons Found", skin,
-                    "bold", Color.RED);
-            selectTable.add(label).row();
-            Label glLabel = createLabel("Good Luck", skin,
-                    "bold", Color.RED);
-            selectTable.add(glLabel).row();
-        }
-
-        ScrollPane scrollPane = new ScrollPane(selectTable, skin, "regular");
-        scrollPane.setScrollingDisabled(true, false);
-        return scrollPane;
+    private Table noWeaponsFound() {
+        Table table = new Table();
+        Label label = createLabel("No Weapons Found", skin,
+                "bold", Color.RED);
+        table.add(label).row();
+        Label glLabel = createLabel("Good Luck", skin,
+                "bold", Color.RED);
+        table.add(glLabel).row();
+        return table;
     }
+
 
     /**
      * Creates the individual tables which each weapon is represented in.
-     * @param weapon    to create an infographic for.
-     * @return  the Table which contains weapon infographic.
+     *
+     * @param weapon to create an infographic for.
+     * @return the Table which contains weapon infographic.
      */
-    private Table createWeaponTable(Weapon weapon) {
+    private Table createWeaponTable(final Weapon weapon) {
         Table itemTable = new Table();
         VerticalGroup itemInfo = new VerticalGroup();
+        itemInfo.columnLeft();
 
         Texture weaponTexture = weapon.getSprite().getTexture();
         Image weaponImage = new Image(new TextureRegion(weaponTexture));
-        itemTable.add(weaponImage);
-
 
         String hpLabelText =
                 String.format("Max HP: + %d", weapon.getMaxHP());
@@ -219,19 +288,20 @@ public class StartScreen implements Screen {
                 "regular", Color.WHITE);
         itemInfo.addActor(dmgLabel);
 
-       String aSpeedLabelText =
-               String.format("Attack Speed: + %d", weapon.getAttackSpeed());
-       Label speedLabel = createLabel(aSpeedLabelText, skin,
-               "regular", Color.WHITE);
-       itemInfo.addActor(speedLabel);
+        String aSpeedLabelText =
+                String.format("Attack Speed: + %d", weapon.getAttackSpeed());
+        Label speedLabel = createLabel(aSpeedLabelText, skin,
+                "regular", Color.WHITE);
+        itemInfo.addActor(speedLabel);
 
-       String speedLabelText =
-               String.format("Movement Speed + %d", weapon.getMoveSpeed());
-       Label moveSpeedLabel = createLabel(speedLabelText, skin,
-               "regular", Color.WHITE);
-       itemInfo.addActor(moveSpeedLabel);
+        String speedLabelText =
+                String.format("Movement Speed + %d", weapon.getMoveSpeed());
+        Label moveSpeedLabel = createLabel(speedLabelText, skin,
+                "regular", Color.WHITE);
+        itemInfo.addActor(moveSpeedLabel);
 
-        itemTable.add(itemInfo);
+        itemTable.add(weaponImage).size(itemInfo.getPrefHeight()).pad(PADDING);
+        itemTable.add(itemInfo).pad(PADDING);
         return itemTable;
     }
 
@@ -242,7 +312,7 @@ public class StartScreen implements Screen {
      * @param v The delta-time of the current frame.
      */
     @Override
-    public void render(float v) {
+    public void render(final float v) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -250,16 +320,54 @@ public class StartScreen implements Screen {
     }
 
     /**
+     * Gets the selected weapons based on the current selectedIndex.
+     * @return Null or the selected weapon from index.
+     */
+    private Weapon retrieveSelectedWeapon() {
+        if (loadedWeapons.isEmpty()) {
+            return null;
+        }
+        return loadedWeapons.get(selectedWeaponIndex);
+    }
+
+    /**
      * Handles the events for the scene.
      * Responsible for acting when enter, left and right arrows are clicked.
      */
     private void handleKeyEvents() {
-        if (gameData.getGameKey().isDown(gameData.getGameKey().getActionToKey().get(KeyAction.SELECT))) {
+        if (gameData.getGameKey().isDown(
+                gameData.getGameKey().getActionToKey().get(KeyAction.SELECT))) {
             ScreenManager screenManager = new ScreenManager();
             screenManager.switchScreen("GameScreen");
             gameData.getGame().setScreen(screenManager.getActiveScreen());
         }
+        if (gameData.getGameKey().isPressed(gameData.getGameKey().
+                getActionToKey().get(KeyAction.MOVE_LEFT))) {
+            if (selectedWeaponIndex > 0) {
+                selectedWeaponIndex--;
+                updateWeaponSelect();
+            }
+        }
+        if (gameData.getGameKey().isPressed(gameData.getGameKey().
+                getActionToKey().get(KeyAction.MOVE_RIGHT))) {
+            if (selectedWeaponIndex < loadedWeapons.size() - 1) {
+                selectedWeaponIndex++;
+                updateWeaponSelect();
+            }
+        }
+
+        gameData.getGameKey().checkJustPressed();
     }
+
+    private void updateWeaponSelect() {
+        weaponSelectTable.clear();
+        Table newWeapon =
+                createWeaponTable(loadedWeapons.get(selectedWeaponIndex));
+        weaponSelectTable.add(newWeapon);
+        weaponSelectTable.invalidate();
+        weaponSelectTable.pack();
+    }
+
 
     /**
      * Automatically executed when a window resize occurs.
