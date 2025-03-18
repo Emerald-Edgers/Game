@@ -378,6 +378,8 @@ public class StartScreen implements Screen {
     @Override
     public void resize(final int width, final int height) {
         stage.getViewport().update(width, height, true);
+        gameData.setDisplayWidth(width);
+        gameData.setDisplayHeight(height);
     }
 
     /**

@@ -2,7 +2,6 @@ package dk.ee.zg.common.data;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameData {
     private int displayHeight;
@@ -18,11 +17,6 @@ public class GameData {
      */
     private OrthographicCamera camera;
 
-    /**
-     * The currently active viewport.
-     * Used for limiting screen size and defining resize behaviour.
-     */
-    private Viewport viewport;
 
     /**
      * The currently active Game
@@ -32,32 +26,11 @@ public class GameData {
     private Game game;
 
     /**
-     * The width of the viewport in world units.
-     * This is how much of the x-axis the player should see at once.
-     */
-    private final float VIEWPORT_WIDTH;
-
-    /**
-     * The height of the viewport in world units.
-     * This is how much of the y-axis the player should see at once.
-     */
-    private final float VIEWPORT_HEIGHT;
-
-    /**
-     * The amount of pixels a singular unit represents.
-     * (E.g.) set to 1/32, 1 unit = 32 px.
-     */
-    private final float UNIT_SCALE;
-
-    /**
      * The maximum fps the game should run at.
      */
     private final int MAXFPS;
 
     private GameData() {
-        VIEWPORT_WIDTH = 8;
-        VIEWPORT_HEIGHT = 8;
-        UNIT_SCALE = 1 / 32f;
         MAXFPS = 30;
     }
 
@@ -107,23 +80,6 @@ public class GameData {
         this.camera = camera;
     }
 
-    /**
-     * Gets the viewport instance.
-     *
-     * @return  the viewport instance.
-     */
-    public Viewport getViewport() {
-        return viewport;
-    }
-
-    /**
-     * Sets the viewport instance.
-     * @param viewport instance to set.
-     */
-    public void setViewport(Viewport viewport) {
-        this.viewport = viewport;
-    }
-
     public GameKey getGameKey() {
         return gameKey;
     }
@@ -159,32 +115,5 @@ public class GameData {
      */
     public void setGame(Game game) {
         this.game = game;
-    }
-
-    /**
-     * Gets the viewport width.
-     *
-     * @return the viewport width
-     */
-    public float getVIEWPORT_WIDTH() {
-        return VIEWPORT_WIDTH;
-    }
-
-    /**
-     * Gets the viewport height.
-     *
-     * @return the viewport height
-     */
-    public float getVIEWPORT_HEIGHT() {
-        return VIEWPORT_HEIGHT;
-    }
-
-    /**
-     * Gets the unit scale factor.
-     *
-     * @return the unit scale factor
-     */
-    public float getUNIT_SCALE() {
-        return UNIT_SCALE;
     }
 }

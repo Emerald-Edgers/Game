@@ -3,6 +3,7 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
@@ -31,12 +32,12 @@ public class GameScreen implements Screen {
      * Instance of {@link OrthographicCamera} used by the game.
      * Is also saved to {@link GameData}
      */
-    private final OrthographicCamera camera;
+    private OrthographicCamera camera;
 
     /**
      * Instance of {@link Viewport} used by the camera.
      */
-    private final Viewport viewport;
+    private Viewport viewport;
 
     /**
      * Instance of {@link IMap} currently loaded.
@@ -49,14 +50,33 @@ public class GameScreen implements Screen {
     private SpriteBatch batch;
 
     /**
+     * The width of the viewport in world units.
+     * This is how much of the x-axis the player should see at once.
+     */
+    private final float VIEWPORT_WIDTH;
+
+    /**
+     * The height of the viewport in world units.
+     * This is how much of the y-axis the player should see at once.
+     */
+    private final float VIEWPORT_HEIGHT;
+
+    /**
+     * The amount of pixels a singular unit represents.
+     * (E.g.) set to 1/32, 1 unit = 32 px.
+     */
+    private final float UNIT_SCALE;
+
+    /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
     public GameScreen() {
+        VIEWPORT_WIDTH = 8;
+        VIEWPORT_HEIGHT = 8;
+        UNIT_SCALE = 1 / 32f;
         gameData = GameData.getInstance();
         world = new World();
-        camera = gameData.getCamera();
-        viewport = gameData.getViewport();
     }
 
 
@@ -72,6 +92,7 @@ public class GameScreen implements Screen {
             entity.start(world);
         }
 
+        initCamera();
         initMap("main-map.tmx");
     }
 
@@ -87,9 +108,27 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, gameData.getUNIT_SCALE());
+                map.loadMap(mapPath, UNIT_SCALE);
             }
         }
+    }
+
+    /**
+     * Creates an {@link OrthographicCamera} and a {@link com.badlogic.gdx.utils.viewport.FitViewport} to
+     * manage the game rendering area.
+     * The viewport ensures that the visible game world is consistent across
+     * aspect ratios, will draw black bars to achieve this.
+     */
+    private void initCamera() {
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(VIEWPORT_WIDTH, VIEWPORT_HEIGHT, camera);
+        viewport.apply();
+
+        // Set the camera to the middle of the screen
+        camera.position.set(VIEWPORT_WIDTH / 2f, VIEWPORT_HEIGHT/ 2f, 0);
+        camera.update();
+
+        gameData.setCamera(camera);
     }
 
     private void checkBounds() {
@@ -102,8 +141,8 @@ public class GameScreen implements Screen {
         }
 
         // Right boundary
-        if (camera.position.x > 960 * gameData.getUNIT_SCALE() - effectiveViewportWidth) {
-            camera.position.x = 960 * gameData.getUNIT_SCALE() - effectiveViewportWidth;
+        if (camera.position.x > 960 * UNIT_SCALE - effectiveViewportWidth) {
+            camera.position.x = 960 * UNIT_SCALE - effectiveViewportWidth;
         }
 
         // Bottom boundary
@@ -112,10 +151,9 @@ public class GameScreen implements Screen {
         }
 
         // Top boundary
-        if (camera.position.y > 960 * gameData.getUNIT_SCALE() - effectiveViewportHeight) {
-            camera.position.y = 960 * gameData.getUNIT_SCALE() - effectiveViewportHeight;
+        if (camera.position.y > 960 * UNIT_SCALE - effectiveViewportHeight) {
+            camera.position.y = 960 * UNIT_SCALE - effectiveViewportHeight;
         }
-
 
         camera.update();
     }

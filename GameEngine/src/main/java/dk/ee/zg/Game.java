@@ -23,17 +23,6 @@ public class Game extends com.badlogic.gdx.Game {
         gameData.setDisplayWidth(Gdx.graphics.getWidth());
         gameData.setDisplayHeight(Gdx.graphics.getHeight());
 
-        OrthographicCamera camera = new OrthographicCamera();
-        gameData.setCamera(camera);
-
-        Viewport viewport = new FitViewport(
-                gameData.getVIEWPORT_WIDTH(),
-                gameData.getVIEWPORT_HEIGHT(),
-                camera
-        );
-        viewport.apply();
-        gameData.setViewport(viewport);
-
         // Set active Screen
         ScreenManager screenManager = new ScreenManager();
         String SCREEN_NAME = "startscreen";
