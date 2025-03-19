@@ -31,7 +31,7 @@ public class Player extends Entity {
     public Player(int maxHP, int attackDamage, int attackSpeed, int moveSpeed,
                   int critChance, int critDamage, int defense, int lifesteal, int penetration,
                   int range, int evasion, int healthRegen) {
-        super(new Vector2(), 0, new Vector2(50,50), "MainShip.png", EntityType.Player);
+        super(new Vector2(0,0), 0, new Vector2(1/10f,1/10f), "MainShip.png", EntityType.Player);
         this.MaxHP = maxHP;
         this.AttackDamage = attackDamage;
         this.AttackSpeed = attackSpeed;

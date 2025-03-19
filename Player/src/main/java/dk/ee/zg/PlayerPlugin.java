@@ -13,9 +13,9 @@ public class PlayerPlugin implements IGamePluginService {
 
     @Override
     public void start(World world) {
-        player = new Player(1,1,1,100,1,1
+        player = new Player(1,1,1,50,1,1
                 ,1,1,1,1,1,1);
-        player.setScale(new Vector2(1/32f, 1/32f));
+        //player.setScale(new Vector2(1/32f, 1/32f));
         world.addEntity(player);
 
     }
@@ -23,6 +23,11 @@ public class PlayerPlugin implements IGamePluginService {
     @Override
     public void stop(World world) {
         world.removeEntity(world.getEntities(Player.class).getFirst().getId());
+    }
+
+    @Override
+    public void update(float delta, World world) {
+
     }
 
 

@@ -13,6 +13,8 @@
         <module>CommonMap</module>
         <module>Player</module>
         <module>Map</module>
+        <module>CommonEnemy</module>
+        <module>Enemies</module>
     </modules>
 
     <properties>

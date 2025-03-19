@@ -54,13 +54,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 8;
+    private static final float VIEWPORT_WIDTH = 16;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 8;
+    private static final float VIEWPORT_HEIGHT = 10;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -76,6 +76,7 @@ public class GameScreen implements Screen {
     public GameScreen() {
         gameData = GameData.getInstance();
         world = new World();
+
     }
 
 
@@ -125,14 +126,14 @@ public class GameScreen implements Screen {
         viewport.apply();
 
         // Set the camera to the middle of the screen
-        camera.position.set(VIEWPORT_WIDTH / 2f, VIEWPORT_HEIGHT/ 2f, 0);
+        camera.position.set(0,0, 0);
         camera.update();
 
         gameData.setCamera(camera);
     }
 
     private void checkBounds() {
-        System.out.println("Camera position:" + camera.position.x + " " + camera.position.y);
+        //System.out.println("Camera position:" + camera.position.x + " " + camera.position.y);
 
         float effectiveViewportWidth = VIEWPORT_WIDTH / 2;
         float effectiveViewportHeight = VIEWPORT_HEIGHT / 2;
@@ -179,6 +180,14 @@ public class GameScreen implements Screen {
      * Handles logic related to updating the game.
      */
     private void update() {
+        float delta = Gdx.graphics.getDeltaTime();
+
+        for (IGamePluginService plugin : ServiceLoader.load(IGamePluginService.class)) {
+            plugin.update(delta, world);
+            //System.out.println("Tester,tester");
+        }
+        //System.out.println("GameScreen_update");
+
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(world);
@@ -191,6 +200,8 @@ public class GameScreen implements Screen {
             }
         }
         camera.update();
+
+        System.out.println("camera pos: " + camera.position.x + " " + camera.position.y);
     }
 
     /**

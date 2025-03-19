@@ -1,25 +1,20 @@
 // Enemy.java
-package dk.ee.zg;
+package dk.ee.zg.skeleton;
 
-public class Skeleton {
-    protected float health;
-    protected float speed;
+import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.map.data.Entity;
+import dk.ee.zg.common.map.data.EntityType;
 
-    public Skeleton(float health, float speed) {
-        this.health = health;
-        this.speed = speed;
-    }
+public class Skeleton extends Entity {
 
-    public void attack() {
-        // Implement enemy attack logic here
-        System.out.println("Enemy attacks!");
-    }
+    private int attackDamage;
+    private int attackSpeed;
+    private int moveSpeed;
+    private int hitpoints;
+    private int defense;
+    private int cost;
 
-    public float getHealth() {
-        return health;
-    }
-
-    public void takeDamage(float damage) {
-        health -= damage;
+    public Skeleton(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense, int cost) {
+        super(new Vector2(), 0, new Vector2(50,50), "boss/Boss2.png", EntityType.Enemy);
     }
 }
