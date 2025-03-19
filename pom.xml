@@ -13,6 +13,8 @@
         <module>CommonMap</module>
         <module>Player</module>
         <module>Map</module>
+        <module>CommonWeapon</module>
+        <module>Sword</module>
     </modules>
 
     <properties>
