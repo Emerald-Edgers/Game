@@ -3,6 +3,7 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
@@ -14,6 +15,7 @@ import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
 
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -29,6 +31,11 @@ public class GameScreen implements Screen {
      * Instance of {@link WorldEntities} used for interacting with entities.
      */
     private final WorldEntities worldEntities;
+
+    /**
+     * Instance of {@link WorldObstacles} used for interacting with world obstacles.
+     */
+    private final WorldObstacles worldObstacles;
 
     /**
      * Instance of {@link OrthographicCamera} used by the game.
@@ -82,6 +89,11 @@ public class GameScreen implements Screen {
     public GameScreen() {
         gameData = GameData.getInstance();
         worldEntities = new WorldEntities();
+        worldObstacles = new WorldObstacles();
+        Entity e1 = new Entity(new Vector2(2, 0),
+                0, new Vector2(0.1F, 0.1F),
+                "placeholder32x32.png", EntityType.Enemy);
+        worldEntities.addEntity(e1);
     }
 
 
@@ -187,10 +199,13 @@ public class GameScreen implements Screen {
      * Handles logic related to updating the game.
      */
     private void update() {
+
+
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(worldEntities);
         }
+
         for (Entity entity : worldEntities.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
                 float cameraX = entity.getPosition().x
@@ -225,11 +240,15 @@ public class GameScreen implements Screen {
         batch.end(); // End drawing
     }
 
-    private void collisionCheck(){
-        for (ICollisionEngine collisionEngine
-                : ServiceLoader.load(ICollisionEngine.class)) {
-            collisionEngine.process(worldEntities, new WorldObstacles());
-        }
+
+    /**
+     * checks collision by processing collision engine with service loader.
+     */
+    private void collisionCheck() {
+        Optional<ICollisionEngine> collisionEngine =
+                ServiceLoader.load(ICollisionEngine.class).findFirst();
+        collisionEngine.ifPresent(iCollisionEngine ->
+                iCollisionEngine.process(worldEntities, worldObstacles));
     }
 
 

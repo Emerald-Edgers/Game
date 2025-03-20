@@ -1,49 +1,60 @@
 package dk.ee.zg.common.map.data;
 
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.List;
+import java.util.ArrayList;
 
 public class WorldEntities {
-
-    private final Map<UUID,Entity> entityMap = new HashMap<UUID,Entity>();
+    /**
+     * HashMap {@link HashMap} casted to Map {@link Map},
+     * of all entities {@link Entity} in map,
+     * both enemies and player.
+     */
+    private final Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
 
     /**
-     * adds entity to entity map
-     * @param entity
+     * adds entity {@link Entity} object to entity map.
+     * @param entity - entity to add
      */
-    public void addEntity(Entity entity){
+    public void addEntity(final Entity entity) {
         entityMap.put(entity.getId(), entity);
     }
-
-
-    public Map<UUID, Entity> getEntityMap() {
-        return entityMap;
-    }
-
-
-    public void removeEntity(UUID entityID){
+    /**
+     * removes entity {@link Entity} object to entity map.
+     * @param entityID - entity to remove by UUID {@link UUID}
+     */
+    public void removeEntity(final UUID entityID) {
         entityMap.remove(entityID);
     }
 
-    public Entity getEntity(UUID entityID){
+    /**
+     * gets entity {@link Entity} object to entity map.
+     * @param entityID - entity to get by UUID {@link UUID}
+     * @return - returns entity found
+     */
+    public Entity getEntity(final UUID entityID) {
         return entityMap.get(entityID);
     }
 
-
     /**
-     * gets values of entityMap
-     * @return - values of entityMap
+     * gets all entities {@link Entity} objects to list.
+     * @return - returns list of all entities
      */
-    public Collection<Entity> getEntities() {
-        return entityMap.values();
+    public List<Entity> getEntities() {
+        return entityMap.values().stream().toList();
     }
 
     /**
-     * Gets entites by class
+     * Gets entites by class.
      * @param entityTypes - class of entities to get
      * @return - returns entities found
      * @param <E> - entity class that extends Entity
      */
-    public <E extends Entity> List<Entity> getEntities(Class<E>... entityTypes) {
+    public <E extends Entity> List<Entity> getEntities(
+            final Class<E>... entityTypes) {
         List<Entity> r = new ArrayList<Entity>();
         for (Entity e : getEntities()) {
             for (Class<E> entityType : entityTypes) {
