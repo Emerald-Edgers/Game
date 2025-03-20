@@ -7,8 +7,10 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
-import dk.ee.zg.common.map.data.World;
+import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
+import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
 
@@ -24,9 +26,9 @@ public class GameScreen implements Screen {
     private final GameData gameData;
 
     /**
-     * Instance of {@link World} used for interacting with entities.
+     * Instance of {@link WorldEntities} used for interacting with entities.
      */
-    private final World world;
+    private final WorldEntities worldEntities;
 
     /**
      * Instance of {@link OrthographicCamera} used by the game.
@@ -79,7 +81,7 @@ public class GameScreen implements Screen {
      */
     public GameScreen() {
         gameData = GameData.getInstance();
-        world = new World();
+        worldEntities = new WorldEntities();
     }
 
 
@@ -93,7 +95,7 @@ public class GameScreen implements Screen {
 
         for (IGamePluginService entity
                 : ServiceLoader.load(IGamePluginService.class)) {
-            entity.start(world);
+            entity.start(worldEntities);
         }
 
         initCamera();
@@ -176,7 +178,7 @@ public class GameScreen implements Screen {
     public void render(final float v) {
         update();
         draw();
-
+        collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
     }
 
@@ -187,9 +189,9 @@ public class GameScreen implements Screen {
     private void update() {
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
-            entity.process(world);
+            entity.process(worldEntities);
         }
-        for (Entity entity : world.getEntities()) {
+        for (Entity entity : worldEntities.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
                 float cameraX = entity.getPosition().x
                         + entity.getSprite().getWidth() / 2;
@@ -217,11 +219,19 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
-        for (Entity entity : world.getEntities()) {
+        for (Entity entity : worldEntities.getEntities()) {
             entity.draw(batch);
         }
         batch.end(); // End drawing
     }
+
+    private void collisionCheck(){
+        for (ICollisionEngine collisionEngine
+                : ServiceLoader.load(ICollisionEngine.class)) {
+            collisionEngine.process(worldEntities, new WorldObstacles());
+        }
+    }
+
 
     /**
      * Automatically executed when a window resize occurs.

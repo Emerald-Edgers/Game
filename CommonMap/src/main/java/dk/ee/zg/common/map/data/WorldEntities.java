@@ -2,7 +2,7 @@ package dk.ee.zg.common.map.data;
 
 import java.util.*;
 
-public class World {
+public class WorldEntities {
 
     private final Map<UUID,Entity> entityMap = new HashMap<UUID,Entity>();
 

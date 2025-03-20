@@ -3,13 +3,10 @@ package dk.ee.zg;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
-import dk.ee.zg.common.data.GameKey;
 import dk.ee.zg.common.data.KeyAction;
 import dk.ee.zg.common.map.data.Entity;
-import dk.ee.zg.common.map.data.World;
+import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IEntityProcessService;
-
-import java.util.ServiceLoader;
 
 public class PlayerControlSystem implements IEntityProcessService {
 
@@ -30,7 +27,7 @@ public class PlayerControlSystem implements IEntityProcessService {
     }
 
     @Override
-    public void process(World world) {
+    public void process(WorldEntities worldEntities) {
         GameData gameData = GameData.getInstance();
         moveDirection = MoveDirection.NONE;
         Vector2 dirVec = new Vector2(0,0);
@@ -53,7 +50,7 @@ public class PlayerControlSystem implements IEntityProcessService {
         }
         dirVec.nor(); // normalize if diagonal to get no speed boost
         
-        for (Entity player : world.getEntities(Player.class)){
+        for (Entity player : worldEntities.getEntities(Player.class)){
             move((Player) player,dirVec);
         }
 
