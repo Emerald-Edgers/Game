@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
+import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -33,7 +34,8 @@ public class GameScreen implements Screen {
     private final WorldEntities worldEntities;
 
     /**
-     * Instance of {@link WorldObstacles} used for interacting with world obstacles.
+     * Instance of {@link WorldObstacles}
+     * used for interacting with world obstacles.
      */
     private final WorldObstacles worldObstacles;
 
@@ -52,6 +54,11 @@ public class GameScreen implements Screen {
      * Instance of {@link IMap} currently loaded.
      */
     private IMap map;
+
+    /**
+     * Instance of {@link dk.ee.zg.common.enemy.interfaces.IEnemySpawner} currently loaded.
+     */
+    private IEnemySpawner enemySpawner;
 
     /**
      * Instance of {@link SpriteBatch} used for drawing sprites to the screen.
@@ -80,7 +87,13 @@ public class GameScreen implements Screen {
      * The width of the map in pixels.
      * Should eventually be capable of calculating this based upon the map.
      */
-    private static final int MAP_WIDTH_PIXELS = 960;
+    private static final int MAP_WIDTH_PIXELS = 100 * 16;
+
+    /**
+     * The height of the map in pixels.
+     * Should eventually be capable of calculating this based upon the map.
+     */
+    private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
     /**
      * Constructor for GameScreen.
@@ -111,6 +124,7 @@ public class GameScreen implements Screen {
         }
 
         initCamera();
+        initSpawner();
         initMap("main-map.tmx");
     }
 
@@ -128,6 +142,21 @@ public class GameScreen implements Screen {
                 map = mapImpl;
                 map.loadMap(mapPath, UNIT_SCALE);
             }
+        }
+    }
+
+    /**
+     * Loads the first implementation of {@link IEnemySpawner} that the
+     * {@link ServiceLoader} finds.
+     * Sets the local variable {@code enemySpawner} to the found implementation.
+     */
+    private void initSpawner() {
+        ServiceLoader<IEnemySpawner> spawnerLoader = ServiceLoader.load(IEnemySpawner.class);
+
+        enemySpawner = spawnerLoader.findFirst().orElse(null);
+
+        if (enemySpawner != null) {
+            enemySpawner.start();
         }
     }
 
@@ -173,9 +202,9 @@ public class GameScreen implements Screen {
 
         // Top boundary
         if (camera.position.y
-                > MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
+                > MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
             camera.position.y =
-                    MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight;
+                    MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight;
         }
 
         camera.update();
@@ -188,7 +217,7 @@ public class GameScreen implements Screen {
      */
     @Override
     public void render(final float v) {
-        update();
+        update(v);
         draw();
         collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
@@ -197,14 +226,15 @@ public class GameScreen implements Screen {
     /**
      * Update loop, part of the main game loop. Is called before {@code draw()}.
      * Handles logic related to updating the game.
+     * @param v The delta-time of the current frame.
      */
-    private void update() {
-
-
+    private void update(final float v) {
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(worldEntities);
         }
+
+        enemySpawnerUpdate(v);
 
         for (Entity entity : worldEntities.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
@@ -217,6 +247,17 @@ public class GameScreen implements Screen {
             }
         }
         camera.update();
+    }
+
+    /**
+     * Handles the update of the spawner.
+     * Runs without error if no spawners were found.
+     * @param v The delta-time of the current frame.
+     */
+    private void enemySpawnerUpdate(final float v) {
+        if (enemySpawner != null) {
+            enemySpawner.process(v);
+        }
     }
 
     /**
