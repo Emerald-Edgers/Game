@@ -20,4 +20,6 @@ public interface ICollisionEngine {
 
     Optional<Rectangle> collidesWithRectangles(Entity entity, List<Rectangle> rectangles);
 
+    List<Entity> rectangleCollidesWithEntities(Rectangle rectangle, List<Entity> entities);
+
 }

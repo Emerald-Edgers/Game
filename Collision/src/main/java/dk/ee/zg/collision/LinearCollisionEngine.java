@@ -7,6 +7,7 @@ import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.services.ICollisionEngine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -175,4 +176,17 @@ public class LinearCollisionEngine implements ICollisionEngine {
         }
         return Optional.empty();
     }
+
+    @Override
+    public List<Entity> rectangleCollidesWithEntities(Rectangle rectangle, List<Entity> entities) {
+        List<Entity> entitiesCollidedWith = new ArrayList<Entity>();
+        for (Entity e : entities) {
+            if (rectangle.overlaps(e.getSprite().getBoundingRectangle())) {
+                System.out.println(e);
+                entitiesCollidedWith.add(e);
+            }
+        }
+        return entitiesCollidedWith;
+    }
+
 }

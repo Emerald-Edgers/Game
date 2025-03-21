@@ -1,11 +1,7 @@
 package dk.ee.zg.common.map.data;
 
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class WorldEntities {
     /**
@@ -64,6 +60,24 @@ public class WorldEntities {
             }
         }
         return r;
+    }
+
+    /**
+     * Gets first found entity by class.
+     * @param entityClass - class of entity to get
+     * @return - returns entity of class found
+     * @param <E> - entity class that extends Entity
+     */
+    public <E extends Entity> Optional<E> getEntityByClass(
+            final Class<E>... entityClass) {
+        for (Entity e : getEntities()) {
+            for (Class<E> entityType : entityClass) {
+                if (entityType.equals(e.getClass())) {
+                    return (Optional<E>) Optional.of(e);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
 }

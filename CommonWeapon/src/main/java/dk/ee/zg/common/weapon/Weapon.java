@@ -1,6 +1,7 @@
 package dk.ee.zg.common.weapon;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.UUID;
@@ -52,12 +53,15 @@ public abstract class Weapon {
      */
     protected int moveSpeed;
 
+
+
     /**
      * basic attack method.
      * left empty to require implementation on specific weapon.
      */
-    public void attack() {
+    public Rectangle attack(Vector2 playerPos, AttackDirection attackDirection ) {
 
+        return null;
     }
 
 

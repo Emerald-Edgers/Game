@@ -1,12 +1,20 @@
 package dk.ee.zg.player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.data.KeyAction;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
+import dk.ee.zg.common.weapon.AttackDirection;
+import dk.ee.zg.common.weapon.Weapon;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 public class PlayerControlSystem implements IEntityProcessService {
 
@@ -42,7 +50,20 @@ public class PlayerControlSystem implements IEntityProcessService {
      */
     private MoveDirection moveDirection = MoveDirection.NONE;
 
+    /**
+     * sets attack direction.
+     */
+    private AttackDirection attackDirection = AttackDirection.RIGHT;
 
+    /**
+     * boolean for if player is attacking.
+     */
+    private boolean isAttacking = false;
+
+    /**
+     * attack hitbox of type Rectangle, to use for attacking enemies.
+     */
+    private Rectangle attackHitbox = null;
 
     /**
      * main entrance to player control system, for controlling player,
@@ -56,29 +77,73 @@ public class PlayerControlSystem implements IEntityProcessService {
         moveDirection = MoveDirection.NONE;
         Vector2 dirVec = new Vector2(0, 0);
 
+        //if keys are down
+
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_LEFT))) {
             moveDirection = MoveDirection.LEFT;
+            attackDirection = AttackDirection.LEFT;
             dirVec.add(-1, 0);
         }
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_RIGHT))) {
             moveDirection = MoveDirection.RIGHT;
+            attackDirection = AttackDirection.RIGHT;
             dirVec.add(1, 0);
         }
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_UP))) {
             moveDirection = MoveDirection.UP;
+            attackDirection = AttackDirection.UP;
             dirVec.add(0, 1);
         }
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_DOWN))) {
             moveDirection = MoveDirection.DOWN;
+            attackDirection = AttackDirection.DOWN;
             dirVec.add(0, -1);
         }
         dirVec.nor(); // normalize if diagonal to get no speed boost
-        for (Entity player : worldEntities.getEntities(Player.class)) {
-            move((Player) player, dirVec);
+
+        //if attack was just pressed
+        if (gameData.getGameKey().isPressed(gameData.getGameKey()
+                .getActionToKey().get(KeyAction.Attack))) {
+            isAttacking = true;
+        }
+
+        Optional<Player> player = worldEntities.getEntityByClass(Player.class);
+
+
+        if (player.isPresent()) {
+            move(player.get(), dirVec);
+
+            Weapon weapon = player.get().getWeapon();
+
+            if (isAttacking && weapon != null) {
+                Vector2 center = new Vector2();
+                attackHitbox = weapon.attack(
+                        player.get().getSprite().getBoundingRectangle().getCenter(center), attackDirection);
+
+            } else if (!isAttacking) {
+                attackHitbox = null;
+            }
+
+            if (attackHitbox != null) {
+                System.out.println("X: " + attackHitbox.x + " Y: "+ attackHitbox.y +
+                        " W: " +attackHitbox.width + " H: " +attackHitbox.height);
+
+                Optional<ICollisionEngine> collisionEngine = ServiceLoader.
+                        load(ICollisionEngine.class).findFirst();
+                if (collisionEngine.isPresent()) {
+                    List<Entity> enemiesHit = collisionEngine.get()
+                            .rectangleCollidesWithEntities(
+                                    attackHitbox, worldEntities.getEntities());
+
+                    System.out.println(enemiesHit.size());
+
+                }
+            }
+
         }
 
     }
