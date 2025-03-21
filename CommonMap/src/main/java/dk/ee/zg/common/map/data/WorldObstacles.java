@@ -71,6 +71,21 @@ public class WorldObstacles {
      * to the player.
      */
     public void optimizeObstacles() {
+        currentVisibleObstaclesMap.clear();
+        for (Map.Entry<String, Rectangle> entry : obstaclesMap.entrySet()) {
+            if (isVisibleToPlayer(entry.getValue())) {
+                currentVisibleObstaclesMap.put(
+                        entry.getKey(), entry.getValue());
+            }
+        }
     }
 
+    /**
+     * Method for checking if an obstacle is visible to the player.
+     * @param obstacle Rectangle to check if visible to player.
+     * @return True if visible, false if not.
+     */
+    private boolean isVisibleToPlayer(final Rectangle obstacle) {
+        return true;
+    }
 }

@@ -85,13 +85,15 @@ public class BaseMap implements IMap {
             for (int y = 0; y < tileLayer.getHeight(); y++) {
                 if (tileLayer.getCell(x, y).getTile().getProperties().
                         containsKey("collision")) {
+                    int tileWidth = tileLayer.getTileWidth();
+                    int tileHeight = tileLayer.getTileHeight();
                     obstacles.addObstacle(
                             String.valueOf(UUID.randomUUID()),
                             new Rectangle(
-                                    x,
-                                    y,
-                                    tileLayer.getWidth(),
-                                    tileLayer.getHeight()
+                                    (x * tileWidth) - tileWidth,
+                                    (y * tileHeight) - tileHeight,
+                                    tileWidth,
+                                    tileHeight
                             )
                     );
                 }
