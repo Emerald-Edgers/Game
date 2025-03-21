@@ -14,7 +14,6 @@
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx</artifactId>
-            <version>1.13.0</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
