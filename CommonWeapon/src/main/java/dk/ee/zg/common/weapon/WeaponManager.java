@@ -1,17 +1,30 @@
 package dk.ee.zg.common.weapon;
 
 public final class WeaponManager {
+    /**
+     * {@link WeaponManager} instance of weapon manager class,
+     * used for making it a singleton pattern.
+     */
+    private static WeaponManager instance;
 
-    private static WeaponManager instance = new WeaponManager();
-
+    /**
+     * {@link Weapon} instance of weapon class,
+     * used for making it a singleton pattern.
+     */
     private Weapon weaponSelected;
 
 
-    private WeaponManager(){
+    private WeaponManager() {
 
     }
 
-    public static WeaponManager getInstance(){
+    /**
+     * @return - returns an instance of WeaponManager
+     */
+    public static WeaponManager getInstance() {
+        if (instance == null) {
+            instance = new WeaponManager();
+        }
         return instance;
     }
 
@@ -19,7 +32,7 @@ public final class WeaponManager {
         return weaponSelected;
     }
 
-    public void setWeaponSelected(Weapon weaponSelected) {
-        this.weaponSelected = weaponSelected;
+    public void setWeaponSelected(final Weapon weapon) {
+        this.weaponSelected = weapon;
     }
 }

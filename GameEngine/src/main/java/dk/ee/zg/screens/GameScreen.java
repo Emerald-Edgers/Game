@@ -2,11 +2,7 @@ package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
@@ -37,7 +33,8 @@ public class GameScreen implements Screen {
     private final WorldEntities worldEntities;
 
     /**
-     * Instance of {@link WorldObstacles} used for interacting with world obstacles.
+     * Instance of {@link WorldObstacles},
+     * used for interacting with world obstacles.
      */
     private final WorldObstacles worldObstacles;
 
@@ -240,6 +237,7 @@ public class GameScreen implements Screen {
         for (Entity entity : worldEntities.getEntities()) {
             entity.draw(batch);
         }
+
         batch.end(); // End drawing
     }
 

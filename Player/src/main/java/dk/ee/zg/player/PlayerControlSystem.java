@@ -50,10 +50,7 @@ public class PlayerControlSystem implements IEntityProcessService {
      */
     private MoveDirection moveDirection = MoveDirection.NONE;
 
-    /**
-     * sets attack direction.
-     */
-    private AttackDirection attackDirection = AttackDirection.RIGHT;
+
 
     /**
      * boolean for if player is attacking.
@@ -66,6 +63,11 @@ public class PlayerControlSystem implements IEntityProcessService {
     private Rectangle attackHitbox = null;
 
     /**
+     * instance of gamedata {@link GameData}.
+     */
+    private final GameData gameData = GameData.getInstance();
+
+    /**
      * main entrance to player control system, for controlling player,
      * if any movement key is pressed.
      * @param worldEntities - Object of WorldEntities,
@@ -73,7 +75,7 @@ public class PlayerControlSystem implements IEntityProcessService {
      */
     @Override
     public void process(final WorldEntities worldEntities) {
-        GameData gameData = GameData.getInstance();
+
         moveDirection = MoveDirection.NONE;
         Vector2 dirVec = new Vector2(0, 0);
 
@@ -82,28 +84,26 @@ public class PlayerControlSystem implements IEntityProcessService {
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_LEFT))) {
             moveDirection = MoveDirection.LEFT;
-            attackDirection = AttackDirection.LEFT;
             dirVec.add(-1, 0);
         }
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_RIGHT))) {
             moveDirection = MoveDirection.RIGHT;
-            attackDirection = AttackDirection.RIGHT;
             dirVec.add(1, 0);
         }
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_UP))) {
             moveDirection = MoveDirection.UP;
-            attackDirection = AttackDirection.UP;
             dirVec.add(0, 1);
         }
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_DOWN))) {
             moveDirection = MoveDirection.DOWN;
-            attackDirection = AttackDirection.DOWN;
             dirVec.add(0, -1);
         }
-        dirVec.nor(); // normalize if diagonal to get no speed boost
+        dirVec.nor(); // normalize to ensure diagonal get no speed boost
+
+
 
         //if attack was just pressed
         if (gameData.getGameKey().isPressed(gameData.getGameKey()
@@ -113,24 +113,30 @@ public class PlayerControlSystem implements IEntityProcessService {
 
         Optional<Player> player = worldEntities.getEntityByClass(Player.class);
 
-
         if (player.isPresent()) {
             move(player.get(), dirVec);
 
             Weapon weapon = player.get().getWeapon();
+            //if move direction is not none, then set attack direction.
+            if (weapon != null && moveDirection != MoveDirection.NONE) {
+                weapon.setAttackDirection(
+                        AttackDirection.valueOf(moveDirection.name()));
+            }
 
             if (isAttacking && weapon != null) {
                 Vector2 center = new Vector2();
+                Vector2 size = new Vector2();
+                player.get().getSprite().
+                        getBoundingRectangle().getCenter(center);
+                player.get().getSprite().getBoundingRectangle().getSize(size);
                 attackHitbox = weapon.attack(
-                        player.get().getSprite().getBoundingRectangle().getCenter(center), attackDirection);
+                        center, size);
 
             } else if (!isAttacking) {
                 attackHitbox = null;
             }
 
             if (attackHitbox != null) {
-                System.out.println("X: " + attackHitbox.x + " Y: "+ attackHitbox.y +
-                        " W: " +attackHitbox.width + " H: " +attackHitbox.height);
 
                 Optional<ICollisionEngine> collisionEngine = ServiceLoader.
                         load(ICollisionEngine.class).findFirst();
@@ -139,13 +145,9 @@ public class PlayerControlSystem implements IEntityProcessService {
                             .rectangleCollidesWithEntities(
                                     attackHitbox, worldEntities.getEntities());
 
-                    System.out.println(enemiesHit.size());
-
                 }
             }
-
         }
-
     }
 
     /**

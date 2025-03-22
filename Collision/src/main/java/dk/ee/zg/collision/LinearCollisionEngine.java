@@ -162,7 +162,7 @@ public class LinearCollisionEngine implements ICollisionEngine {
      * check if entity overlaps with any rectangles in list.
      * @param entity - entity to check if overlaps other
      * @param rectangles - rectangles to check overlaps on
-     * @return - boolean Optional of rectangle first collided with,
+     * @return - Optional of rectangle first collided with,
      *          else empty optional
      */
     @Override
@@ -177,12 +177,18 @@ public class LinearCollisionEngine implements ICollisionEngine {
         return Optional.empty();
     }
 
+    /**
+     * check if rectangle overlaps with any entities in list.
+     * @param rectangle - rectangle to check if overlaps other
+     * @param entities - entities to check overlaps on
+     * @return - List of entities collided with
+     */
     @Override
-    public List<Entity> rectangleCollidesWithEntities(Rectangle rectangle, List<Entity> entities) {
+    public List<Entity> rectangleCollidesWithEntities(
+            final Rectangle rectangle, final List<Entity> entities) {
         List<Entity> entitiesCollidedWith = new ArrayList<Entity>();
         for (Entity e : entities) {
             if (rectangle.overlaps(e.getSprite().getBoundingRectangle())) {
-                System.out.println(e);
                 entitiesCollidedWith.add(e);
             }
         }

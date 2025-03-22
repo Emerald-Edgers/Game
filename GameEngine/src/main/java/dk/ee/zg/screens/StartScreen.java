@@ -338,7 +338,8 @@ public class StartScreen implements Screen {
     private void handleKeyEvents() {
         if (gameData.getGameKey().isDown(
                 gameData.getGameKey().getActionToKey().get(KeyAction.SELECT))) {
-            WeaponManager.getInstance().setWeaponSelected(retrieveSelectedWeapon());
+            WeaponManager.getInstance().
+                    setWeaponSelected(retrieveSelectedWeapon());
             ScreenManager screenManager = new ScreenManager();
             screenManager.switchScreen("GameScreen");
             gameData.getGame().setScreen(screenManager.getActiveScreen());

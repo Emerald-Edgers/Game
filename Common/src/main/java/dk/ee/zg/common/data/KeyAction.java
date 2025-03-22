@@ -32,7 +32,7 @@ public enum KeyAction {
      */
     SELECT,
     /**
-     * Action for attacking with weapons basic attack
+     * Action for attacking with weapons basic attack.
      */
     Attack,
 }
