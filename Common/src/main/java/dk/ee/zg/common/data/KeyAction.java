@@ -31,4 +31,8 @@ public enum KeyAction {
      * Action for selecting an item. Used in menus when confirming something.
      */
     SELECT,
+    /**
+     * Action for attacking with weapons basic attack.
+     */
+    Attack,
 }

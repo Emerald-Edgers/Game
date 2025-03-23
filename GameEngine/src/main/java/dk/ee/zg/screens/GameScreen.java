@@ -33,6 +33,7 @@ public class GameScreen implements Screen {
     private final WorldEntities worldEntities;
 
     /**
+
      * Instance of {@link WorldObstacles}
      * used for interacting with world obstacles.
      */
@@ -206,8 +207,6 @@ public class GameScreen implements Screen {
      * Handles logic related to updating the game.
      */
     private void update() {
-
-
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(worldEntities);
@@ -241,9 +240,11 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
+
         for (Entity entity : worldEntities.getEntities()) {
             entity.draw(batch);
         }
+
         batch.end(); // End drawing
     }
 

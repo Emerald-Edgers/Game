@@ -1,12 +1,20 @@
 package dk.ee.zg.player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.data.KeyAction;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
+import dk.ee.zg.common.weapon.AttackDirection;
+import dk.ee.zg.common.weapon.Weapon;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 public class PlayerControlSystem implements IEntityProcessService {
 
@@ -45,6 +53,21 @@ public class PlayerControlSystem implements IEntityProcessService {
 
 
     /**
+     * boolean for if player is attacking.
+     */
+    private boolean isAttacking = false;
+
+    /**
+     * attack hitbox of type Rectangle, to use for attacking enemies.
+     */
+    private Rectangle attackHitbox = null;
+
+    /**
+     * instance of gamedata {@link GameData}.
+     */
+    private final GameData gameData = GameData.getInstance();
+
+    /**
      * main entrance to player control system, for controlling player,
      * if any movement key is pressed.
      * @param worldEntities - Object of WorldEntities,
@@ -52,9 +75,11 @@ public class PlayerControlSystem implements IEntityProcessService {
      */
     @Override
     public void process(final WorldEntities worldEntities) {
-        GameData gameData = GameData.getInstance();
+
         moveDirection = MoveDirection.NONE;
         Vector2 dirVec = new Vector2(0, 0);
+
+        //if keys are down
 
         if (gameData.getGameKey().isDown(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.MOVE_LEFT))) {
@@ -76,11 +101,53 @@ public class PlayerControlSystem implements IEntityProcessService {
             moveDirection = MoveDirection.DOWN;
             dirVec.add(0, -1);
         }
-        dirVec.nor(); // normalize if diagonal to get no speed boost
-        for (Entity player : worldEntities.getEntities(Player.class)) {
-            move((Player) player, dirVec);
+        dirVec.nor(); // normalize to ensure diagonal get no speed boost
+
+
+
+        //if attack was just pressed
+        if (gameData.getGameKey().isPressed(gameData.getGameKey()
+                .getActionToKey().get(KeyAction.Attack))) {
+            isAttacking = true;
         }
 
+        Optional<Player> player = worldEntities.getEntityByClass(Player.class);
+
+        if (player.isPresent()) {
+            move(player.get(), dirVec);
+
+            Weapon weapon = player.get().getWeapon();
+            //if move direction is not none, then set attack direction.
+            if (weapon != null && moveDirection != MoveDirection.NONE) {
+                weapon.setAttackDirection(
+                        AttackDirection.valueOf(moveDirection.name()));
+            }
+
+            if (isAttacking && weapon != null) {
+                Vector2 center = new Vector2();
+                Vector2 size = new Vector2();
+                player.get().getSprite().
+                        getBoundingRectangle().getCenter(center);
+                player.get().getSprite().getBoundingRectangle().getSize(size);
+                attackHitbox = weapon.attack(
+                        center, size);
+
+            } else if (!isAttacking) {
+                attackHitbox = null;
+            }
+
+            if (attackHitbox != null) {
+
+                Optional<ICollisionEngine> collisionEngine = ServiceLoader.
+                        load(ICollisionEngine.class).findFirst();
+                if (collisionEngine.isPresent()) {
+                    List<Entity> enemiesHit = collisionEngine.get()
+                            .rectangleCollidesWithEntities(
+                                    attackHitbox, worldEntities.getEntities());
+
+                }
+            }
+        }
     }
 
     /**
