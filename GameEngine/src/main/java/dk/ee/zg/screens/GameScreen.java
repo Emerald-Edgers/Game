@@ -33,7 +33,8 @@ public class GameScreen implements Screen {
     private final WorldEntities worldEntities;
 
     /**
-     * Instance of {@link WorldObstacles},
+
+     * Instance of {@link WorldObstacles}
      * used for interacting with world obstacles.
      */
     private final WorldObstacles worldObstacles;
@@ -81,7 +82,13 @@ public class GameScreen implements Screen {
      * The width of the map in pixels.
      * Should eventually be capable of calculating this based upon the map.
      */
-    private static final int MAP_WIDTH_PIXELS = 960;
+    private static final int MAP_WIDTH_PIXELS = 100 * 16;
+
+    /**
+     * The height of the map in pixels.
+     * Should eventually be capable of calculating this based upon the map.
+     */
+    private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
     /**
      * Constructor for GameScreen.
@@ -174,9 +181,9 @@ public class GameScreen implements Screen {
 
         // Top boundary
         if (camera.position.y
-                > MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
+                > MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
             camera.position.y =
-                    MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight;
+                    MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight;
         }
 
         camera.update();
