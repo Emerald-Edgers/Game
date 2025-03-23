@@ -21,6 +21,10 @@ public class Entity {
 
     private Sprite sprite;
 
+    /**
+     * hp is the current amount of health, an entity has.
+     */
+    private int hp;
 
     public Sprite getSprite() {
         return sprite;
@@ -80,10 +84,29 @@ public class Entity {
         this.sprite_path = sprite_path;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(final int hp) {
+        this.hp = hp;
+    }
+
     public void draw(SpriteBatch batch) {
         sprite.setScale(scale.x,scale.y);
         sprite.setPosition(position.x, position.y);
         sprite.draw(batch); // Draw the sprite
 
+    }
+
+    /**
+     * universal method for getting hit.
+     * @param damage - damage taken, dertermined,
+     *               by the attacker
+     */
+    public void hit(int damage){
+        if (entityType != EntityType.Obstacle){
+            this.hp -= damage;
+        }
     }
 }

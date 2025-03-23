@@ -145,6 +145,9 @@ public class PlayerControlSystem implements IEntityProcessService {
                             .rectangleCollidesWithEntities(
                                     attackHitbox, worldEntities.getEntities());
 
+                    for (Entity e : enemiesHit) {
+                        e.hit(player.get().getAttackDamage());
+                    }
                 }
             }
         }
