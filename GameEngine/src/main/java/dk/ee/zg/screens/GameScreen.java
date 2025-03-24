@@ -54,7 +54,8 @@ public class GameScreen implements Screen {
     private IMap map;
 
     /**
-     * Instance of {@link dk.ee.zg.common.enemy.interfaces.IEnemySpawner} currently loaded.
+     * Instance of
+     * {@link dk.ee.zg.common.enemy.interfaces.IEnemySpawner} currently loaded.
      */
     private IEnemySpawner enemySpawner;
 
@@ -149,7 +150,8 @@ public class GameScreen implements Screen {
      * Sets the local variable {@code enemySpawner} to the found implementation.
      */
     private void initSpawner() {
-        ServiceLoader<IEnemySpawner> spawnerLoader = ServiceLoader.load(IEnemySpawner.class);
+        ServiceLoader<IEnemySpawner> spawnerLoader
+                = ServiceLoader.load(IEnemySpawner.class);
 
         enemySpawner = spawnerLoader.findFirst().orElse(null);
 
