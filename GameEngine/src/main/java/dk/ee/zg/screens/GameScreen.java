@@ -3,18 +3,20 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.World;
+import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
+import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
-
+import java.util.Optional;
 import java.util.ServiceLoader;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -25,9 +27,16 @@ public class GameScreen implements Screen {
     private final GameData gameData;
 
     /**
-     * Instance of {@link World} used for interacting with entities.
+     * Instance of {@link WorldEntities} used for interacting with entities.
      */
-    private final World world;
+    private final WorldEntities worldEntities;
+
+    /**
+
+     * Instance of {@link WorldObstacles}
+     * used for interacting with world obstacles.
+     */
+    private final WorldObstacles worldObstacles;
 
     /**
      * Instance of {@link OrthographicCamera} used by the game.
@@ -72,7 +81,13 @@ public class GameScreen implements Screen {
      * The width of the map in pixels.
      * Should eventually be capable of calculating this based upon the map.
      */
-    private static final int MAP_WIDTH_PIXELS = 960;
+    private static final int MAP_WIDTH_PIXELS = 100 * 16;
+
+    /**
+     * The height of the map in pixels.
+     * Should eventually be capable of calculating this based upon the map.
+     */
+    private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
     /**
      * Constructor for GameScreen.
@@ -80,7 +95,12 @@ public class GameScreen implements Screen {
      */
     public GameScreen() {
         gameData = GameData.getInstance();
-        world = new World();
+        worldEntities = new WorldEntities();
+        worldObstacles = new WorldObstacles();
+        Entity e1 = new Entity(new Vector2(2, 0),
+                0, new Vector2(0.1F, 0.1F),
+                "placeholder32x32.png", EntityType.Enemy);
+        worldEntities.addEntity(e1);
     }
 
 
@@ -94,7 +114,7 @@ public class GameScreen implements Screen {
 
         for (IGamePluginService entity
                 : ServiceLoader.load(IGamePluginService.class)) {
-            entity.start(world);
+            entity.start(worldEntities);
         }
 
         initCamera();
@@ -113,8 +133,7 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                //TODO Change WorldObstacles to GameScreen worldObstacles.
-                map.loadMap(mapPath, UNIT_SCALE, new WorldObstacles());
+                map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
         }
     }
@@ -161,9 +180,9 @@ public class GameScreen implements Screen {
 
         // Top boundary
         if (camera.position.y
-                > MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
+                > MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
             camera.position.y =
-                    MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportHeight;
+                    MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight;
         }
 
         camera.update();
@@ -178,7 +197,7 @@ public class GameScreen implements Screen {
     public void render(final float v) {
         update();
         draw();
-
+        collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
     }
 
@@ -189,9 +208,10 @@ public class GameScreen implements Screen {
     private void update() {
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
-            entity.process(world);
+            entity.process(worldEntities);
         }
-        for (Entity entity : world.getEntities()) {
+
+        for (Entity entity : worldEntities.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
                 float cameraX = entity.getPosition().x
                         + entity.getSprite().getWidth() / 2;
@@ -219,11 +239,25 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
-        for (Entity entity : world.getEntities()) {
+
+        for (Entity entity : worldEntities.getEntities()) {
             entity.draw(batch);
         }
+
         batch.end(); // End drawing
     }
+
+
+    /**
+     * checks collision by processing collision engine with service loader.
+     */
+    private void collisionCheck() {
+        Optional<ICollisionEngine> collisionEngine =
+                ServiceLoader.load(ICollisionEngine.class).findFirst();
+        collisionEngine.ifPresent(iCollisionEngine ->
+                iCollisionEngine.process(worldEntities, worldObstacles));
+    }
+
 
     /**
      * Automatically executed when a window resize occurs.

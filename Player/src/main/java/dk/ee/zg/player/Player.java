@@ -1,4 +1,4 @@
-package dk.ee.zg;
+package dk.ee.zg.player;
 
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.Entity;
@@ -162,7 +162,7 @@ public class Player extends Entity {
         return hp;
     }
 
-    public void setHp(int hp) {
+    public void setHp(final int hp) {
         this.hp = hp;
     }
 
@@ -170,7 +170,7 @@ public class Player extends Entity {
         return critChance;
     }
 
-    public void setCritChance(int critChance) {
+    public void setCritChance(final int critChance) {
         this.critChance = critChance;
     }
 
@@ -178,7 +178,7 @@ public class Player extends Entity {
         return critDamage;
     }
 
-    public void setCritDamage(int critDamage) {
+    public void setCritDamage(final int critDamage) {
         this.critDamage = critDamage;
     }
 
@@ -186,7 +186,7 @@ public class Player extends Entity {
         return defense;
     }
 
-    public void setDefense(int defense) {
+    public void setDefense(final int defense) {
         this.defense = defense;
     }
 
@@ -194,7 +194,7 @@ public class Player extends Entity {
         return lifesteal;
     }
 
-    public void setLifesteal(int lifesteal) {
+    public void setLifesteal(final int lifesteal) {
         this.lifesteal = lifesteal;
     }
 
@@ -210,7 +210,7 @@ public class Player extends Entity {
         return range;
     }
 
-    public void setRange(int range) {
+    public void setRange(final int range) {
         this.range = range;
     }
 
@@ -218,7 +218,7 @@ public class Player extends Entity {
         return evasion;
     }
 
-    public void setEvasion(int evasion) {
+    public void setEvasion(final int evasion) {
         this.evasion = evasion;
     }
 
@@ -226,7 +226,7 @@ public class Player extends Entity {
         return healthRegen;
     }
 
-    public void setHealthRegen(int healthRegen) {
+    public void setHealthRegen(final int healthRegen) {
         this.healthRegen = healthRegen;
     }
 

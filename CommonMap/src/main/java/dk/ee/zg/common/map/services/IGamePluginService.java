@@ -1,10 +1,21 @@
 package dk.ee.zg.common.map.services;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import dk.ee.zg.common.map.data.World;
+import dk.ee.zg.common.map.data.WorldEntities;
 
 public interface IGamePluginService {
-    void start(World world);
-    void stop(World world);
+    /**
+     * main entrance to all game plugins.
+     * supposed to be for starting the plugin.
+     * @param worldEntities - Object of WorldEntities,
+     *                      contains a map of all entities on map
+     */
+    void start(WorldEntities worldEntities);
+    /**
+     * main entrance to all game plugins.
+     * supposed to be for stopping the plugin.
+     * @param worldEntities - Object of WorldEntities,
+     *                      contains a map of all entities on map
+     */
+    void stop(WorldEntities worldEntities);
 
 }
