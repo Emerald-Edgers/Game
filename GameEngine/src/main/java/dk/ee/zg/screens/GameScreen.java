@@ -8,16 +8,15 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
+import dk.ee.zg.common.map.data.World;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
 import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
-
 import java.util.Optional;
 import java.util.ServiceLoader;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -134,7 +133,7 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, UNIT_SCALE);
+                map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
         }
     }
