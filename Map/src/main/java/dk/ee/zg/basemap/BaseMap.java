@@ -91,7 +91,7 @@ public class BaseMap implements IMap {
                     int tileHeight = (int)
                             (tileLayer.getTileHeight() * unitScale);
                     obstacles.addObstacle(
-                            String.valueOf(UUID.randomUUID()),
+                            UUID.randomUUID(),
                             new Rectangle(
                                     (x * tileWidth) - tileWidth,
                                     (y * tileHeight) - tileHeight,

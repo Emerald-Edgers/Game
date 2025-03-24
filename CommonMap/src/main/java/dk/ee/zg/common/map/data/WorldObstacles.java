@@ -3,25 +3,26 @@ package dk.ee.zg.common.map.data;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 public class WorldObstacles {
 
     /**
      * Map of all obstacles.
      */
-    private Map<String, Rectangle> obstaclesMap;
+    private Map<UUID, Rectangle> obstaclesMap;
 
     /**
      * Map of all obstacles in players viewport.
      */
-    private Map<String, Rectangle> currentVisibleObstaclesMap;
+    private Map<UUID, Rectangle> currentVisibleObstaclesMap;
 
     /**
      * Add an obstacle to the map of all obstacles.
      * @param obstacleID UUID of obstacle
      * @param obstacle Rectangle with position of obstacle
      */
-    public void addObstacle(final String obstacleID, final Rectangle obstacle) {
+    public void addObstacle(final UUID obstacleID, final Rectangle obstacle) {
         obstaclesMap.put(obstacleID, obstacle);
     }
 
@@ -37,7 +38,7 @@ public class WorldObstacles {
      * Remove an obstacle with UUID.
      * @param obstacleID UUID for the obstacle ro be removed.
      */
-    public void removeObstacle(final String obstacleID) {
+    public void removeObstacle(final UUID obstacleID) {
         obstaclesMap.remove(obstacleID);
     }
 
@@ -46,7 +47,7 @@ public class WorldObstacles {
      * @param obstacleID UUID for obstacle to be returned.
      * @return Obstacle Rectangle.
      */
-    public Rectangle getObstacle(final String obstacleID) {
+    public Rectangle getObstacle(final UUID obstacleID) {
         return obstaclesMap.get(obstacleID);
     }
 
@@ -72,7 +73,7 @@ public class WorldObstacles {
      */
     public void optimizeObstacles() {
         currentVisibleObstaclesMap.clear();
-        for (Map.Entry<String, Rectangle> entry : obstaclesMap.entrySet()) {
+        for (Map.Entry<UUID, Rectangle> entry : obstaclesMap.entrySet()) {
             if (isVisibleToPlayer(entry.getValue())) {
                 currentVisibleObstaclesMap.put(
                         entry.getKey(), entry.getValue());
