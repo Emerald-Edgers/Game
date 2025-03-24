@@ -9,7 +9,6 @@ import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
-import dk.ee.zg.common.map.data.World;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
