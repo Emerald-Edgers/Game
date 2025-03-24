@@ -44,6 +44,7 @@ public interface IMap {
      * @return Collection of obstacle rectangles.
      */
     Collection<Rectangle> getObstaclesFromLayer(MapLayer layer,
-                                                WorldObstacles obstacles);
+                                                WorldObstacles obstacles,
+                                                float unitScale);
 
 }

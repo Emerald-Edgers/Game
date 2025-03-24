@@ -37,7 +37,7 @@ public class BaseMap implements IMap {
         map = new TmxMapLoader().load(mapName);
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
         getObstaclesFromLayer(map.getLayers().get(
-                "Collision"), new WorldObstacles());
+                "Collision"), new WorldObstacles(), unitScale);
     }
 
     /**
@@ -79,14 +79,17 @@ public class BaseMap implements IMap {
     @Override
     public Collection<Rectangle> getObstaclesFromLayer(final MapLayer layer,
                                                        final  WorldObstacles
-                                                               obstacles) {
+                                                               obstacles,
+                                                       final float unitScale) {
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
         for (int x = 0; x < tileLayer.getWidth(); x++) {
             for (int y = 0; y < tileLayer.getHeight(); y++) {
                 if (tileLayer.getCell(x, y).getTile().getProperties().
                         containsKey("collision")) {
-                    int tileWidth = tileLayer.getTileWidth();
-                    int tileHeight = tileLayer.getTileHeight();
+                    int tileWidth = (int)
+                            (tileLayer.getTileWidth() * unitScale);
+                    int tileHeight = (int)
+                            (tileLayer.getTileHeight() * unitScale);
                     obstacles.addObstacle(
                             String.valueOf(UUID.randomUUID()),
                             new Rectangle(
