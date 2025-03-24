@@ -14,9 +14,9 @@ public class Skeleton extends Entity{
     private int moveSpeed;
     private int hitpoints;
     private int defense;
-    private int cost;
+    private float cost;
 
-    public Skeleton(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense, int cost) {
+    public Skeleton(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense, float cost) {
         super(new Vector2(0,5), 0, new Vector2(1/25f,1/25f), "MainShip.png", EntityType.Enemy);
     }
 
@@ -60,11 +60,4 @@ public class Skeleton extends Entity{
         this.defense = defense;
     }
 
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
 }
