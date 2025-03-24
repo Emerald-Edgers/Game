@@ -16,8 +16,6 @@
         <dependency>
             <groupId>com.badlogicgames.gdx</groupId>
             <artifactId>gdx</artifactId>
-            <version>1.13.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>dk.ee.zg</groupId>
@@ -27,6 +25,11 @@
         <dependency>
             <groupId>dk.ee.zg</groupId>
             <artifactId>CommonMap</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>dk.ee.zg</groupId>
+            <artifactId>CommonWeapon</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

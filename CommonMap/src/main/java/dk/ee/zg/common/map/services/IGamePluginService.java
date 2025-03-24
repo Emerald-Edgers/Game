@@ -1,11 +1,9 @@
 package dk.ee.zg.common.map.services;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import dk.ee.zg.common.map.data.World;
+import dk.ee.zg.common.map.data.WorldEntities;
 
 public interface IGamePluginService {
-    void start(World world);
-    void stop(World world);
-    void update();
+    void start(WorldEntities worldEntities);
+    void stop(WorldEntities worldEntities);
 
 }

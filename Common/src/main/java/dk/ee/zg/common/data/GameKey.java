@@ -29,6 +29,7 @@ public class GameKey {
         bindActionToKey(KeyAction.MOVE_DOWN, Input.Keys.DOWN);
         bindActionToKey(KeyAction.MOVE_LEFT, Input.Keys.LEFT);
         bindActionToKey(KeyAction.MOVE_RIGHT, Input.Keys.RIGHT);
+        bindActionToKey(KeyAction.SELECT, Input.Keys.ENTER);
     }
 
     /**

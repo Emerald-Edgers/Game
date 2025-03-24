@@ -13,9 +13,10 @@
         <module>CommonMap</module>
         <module>Player</module>
         <module>Map</module>
+        <module>CommonWeapon</module>
+        <module>Sword</module>
+        <module>Collision</module>
         <module>CommonEnemy</module>
-        <module>EnemySkeleton</module>
-        <module>Boss</module>
         <module>SimpleEnemySpawner</module>
     </modules>
 
@@ -27,11 +28,15 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Common dependencies, e.g., LibGDX, Ashley ECS -->
             <dependency>
                 <groupId>com.badlogicgames.libgdx</groupId>
                 <artifactId>libgdx</artifactId>
-                <version>1.10.0</version>
+                <version>${libgdx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.badlogicgames.gdx</groupId>
+                <artifactId>gdx</artifactId>
+                <version>${libgdx.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

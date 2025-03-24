@@ -4,18 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
+import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
-import dk.ee.zg.common.map.data.World;
+import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
+import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
 
+import java.util.Optional;
 import java.util.ServiceLoader;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
@@ -23,6 +27,17 @@ public class GameScreen implements Screen {
      * Instance of the singleton class {@link GameData}.
      */
     private final GameData gameData;
+
+    /**
+     * Instance of {@link WorldEntities} used for interacting with entities.
+     */
+    private final WorldEntities worldEntities;
+
+    /**
+     * Instance of {@link WorldObstacles}
+     * used for interacting with world obstacles.
+     */
+    private final WorldObstacles worldObstacles;
 
     /**
      * Instance of {@link OrthographicCamera} used by the game.
@@ -41,14 +56,14 @@ public class GameScreen implements Screen {
     private IMap map;
 
     /**
+     * Instance of {@link dk.ee.zg.common.enemy.interfaces.IEnemySpawner} currently loaded.
+     */
+    private IEnemySpawner enemySpawner;
+
+    /**
      * Instance of {@link SpriteBatch} used for drawing sprites to the screen.
      */
     private SpriteBatch batch;
-
-    /**
-     * Instance of {@link World} used for interacting with entities.
-     */
-    private final World world;
 
     /**
      * The width of the viewport in world units.
@@ -68,6 +83,17 @@ public class GameScreen implements Screen {
      */
     private static final float UNIT_SCALE = 1 / 32f;
 
+    /**
+     * The width of the map in pixels.
+     * Should eventually be capable of calculating this based upon the map.
+     */
+    private static final int MAP_WIDTH_PIXELS = 100 * 16;
+
+    /**
+     * The height of the map in pixels.
+     * Should eventually be capable of calculating this based upon the map.
+     */
+    private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
     /**
      * Constructor for GameScreen.
@@ -75,8 +101,12 @@ public class GameScreen implements Screen {
      */
     public GameScreen() {
         gameData = GameData.getInstance();
-        world = new World();
-
+        worldEntities = new WorldEntities();
+        worldObstacles = new WorldObstacles();
+        Entity e1 = new Entity(new Vector2(2, 0),
+                0, new Vector2(0.1F, 0.1F),
+                "placeholder32x32.png", EntityType.Enemy);
+        worldEntities.addEntity(e1);
     }
 
 
@@ -90,10 +120,11 @@ public class GameScreen implements Screen {
 
         for (IGamePluginService entity
                 : ServiceLoader.load(IGamePluginService.class)) {
-            entity.start(world);
+            entity.start(worldEntities);
         }
 
         initCamera();
+        initSpawner();
         initMap("main-map.tmx");
     }
 
@@ -115,7 +146,23 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Creates an {@link OrthographicCamera} and a {@link FitViewport} to
+     * Loads the first implementation of {@link IEnemySpawner} that the
+     * {@link ServiceLoader} finds.
+     * Sets the local variable {@code enemySpawner} to the found implementation.
+     */
+    private void initSpawner() {
+        ServiceLoader<IEnemySpawner> spawnerLoader = ServiceLoader.load(IEnemySpawner.class);
+
+        enemySpawner = spawnerLoader.findFirst().orElse(null);
+
+        if (enemySpawner != null) {
+            enemySpawner.start();
+        }
+    }
+
+    /**
+     * Creates an {@link OrthographicCamera}
+     * and a {@link com.badlogic.gdx.utils.viewport.FitViewport} to
      * manage the game rendering area.
      * The viewport ensures that the visible game world is consistent across
      * aspect ratios, will draw black bars to achieve this.
@@ -126,17 +173,15 @@ public class GameScreen implements Screen {
         viewport.apply();
 
         // Set the camera to the middle of the screen
-        camera.position.set(0,0, 0);
+        camera.position.set(VIEWPORT_WIDTH / 2f, VIEWPORT_HEIGHT / 2f, 0);
         camera.update();
 
         gameData.setCamera(camera);
     }
 
     private void checkBounds() {
-        //System.out.println("Camera position:" + camera.position.x + " " + camera.position.y);
-
-        float effectiveViewportWidth = VIEWPORT_WIDTH / 2;
-        float effectiveViewportHeight = VIEWPORT_HEIGHT / 2;
+        float effectiveViewportWidth = camera.viewportWidth / 2;
+        float effectiveViewportHeight = camera.viewportWidth / 2;
 
         // Left boundary
         if (camera.position.x < effectiveViewportWidth) {
@@ -144,8 +189,10 @@ public class GameScreen implements Screen {
         }
 
         // Right boundary
-        if (camera.position.x > 960 * UNIT_SCALE - effectiveViewportWidth) {
-            camera.position.x = 960 * UNIT_SCALE - effectiveViewportWidth;
+        if (camera.position.x
+                > MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportWidth) {
+            camera.position.x =
+                    MAP_WIDTH_PIXELS * UNIT_SCALE - effectiveViewportWidth;
         }
 
         // Bottom boundary
@@ -154,10 +201,11 @@ public class GameScreen implements Screen {
         }
 
         // Top boundary
-        if (camera.position.y > 960 * UNIT_SCALE - effectiveViewportHeight) {
-            camera.position.y = 960 * UNIT_SCALE - effectiveViewportHeight;
+        if (camera.position.y
+                > MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight) {
+            camera.position.y =
+                    MAP_HEIGHT_PIXELS * UNIT_SCALE - effectiveViewportHeight;
         }
-
 
         camera.update();
     }
@@ -169,39 +217,49 @@ public class GameScreen implements Screen {
      */
     @Override
     public void render(final float v) {
-        update();
+        update(v);
         draw();
-
+        collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
     }
 
     /**
      * Update loop, part of the main game loop. Is called before {@code draw()}.
      * Handles logic related to updating the game.
+     * @param v The delta-time of the current frame.
      */
-    private void update() {
-        float delta = Gdx.graphics.getDeltaTime();
-
-        for (IGamePluginService plugin : ServiceLoader.load(IGamePluginService.class)) {
-            plugin.update();
-            //System.out.println("Tester,tester");
-        }
-        //System.out.println("GameScreen_update");
-
+    private void update(final float v) {
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
-            entity.process(world);
+            entity.process(worldEntities);
         }
-        for (Entity entity : world.getEntities()) {
+
+        enemySpawnerUpdate(v);
+
+        for (Entity entity : worldEntities.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
-                camera.position.set(entity.getPosition().x + entity.getSprite().getWidth() / 2,
-                        entity.getPosition().y + entity.getSprite().getHeight() /2, 0);
+                float cameraX = entity.getPosition().x
+                        + entity.getSprite().getWidth() / 2;
+                float cameraY = entity.getPosition().y
+                        + entity.getSprite().getHeight() / 2;
+                camera.position.set(cameraX, cameraY, 0);
                 checkBounds();
             }
         }
         camera.update();
 
         //System.out.println("camera pos: " + camera.position.x + " " + camera.position.y);
+    }
+
+    /**
+     * Handles the update of the spawner.
+     * Runs without error if no spawners were found.
+     * @param v The delta-time of the current frame.
+     */
+    private void enemySpawnerUpdate(final float v) {
+        if (enemySpawner != null) {
+            enemySpawner.process(v);
+        }
     }
 
     /**
@@ -219,11 +277,23 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
-        for (Entity entity : world.getEntities()) {
+        for (Entity entity : worldEntities.getEntities()) {
             entity.draw(batch);
         }
         batch.end(); // End drawing
     }
+
+
+    /**
+     * checks collision by processing collision engine with service loader.
+     */
+    private void collisionCheck() {
+        Optional<ICollisionEngine> collisionEngine =
+                ServiceLoader.load(ICollisionEngine.class).findFirst();
+        collisionEngine.ifPresent(iCollisionEngine ->
+                iCollisionEngine.process(worldEntities, worldObstacles));
+    }
+
 
     /**
      * Automatically executed when a window resize occurs.
@@ -268,5 +338,7 @@ public class GameScreen implements Screen {
      */
     @Override
     public void dispose() {
+        batch.dispose();
+        map.getRenderer().dispose();
     }
 }
