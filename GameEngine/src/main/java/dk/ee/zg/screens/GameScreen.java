@@ -156,7 +156,7 @@ public class GameScreen implements Screen {
         enemySpawner = spawnerLoader.findFirst().orElse(null);
 
         if (enemySpawner != null) {
-            enemySpawner.start();
+            enemySpawner.start(worldEntities);
         }
     }
 

@@ -18,6 +18,8 @@ public interface IEnemySpawner {
     /**
      * Apart of the main game startup sequence,
      * code which runs once on game start.
+     * @param world which contains information about
+     *              already existing entities in the world.
      */
-    void start();
+    void start(WorldEntities world);
 }
