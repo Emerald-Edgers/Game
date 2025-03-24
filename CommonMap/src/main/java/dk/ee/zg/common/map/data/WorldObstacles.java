@@ -1,47 +1,92 @@
 package dk.ee.zg.common.map.data;
 
 import com.badlogic.gdx.math.Rectangle;
-
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
-import java.util.List;
-
 
 public class WorldObstacles {
 
-    private final Map<UUID,Rectangle> obstaclesMap =
-            new HashMap<UUID, Rectangle>();
-    private final Map<UUID,Rectangle> currentlyVisibleObstaclesMap = new HashMap<UUID,Rectangle>();
+    /**
+     * Map of all obstacles.
+     */
+    private Map<UUID, Rectangle> obstaclesMap;
 
-    public void addObstacle(Rectangle rect){
+    /**
+     * Map of all obstacles in players viewport.
+     */
+    private Map<UUID, Rectangle> currentVisibleObstaclesMap;
 
+    /**
+     * Add an obstacle to the map of all obstacles.
+     * @param obstacleID UUID of obstacle
+     * @param obstacle Rectangle with position of obstacle
+     */
+    public void addObstacle(final UUID obstacleID, final Rectangle obstacle) {
+        obstaclesMap.put(obstacleID, obstacle);
     }
 
-    public void removeObstacle(UUID obstacleID){
-
+    /**
+     * Remove an obstacle by specific Rectangle.
+     * @param obstacle Rectangle to delete from map.
+     */
+    public void removeObstacle(final Rectangle obstacle) {
+        obstaclesMap.values().remove(obstacle);
     }
 
-    public void removeObstacle(Rectangle rect){
-
+    /**
+     * Remove an obstacle with UUID.
+     * @param obstacleID UUID for the obstacle ro be removed.
+     */
+    public void removeObstacle(final UUID obstacleID) {
+        obstaclesMap.remove(obstacleID);
     }
 
-    public Rectangle getObstacle(UUID obstacleID){
-        return null;
+    /**
+     * Get obstacle from UUID.
+     * @param obstacleID UUID for obstacle to be returned.
+     * @return Obstacle Rectangle.
+     */
+    public Rectangle getObstacle(final UUID obstacleID) {
+        return obstaclesMap.get(obstacleID);
     }
 
-
-    public List<Rectangle> getObstacles() {
-        return null;
+    /**
+     * Get all obstacles on the map.
+     * @return Collection of all obstacle Rectangles.
+     */
+    public Collection<Rectangle> getObstacles() {
+        return obstaclesMap.values();
     }
 
-    public List<Rectangle> getVisibleObstacles() {
-        return currentlyVisibleObstaclesMap.values().stream().toList();
+    /**
+     * Get all obstacles visible to the player.
+     * @return Collection of all obstacle Rectangles visible to the player.
+     */
+    public Collection<Rectangle> getVisibleObstacles() {
+        return currentVisibleObstaclesMap.values();
     }
 
-    public void optimizeObstacles(){
-
+    /**
+     * Method for updating currentVisibleObstacles based on what is visible
+     * to the player.
+     */
+    public void optimizeObstacles() {
+        currentVisibleObstaclesMap.clear();
+        for (Map.Entry<UUID, Rectangle> entry : obstaclesMap.entrySet()) {
+            if (isVisibleToPlayer(entry.getValue())) {
+                currentVisibleObstaclesMap.put(
+                        entry.getKey(), entry.getValue());
+            }
+        }
     }
 
-
+    /**
+     * Method for checking if an obstacle is visible to the player.
+     * @param obstacle Rectangle to check if visible to player.
+     * @return True if visible, false if not.
+     */
+    private boolean isVisibleToPlayer(final Rectangle obstacle) {
+        return true;
+    }
 }

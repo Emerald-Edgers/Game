@@ -30,7 +30,6 @@ public class ScreenManager {
         }
 
         activeScreen = tempScreen;
-
     }
 
     public Screen getActiveScreen() {

@@ -9,16 +9,15 @@ import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
+import dk.ee.zg.common.map.data.World;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
 import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
-
 import java.util.Optional;
 import java.util.ServiceLoader;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -140,7 +139,7 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, UNIT_SCALE);
+                map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
         }
     }
@@ -229,6 +228,7 @@ public class GameScreen implements Screen {
      * @param v The delta-time of the current frame.
      */
     private void update(final float v) {
+
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(worldEntities);
@@ -275,9 +275,11 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
+
         for (Entity entity : worldEntities.getEntities()) {
             entity.draw(batch);
         }
+
         batch.end(); // End drawing
     }
 
