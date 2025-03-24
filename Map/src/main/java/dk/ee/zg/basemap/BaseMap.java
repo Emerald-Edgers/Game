@@ -33,11 +33,11 @@ public class BaseMap implements IMap {
      *                     (E.g. 1 / 32 means 32 pixels per unit)
      */
     @Override
-    public void loadMap(final String mapName, final float unitScale) {
+    public void loadMap(final String mapName, final float unitScale, final WorldObstacles worldObstacles) {
         map = new TmxMapLoader().load(mapName);
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
         getObstaclesFromLayer(map.getLayers().get(
-                "Collision"), new WorldObstacles(), unitScale);
+                "Collision"), worldObstacles, unitScale);
     }
 
     /**

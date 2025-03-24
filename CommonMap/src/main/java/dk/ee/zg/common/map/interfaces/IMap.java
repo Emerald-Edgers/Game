@@ -12,9 +12,12 @@ public interface IMap {
      * Loads a map from a given name.
      * @param mapName      The name of the map.
      * @param unitScale    The scale of a singular unit.
-     *                     (E.g. 1 / 32 means 32 pixels per unit)
+     *                     (E.g. 1 / 32 means 32 pixels per unit)'
+     * @param worldObstacles The world obstacles.
      */
-    void loadMap(String mapName, float unitScale);
+    void loadMap(String mapName,
+                 float unitScale,
+                 WorldObstacles worldObstacles);
 
     /**
      * Render the currently loaded map.
@@ -41,6 +44,8 @@ public interface IMap {
      * Get the obstacles as a collection of rectangles from a specific layer.
      * @param layer The layer of which the obstacles is on.
      * @param obstacles The WorldObstacles class that is being used.
+     * @param unitScale    The scale of a singular unit.
+     *                     (E.g. 1 / 32 means 32 pixels per unit)
      * @return Collection of obstacle rectangles.
      */
     Collection<Rectangle> getObstaclesFromLayer(MapLayer layer,
