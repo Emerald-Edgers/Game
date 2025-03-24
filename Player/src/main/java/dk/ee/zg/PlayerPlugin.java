@@ -1,6 +1,7 @@
 package dk.ee.zg;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -17,6 +18,7 @@ public class PlayerPlugin implements IGamePluginService {
                 ,1,1,1,1,1,1);
         //player.setScale(new Vector2(1/32f, 1/32f));
         world.addEntity(player);
+        player.setPosition(new Vector2(0,0));
 
     }
 
@@ -26,9 +28,8 @@ public class PlayerPlugin implements IGamePluginService {
     }
 
     @Override
-    public void update(float delta, World world) {
+    public void update() {
 
     }
-
 
 }

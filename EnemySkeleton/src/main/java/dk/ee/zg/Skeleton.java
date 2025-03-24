@@ -3,10 +3,11 @@ package dk.ee.zg;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.enemy.interfaces.IEnemy;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
-public class Skeleton extends Entity {
+public class Skeleton extends Entity{
 
     private int attackDamage;
     private int attackSpeed;
@@ -16,11 +17,54 @@ public class Skeleton extends Entity {
     private int cost;
 
     public Skeleton(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense, int cost) {
-        super(new Vector2(5,5), 0, new Vector2(1/10f,1/10f), "boss/Boss2.png", EntityType.Enemy);
+        super(new Vector2(0,5), 0, new Vector2(1/25f,1/25f), "MainShip.png", EntityType.Enemy);
     }
 
-    @Override
-    public void draw(SpriteBatch batch) {
-        super.draw(batch);
+    public int getAttackDamage() {
+        return attackDamage;
+    }
+
+    public void setAttackDamage(int attackDamage) {
+        this.attackDamage = attackDamage;
+    }
+
+    public int getAttackSpeed() {
+        return attackSpeed;
+    }
+
+    public void setAttackSpeed(int attackSpeed) {
+        this.attackSpeed = attackSpeed;
+    }
+
+    public int getMoveSpeed() {
+        return moveSpeed;
+    }
+
+    public void setMoveSpeed(int moveSpeed) {
+        this.moveSpeed = moveSpeed;
+    }
+
+    public int getHitpoints() {
+        return hitpoints;
+    }
+
+    public void setHitpoints(int hitpoints) {
+        this.hitpoints = hitpoints;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 }

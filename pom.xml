@@ -14,7 +14,9 @@
         <module>Player</module>
         <module>Map</module>
         <module>CommonEnemy</module>
-        <module>Enemies</module>
+        <module>EnemySkeleton</module>
+        <module>Boss</module>
+        <module>SimpleEnemySpawner</module>
     </modules>
 
     <properties>

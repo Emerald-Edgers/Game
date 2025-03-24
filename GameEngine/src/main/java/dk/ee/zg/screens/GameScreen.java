@@ -54,13 +54,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 16;
+    private static final float VIEWPORT_WIDTH = 32;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 10;
+    private static final float VIEWPORT_HEIGHT = 20;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -183,7 +183,7 @@ public class GameScreen implements Screen {
         float delta = Gdx.graphics.getDeltaTime();
 
         for (IGamePluginService plugin : ServiceLoader.load(IGamePluginService.class)) {
-            plugin.update(delta, world);
+            plugin.update();
             //System.out.println("Tester,tester");
         }
         //System.out.println("GameScreen_update");
@@ -201,7 +201,7 @@ public class GameScreen implements Screen {
         }
         camera.update();
 
-        System.out.println("camera pos: " + camera.position.x + " " + camera.position.y);
+        //System.out.println("camera pos: " + camera.position.x + " " + camera.position.y);
     }
 
     /**

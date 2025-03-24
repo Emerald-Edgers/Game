@@ -6,6 +6,6 @@ import dk.ee.zg.common.map.data.World;
 public interface IGamePluginService {
     void start(World world);
     void stop(World world);
-    void update(float delta, World world);
+    void update();
 
 }

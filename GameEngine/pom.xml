@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>dk.ee.zg</groupId>
-            <artifactId>Enemies</artifactId>
+            <artifactId>EnemySkeleton</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

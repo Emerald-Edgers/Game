@@ -47,7 +47,6 @@ public class Player extends Entity {
         this.healthRegen = healthRegen;
     }
 
-
     public int getMaxHP() {
         return MaxHP;
     }
