@@ -256,7 +256,7 @@ public class GameScreen implements Screen {
      */
     private void enemySpawnerUpdate(final float v) {
         if (enemySpawner != null) {
-            enemySpawner.process(v);
+            enemySpawner.process(v, worldEntities);
         }
     }
 

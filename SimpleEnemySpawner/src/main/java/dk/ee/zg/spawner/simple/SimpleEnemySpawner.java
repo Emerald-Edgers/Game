@@ -1,5 +1,8 @@
 package dk.ee.zg.spawner.simple;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemyCreator;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.map.data.Entity;
@@ -32,6 +35,16 @@ public class SimpleEnemySpawner implements IEnemySpawner {
     private Entity player;
 
     /**
+     * The next wave to be spawned.
+     */
+    private List<IEnemyCreator> nextWave;
+
+    /**
+     * The cost of the next wave to be spawned.
+     */
+    private float costOfWave;
+
+    /**
      * The instance of random to use for rng in this class.
      */
     private final Random random = new Random();
@@ -47,14 +60,89 @@ public class SimpleEnemySpawner implements IEnemySpawner {
     private static final float BALANCE_GAIN_RATE_SECONDS = 3;
 
     /**
+     * Constant:    The buffer units around the camera,
+     * in which enemies can spawn.
+     */
+    private static final float SPAWN_BUFFER_UNITS = 3;
+
+    /**
      * Creates and adds an enemy from the found implementations to the world.
      * @param world in which the entities should be added.
      */
     @Override
-    public void requestSpawnEnemy(WorldEntities world) {
-        if (loadedEnemies.isEmpty()) {
-            return;
+    public void requestSpawnEnemy(final WorldEntities world) {
+        OrthographicCamera camera = GameData.getInstance().getCamera();
+
+        // Rectangle made by the camera.
+        float bottomX = camera.position.x - camera.viewportWidth / 2;
+        float bottomY = camera.position.y - camera.viewportHeight / 2;
+        float topX = camera.position.x + camera.viewportWidth / 2;
+        float topY = camera.position.y + camera.viewportHeight / 2;
+
+        // Rectangle made by the spawning boundary.
+        float bottomSpawnX = Math.max(bottomX - SPAWN_BUFFER_UNITS, 0);
+        float bottomSpawnY = Math.max(bottomY - SPAWN_BUFFER_UNITS, 0);
+        float topSpawnX = Math.min(topX + SPAWN_BUFFER_UNITS, 50);
+        float topSpawnY = Math.min(topY + SPAWN_BUFFER_UNITS, 75);
+
+       Vector2 bottomSpawnCorner = new Vector2(bottomSpawnX, bottomSpawnY);
+       Vector2 topSpawnCorner = new Vector2(topSpawnX, topSpawnY);
+
+
+        for (IEnemyCreator enemy : nextWave) {
+            spawnEnemy(world, enemy, bottomSpawnCorner, topSpawnCorner);
         }
+
+        balance -= costOfWave;
+        nextWave = null;
+    }
+
+    /**
+     * Tells the given {@link IEnemyCreator}
+     * to spawn an enemy at a random point.
+     * The random point is withing the rectangle made by two vectors
+     * @param world the world in which the enemy should spawn.
+     * @param enemy the EnemyCreator which can create an enemy.
+     * @param bottomCorner the bottom corner of the rectangle.
+     * @param topCorner the top corner of the rectangle.
+     */
+    private void spawnEnemy(final WorldEntities world,
+                            final IEnemyCreator enemy,
+                            final Vector2 bottomCorner,
+                            final Vector2 topCorner) {
+        float spawnX;
+        float spawnY;
+
+        int edge = random.nextInt(4);
+
+        switch (edge) {
+            case 0: // Left edge
+                spawnX = random.nextFloat(bottomCorner.x,
+                        bottomCorner.x + SPAWN_BUFFER_UNITS);
+                spawnY = random.nextFloat(bottomCorner.y, topCorner.y);
+                break;
+            case 1: // Right edge
+                spawnX = random.nextFloat(
+                        topCorner.x - SPAWN_BUFFER_UNITS, topCorner.x);
+                spawnY = random.nextFloat(bottomCorner.y, topCorner.y);
+                break;
+            case 2: // Top edge
+                spawnY = random.nextFloat(topCorner.y
+                        - SPAWN_BUFFER_UNITS, topCorner.y);
+                spawnX = random.nextFloat(bottomCorner.x, topCorner.x);
+                break;
+            case 3: // Bottom edge
+                spawnY = random.nextFloat(bottomCorner.y,
+                        bottomCorner.y + SPAWN_BUFFER_UNITS);
+                spawnX = random.nextFloat(bottomCorner.x, topCorner.x);
+                break;
+            default:
+                spawnX = bottomCorner.x;
+                spawnY = bottomCorner.y;
+                break;
+        }
+
+        enemy.spawn(spawnX, spawnY, world);
     }
 
     /**
@@ -62,9 +150,19 @@ public class SimpleEnemySpawner implements IEnemySpawner {
      * Updates the coin balance, and checks for when to start a spawn.
      */
     @Override
-    public void process(final float frameDelta) {
+    public void process(final float frameDelta, final WorldEntities world) {
+        // Early exist if no enemies have been found.
         if (loadedEnemies.isEmpty()) {
             return;
+        }
+
+        if (nextWave == null) {
+            nextWave = generateWave(random.nextInt(1, 8));
+            costOfWave = findCostOfWave(nextWave);
+        }
+
+        if (costOfWave <= balance) {
+            requestSpawnEnemy(world);
         }
 
         balance += BALANCE_GAIN_RATE_SECONDS * frameDelta;
@@ -75,13 +173,18 @@ public class SimpleEnemySpawner implements IEnemySpawner {
      * Checks for potential enemy candidates.
      */
     @Override
-    public void start(WorldEntities world) {
+    public void start(final WorldEntities world) {
         loadedEnemies = findLoadedEnemies();
         player = getPlayer(world);
         balance = START_BALANCE;
     }
 
-    private List<IEnemyCreator> generateWave(int enemyAmount) {
+    /**
+     * Generates a wave, with a specific size.
+     * @param enemyAmount the amount of enemies which should be in the wave.
+     * @return a list of {@link IEnemyCreator}'s. Which make up the wave.
+     */
+    private List<IEnemyCreator> generateWave(final int enemyAmount) {
         // Turn set into list, so we can access its elements without looping.
         List<IEnemyCreator> enemies = new ArrayList<>(loadedEnemies);
         List<IEnemyCreator> wave = new ArrayList<>();
@@ -96,16 +199,37 @@ public class SimpleEnemySpawner implements IEnemySpawner {
     }
 
     /**
+     * Finds the cost of a wave.
+     * @param wave the wave which we want to find the cost of.
+     * @return the total cost of a wave.
+     */
+    private float findCostOfWave(final List<IEnemyCreator> wave) {
+        float totalCost = 0;
+
+        for (IEnemyCreator enemy : wave) {
+            totalCost += enemy.getEnemyCost();
+        }
+
+        return totalCost;
+    }
+
+    /**
      * Gets all instances of classes which implements {@link IEnemyCreator}.
      * @return  A List populated with found {@link IEnemyCreator}'s.
      * List can be empty if no IEnemyCreator implementations are found.
      */
     private Set<IEnemyCreator> findLoadedEnemies() {
-        Set<IEnemyCreator> loadedEnemies = new HashSet<>();
+        Set<IEnemyCreator> enemies = new HashSet<>();
         for (IEnemyCreator enemy : ServiceLoader.load(IEnemyCreator.class)) {
-            loadedEnemies.add(enemy);
+            enemies.add(enemy);
         }
-        return loadedEnemies;
+
+        if (enemies.isEmpty()) {
+            System.err.println("Warning: No Enemies Loaded,"
+                    + " spawner will not work.");
+        }
+
+        return enemies;
     }
 
     /**
@@ -114,7 +238,7 @@ public class SimpleEnemySpawner implements IEnemySpawner {
      * @return the player object as a {@link Entity},
      * is null if no entity with {@link EntityType} player is found.
      */
-    private Entity getPlayer(WorldEntities world) {
+    private Entity getPlayer(final WorldEntities world) {
         for (Entity entity : world.getEntities()) {
             if (entity.getEntityType() == EntityType.Player) {
                 return entity;
