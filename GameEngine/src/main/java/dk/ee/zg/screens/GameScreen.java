@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
-import dk.ee.zg.common.map.data.World;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
@@ -221,6 +220,8 @@ public class GameScreen implements Screen {
                 checkBounds();
             }
         }
+        //TODO optimize optimizeObstaclces to get called at a fixed interval.
+        worldObstacles.optimizeObstacles();
         camera.update();
     }
 
