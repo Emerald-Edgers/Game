@@ -2,6 +2,7 @@ package dk.ee.zg.common.map.data;
 
 import com.badlogic.gdx.math.Rectangle;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,6 +17,14 @@ public class WorldObstacles {
      * Map of all obstacles in players viewport.
      */
     private Map<UUID, Rectangle> currentVisibleObstaclesMap;
+
+    /**
+     * Constructor for worldobstacles.
+     */
+    public WorldObstacles() {
+        this.obstaclesMap = new HashMap<>();
+        this.currentVisibleObstaclesMap = new HashMap<>();
+    }
 
     /**
      * Add an obstacle to the map of all obstacles.

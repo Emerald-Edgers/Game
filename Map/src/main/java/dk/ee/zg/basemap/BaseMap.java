@@ -33,7 +33,9 @@ public class BaseMap implements IMap {
      *                     (E.g. 1 / 32 means 32 pixels per unit)
      */
     @Override
-    public void loadMap(final String mapName, final float unitScale, final WorldObstacles worldObstacles) {
+    public void loadMap(final String mapName,
+                        final float unitScale,
+                        final WorldObstacles worldObstacles) {
         map = new TmxMapLoader().load(mapName);
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
         getObstaclesFromLayer(map.getLayers().get(
@@ -82,14 +84,24 @@ public class BaseMap implements IMap {
                                                                obstacles,
                                                        final float unitScale) {
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
+
+        int tileWidth = (int)
+                (tileLayer.getTileWidth() * unitScale);
+        int tileHeight = (int)
+                (tileLayer.getTileHeight() * unitScale);
         for (int x = 0; x < tileLayer.getWidth(); x++) {
             for (int y = 0; y < tileLayer.getHeight(); y++) {
-                if (tileLayer.getCell(x, y).getTile().getProperties().
-                        containsKey("collision")) {
-                    int tileWidth = (int)
-                            (tileLayer.getTileWidth() * unitScale);
-                    int tileHeight = (int)
-                            (tileLayer.getTileHeight() * unitScale);
+
+                TiledMapTileLayer.Cell cell = tileLayer.getCell(x, y);
+                if (cell == null) {
+                    continue;
+                }
+                if (cell.getTile() == null) {
+                    continue;
+                }
+
+                if (cell.getTile().getProperties().containsKey("collision")) {
+                    System.out.println(x * unitScale + "," + y * unitScale);
                     obstacles.addObstacle(
                             UUID.randomUUID(),
                             new Rectangle(
