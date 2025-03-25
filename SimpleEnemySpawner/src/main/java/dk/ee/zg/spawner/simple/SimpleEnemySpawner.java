@@ -30,11 +30,6 @@ public class SimpleEnemySpawner implements IEnemySpawner {
     private float balance;
 
     /**
-     * The player which spawning should happen around.
-     */
-    private Entity player;
-
-    /**
      * The next wave to be spawned.
      */
     private List<IEnemyCreator> nextWave;
@@ -175,7 +170,6 @@ public class SimpleEnemySpawner implements IEnemySpawner {
     @Override
     public void start(final WorldEntities world) {
         loadedEnemies = findLoadedEnemies();
-        player = getPlayer(world);
         balance = START_BALANCE;
     }
 
@@ -230,20 +224,5 @@ public class SimpleEnemySpawner implements IEnemySpawner {
         }
 
         return enemies;
-    }
-
-    /**
-     * Looks through the spawned entities and attempts to find a player.
-     * @param world the world in which the player is can be found.
-     * @return the player object as a {@link Entity},
-     * is null if no entity with {@link EntityType} player is found.
-     */
-    private Entity getPlayer(final WorldEntities world) {
-        for (Entity entity : world.getEntities()) {
-            if (entity.getEntityType() == EntityType.Player) {
-                return entity;
-            }
-        }
-        return null;
     }
 }
