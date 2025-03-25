@@ -100,7 +100,7 @@ public class SimpleEnemySpawner implements IEnemySpawner {
     /**
      * Tells the given {@link IEnemyCreator}
      * to spawn an enemy at a random point.
-     * The random point is withing the rectangle made by two vectors
+     * The random point is within the rectangle made by two vectors
      * @param world the world in which the enemy should spawn.
      * @param enemy the EnemyCreator which can create an enemy.
      * @param bottomCorner the bottom corner of the rectangle.
