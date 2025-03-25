@@ -1,4 +1,4 @@
-package dk.ee.zg;
+package dk.ee.zg.boss;
 
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IEnemy;
@@ -6,7 +6,7 @@ import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
 
-public class Boss extends Entity implements IEnemy {
+public class Boss extends Entity {
 
     private final int attackDamage;
     private final int attackSpeed;
@@ -39,8 +39,4 @@ public class Boss extends Entity implements IEnemy {
         return defense;
     }
 
-    @Override
-    public void attack() {
-
-    }
 }

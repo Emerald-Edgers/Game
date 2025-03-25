@@ -15,4 +15,5 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
     public void process(WorldEntities worldEntities) {
 
     }
+
 }
