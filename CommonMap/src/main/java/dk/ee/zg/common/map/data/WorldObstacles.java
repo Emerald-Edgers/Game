@@ -1,6 +1,9 @@
 package dk.ee.zg.common.map.data;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
+import dk.ee.zg.common.data.GameData;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,20 +85,20 @@ public class WorldObstacles {
      */
     public void optimizeObstacles() {
         currentVisibleObstaclesMap.clear();
+        GameData gameData = GameData.getInstance();
+        OrthographicCamera camera = gameData.getCamera();
+        float x =
+                camera.position.x - (camera.viewportWidth / 2);
+        float y =
+                camera.position.y - (camera.viewportHeight / 2);
+        Rectangle viewportRectangle = new Rectangle(x, y,
+                camera.viewportWidth, camera.viewportHeight);
         for (Map.Entry<UUID, Rectangle> entry : obstaclesMap.entrySet()) {
-            if (isVisibleToPlayer(entry.getValue())) {
+            if (entry.getValue().overlaps(viewportRectangle)) {
                 currentVisibleObstaclesMap.put(
                         entry.getKey(), entry.getValue());
             }
         }
     }
 
-    /**
-     * Method for checking if an obstacle is visible to the player.
-     * @param obstacle Rectangle to check if visible to player.
-     * @return True if visible, false if not.
-     */
-    private boolean isVisibleToPlayer(final Rectangle obstacle) {
-        return true;
-    }
 }

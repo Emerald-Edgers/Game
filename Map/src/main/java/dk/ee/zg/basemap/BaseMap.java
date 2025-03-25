@@ -76,6 +76,8 @@ public class BaseMap implements IMap {
      * Get the obstacles as a collection of rectangles from a specific layer.
      * @param layer The layer of which the obstacles is on.
      * @param obstacles The WorldObstacles class that is being used.
+     * @param unitScale    The scale of a singular unit$.
+     *                     (E.g. 1 / 32 means 32 pixels per unit)
      * @return Collection of obstacle rectangles.
      */
     @Override
@@ -85,10 +87,8 @@ public class BaseMap implements IMap {
                                                        final float unitScale) {
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
 
-        int tileWidth = (int)
-                (tileLayer.getTileWidth() * unitScale);
-        int tileHeight = (int)
-                (tileLayer.getTileHeight() * unitScale);
+        float tileWidth = tileLayer.getTileWidth() * unitScale;
+        float tileHeight = tileLayer.getTileHeight() * unitScale;
         for (int x = 0; x < tileLayer.getWidth(); x++) {
             for (int y = 0; y < tileLayer.getHeight(); y++) {
 
@@ -101,15 +101,14 @@ public class BaseMap implements IMap {
                 }
 
                 if (cell.getTile().getProperties().containsKey("collision")) {
-                    System.out.println(x * unitScale + "," + y * unitScale);
+                    Rectangle rectangle = new Rectangle(
+                            (x * tileWidth),
+                            (y * tileHeight),
+                            tileWidth,
+                            tileHeight);
                     obstacles.addObstacle(
                             UUID.randomUUID(),
-                            new Rectangle(
-                                    (x * tileWidth) - tileWidth,
-                                    (y * tileHeight) - tileHeight,
-                                    tileWidth,
-                                    tileHeight
-                            )
+                            rectangle
                     );
                 }
             }
