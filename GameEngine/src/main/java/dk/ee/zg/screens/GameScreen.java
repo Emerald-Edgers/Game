@@ -247,6 +247,8 @@ public class GameScreen implements Screen {
                 checkBounds();
             }
         }
+        //TODO optimize optimizeObstaclces to get called at a fixed interval.
+        worldObstacles.optimizeObstacles();
         camera.update();
     }
 
