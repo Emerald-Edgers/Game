@@ -6,24 +6,25 @@ import dk.ee.zg.common.data.GameData;
 public class InputManager extends InputAdapter {
 
     @Override
-    public boolean keyDown(int keycode){
+    public final boolean keyDown(final int keycode) {
         handleKey(keycode, true);
         return true;
     }
 
     @Override
-    public boolean keyUp(int keycode){
+    public final boolean keyUp(final int keycode) {
         handleKey(keycode, false);
         return true;
     }
 
     @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+    public final boolean touchUp(final int screenX, final int screenY,
+                                 final int pointer, final int button) {
         return true;
     }
 
-    private void handleKey(int keycode, boolean bool){
-        GameData.getInstance().getGameKey().setKey(keycode,bool);
+    private void handleKey(final int keycode, final boolean bool) {
+        GameData.getInstance().getGameKey().setKey(keycode, bool);
     }
 
 }
