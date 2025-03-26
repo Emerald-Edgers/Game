@@ -16,8 +16,8 @@ import dk.ee.zg.common.map.services.IEntityProcessService;
 
 public class BossControlSystem implements IEntityProcessService {
     private static Vector2 Dir = new Vector2(0,0);
-
     private static float melAttackCooldown = 5.0f;
+
 
     @Override
     public void process(WorldEntities world) {
@@ -121,38 +121,17 @@ public class BossControlSystem implements IEntityProcessService {
     }
 
     public void rangedAttack(Boss boss, WorldEntities world) {
-
-        Vector2 bossPos = boss.getPosition();
-        System.out.println("Boss.getposition in ranged method:" + bossPos);
-
-        Sprite bossSprite = boss.getSprite();
-        float bossSpriteWidth = bossSprite.getWidth() * boss.getScale().x;
-        float bossSpriteHeight = bossSprite.getHeight() * boss.getScale().y;
-
-        Vector2 bossCenterPos = new Vector2(
-                boss.getSprite().getBoundingRectangle().getX() + boss.getSprite().getBoundingRectangle().getWidth() * boss.getScale().x,
-                boss.getSprite().getBoundingRectangle().getY() + boss.getSprite().getBoundingRectangle().getHeight() * boss.getScale().y);
-        bossCenterPos.add(2,2);
-
         Vector2 projectileDir = new Vector2(Dir);
         if (projectileDir.len() == 0) {
             projectileDir.set(1, 0);
         } else {
             projectileDir.nor();
         }
+
         float speed = boss.getAttackSpeed() * 2f;
-
-        Projectile projectile = new Projectile(new Vector2(2,2), projectileDir, speed);
-
+        Projectile projectile = new Projectile(boss.getPosition(),
+                projectileDir, speed, world, boss.getTarget());
         world.addEntity(projectile);
-
-
-        System.out.println("projectile position:" + projectile.getPosition());
-        System.out.println("Projectile bounding sprite" + projectile.getSprite().getBoundingRectangle().getCenter(new Vector2()));
-        System.out.println("Boss position: " + bossPos);
-        System.out.println("Boss center: " + bossCenterPos);
-        System.out.println("Projectile spawned at: " + projectile.getPosition());
-        System.out.println("Boss ranged attack in dir: " + projectileDir);
     }
 
     public Rectangle aoeAttack(Boss boss) {

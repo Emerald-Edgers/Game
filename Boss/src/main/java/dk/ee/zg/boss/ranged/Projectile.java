@@ -1,23 +1,32 @@
 package dk.ee.zg.boss.ranged;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
+import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.services.ICollisionEngine;
+
+import java.util.ServiceLoader;
 
 public class Projectile extends Entity {
 
-    private Vector2 direction;
-    private float speed;
+    private final Vector2 direction;
+    private final float speed;
 
-    private boolean active = true;
+    private final WorldEntities world;
+    private final ICollisionEngine collisionEngine;
+    private final Entity player;
 
 
-    public Projectile(Vector2 position, Vector2 direction, float speed) {
-        super(new Vector2(position),0, new Vector2(1/10f,1/10f), "Fire.png", EntityType.Enemy);
+    public Projectile(Vector2 position,
+                      Vector2 direction,
+                      float speed,
+                      WorldEntities world,
+                      Entity player) {
+        super(new Vector2(position),0, new Vector2(1/32f,1/32f), "Fire.png", EntityType.Projectile);
 
+        this.player = player;
 
         this.direction = new Vector2(direction);
 
@@ -28,9 +37,15 @@ public class Projectile extends Entity {
         }
 
         this.speed = speed;
+        this.world = world;
+        this.collisionEngine = getCollisionEngine();
+    }
 
-        //this.sprite.setRotation(this.direction.angle());
-        //this.sprite.setPosition(position.x, position.y);
+    private ICollisionEngine getCollisionEngine() {
+        ServiceLoader<ICollisionEngine> collisionEngineLoader =
+                ServiceLoader.load(ICollisionEngine.class);
+
+        return collisionEngineLoader.findFirst().orElse(null);
     }
 
     public void update() {
@@ -39,15 +54,19 @@ public class Projectile extends Entity {
         pos.add(direction.x * speed * delta, direction.y * speed * delta);
         setPosition(pos);
 
-        float buffer = 50; // buffer to allow some off-screen movement before removal
-        if (pos.x < -buffer || pos.x > Gdx.graphics.getWidth() + buffer ||
-                pos.y < -buffer || pos.y > Gdx.graphics.getHeight() + buffer) {
-            active = false;
+        if (collisionEngine != null && player != null) {
+            resolveCollision();
         }
     }
 
-    public boolean isActive() {
-        return active;
+    /**
+     * Resolves the collision between the fireball, and an entity.
+     * Should only target players.
+     */
+    private void resolveCollision() {
+        if (collisionEngine.collidesWithEntity(
+                this, player)) {
+            //TODO: Implement Hit
+        }
     }
-
 }

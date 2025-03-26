@@ -13,6 +13,7 @@ public class Boss extends Entity {
     private final int moveSpeed;
     private final int hitpoints;
     private final int defense;
+    private Entity target;
 
     public Boss(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense) {
         super(new Vector2(0,0), 0, new Vector2(1/10f,1/10f), "Boss2.png", EntityType.Enemy);
@@ -22,6 +23,7 @@ public class Boss extends Entity {
         this.hitpoints = hitpoints;
         this.defense = defense;
     }
+
 
     public int getAttackDamage() {
         return attackDamage;
@@ -37,6 +39,12 @@ public class Boss extends Entity {
     }
     public int getDefense() {
         return defense;
+    }
+    public Entity getTarget() {
+        return target;
+    }
+    public void setTarget(Entity target) {
+        this.target = target;
     }
 
 }

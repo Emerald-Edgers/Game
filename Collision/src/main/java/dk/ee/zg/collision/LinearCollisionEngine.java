@@ -3,6 +3,7 @@ package dk.ee.zg.collision;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.Entity;
+import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.services.ICollisionEngine;
@@ -32,6 +33,13 @@ public class LinearCollisionEngine implements ICollisionEngine {
                     break;
                 }
 
+                if (e1.getEntityType() == EntityType.Projectile) {
+                    break;
+                }
+                if (e2.getEntityType() == EntityType.Projectile) {
+                    continue;
+                }
+
                 if (collidesWithEntity(e1, e2)) {
                     resolveCollisionEntities(e1, e2);
                 }
@@ -39,10 +47,18 @@ public class LinearCollisionEngine implements ICollisionEngine {
 
             for (Rectangle rect : worldObstacles.getVisibleObstacles()) {
                 if (collidesWithRectangle(e1, rect)) {
+                    if (e1.getEntityType() == EntityType.Projectile) {
+                        resolveCollisionProjectileObstacle(e1);
+                    }
                     resolveCollisionObstacles(e1, rect);
                 }
             }
         }
+    }
+
+
+    private void resolveCollisionProjectileObstacle(final Entity projectile) {
+        //TODO: HIT PROJECTILE
     }
 
     /**
@@ -76,8 +92,8 @@ public class LinearCollisionEngine implements ICollisionEngine {
         //move entity1 by adding a difference vec,
         //move entity2 by subbing a difference vec,
         //to make both move a bit, pushing each other
-        entity1.getPosition().add(diffVec.scl(0.8f));
-        entity2.getPosition().sub(diffVec.scl(0.8f));
+        entity1.setPosition(entity1.getPosition().add(diffVec.scl(0.8f)));
+        entity2.setPosition(entity2.getPosition().sub(diffVec.scl(0.8f)));
     }
 
     /**
@@ -107,7 +123,7 @@ public class LinearCollisionEngine implements ICollisionEngine {
             diffVec.y = (e1Rect.getY() < rect.getY()) ? -yOverlap : yOverlap;
         }
 
-        entity1.getPosition().add(diffVec);
+        entity1.setPosition(entity1.getPosition().add(diffVec));
     }
 
 
