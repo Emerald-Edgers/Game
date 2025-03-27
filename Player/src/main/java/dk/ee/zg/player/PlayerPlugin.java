@@ -20,7 +20,7 @@ public class PlayerPlugin implements IGamePluginService {
         player = new Player(1, 1, 1, 10, 1, 1,
                 1, 1, 1, 1, 1, 1);
         player.setScale(new Vector2(1 / 32f, 1 / 32f));
-        player.setPosition(new Vector2(10, 10));
+        player.setPosition(new Vector2(5, 5));
         worldEntities.addEntity(player);
 
     }

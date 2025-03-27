@@ -1,12 +1,11 @@
 // Enemy.java
 package dk.ee.zg;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
-public class Skeleton extends Entity{
+public class Skeleton extends Entity {
 
     private int attackDamage;
     private int attackSpeed;
@@ -17,7 +16,8 @@ public class Skeleton extends Entity{
 
     public Skeleton(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense, float cost,
                     Vector2 spawnPoint) {
-        super(spawnPoint, 0, new Vector2(1/25f,1/25f), "MainShip.png", EntityType.Enemy);
+        super(spawnPoint, 0, new Vector2(1/25f,1/25f), "Skeleton.png", EntityType.Enemy);
+
     }
 
     public int getAttackDamage() {

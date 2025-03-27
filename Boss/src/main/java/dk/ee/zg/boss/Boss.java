@@ -1,7 +1,6 @@
 package dk.ee.zg.boss;
 
 import com.badlogic.gdx.math.Vector2;
-import dk.ee.zg.common.enemy.interfaces.IEnemy;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
@@ -15,13 +14,15 @@ public class Boss extends Entity {
     private final int defense;
     private Entity target;
 
+
     public Boss(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense) {
-        super(new Vector2(0,0), 0, new Vector2(1/10f,1/10f), "Boss2.png", EntityType.Enemy);
+        super(new Vector2(0,0), 0, new Vector2(1/10f,1/10f), "Boss4.png", EntityType.Enemy);
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
         this.moveSpeed = moveSpeed;
         this.hitpoints = hitpoints;
         this.defense = defense;
+
     }
 
 

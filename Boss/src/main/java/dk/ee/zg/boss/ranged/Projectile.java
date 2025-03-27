@@ -18,6 +18,8 @@ public class Projectile extends Entity {
     private final ICollisionEngine collisionEngine;
     private final Entity player;
 
+    private float rotationAngle;
+
 
     public Projectile(Vector2 position,
                       Vector2 direction,
@@ -38,6 +40,11 @@ public class Projectile extends Entity {
 
         this.speed = speed;
         this.world = world;
+
+        this.rotationAngle = direction.angleDeg();
+
+        setRotation(rotationAngle);
+
         this.collisionEngine = getCollisionEngine();
     }
 
@@ -53,7 +60,6 @@ public class Projectile extends Entity {
         Vector2 pos = getPosition();
         pos.add(direction.x * speed * delta, direction.y * speed * delta);
         setPosition(pos);
-
         if (collisionEngine != null && player != null) {
             resolveCollision();
         }
@@ -67,6 +73,7 @@ public class Projectile extends Entity {
         if (collisionEngine.collidesWithEntity(
                 this, player)) {
             //TODO: Implement Hit
+            System.out.println("YESYESYES");
         }
     }
 }
