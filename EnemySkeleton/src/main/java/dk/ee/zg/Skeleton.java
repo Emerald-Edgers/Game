@@ -1,4 +1,3 @@
-// Enemy.java
 package dk.ee.zg;
 
 import com.badlogic.gdx.math.Vector2;
@@ -7,16 +6,47 @@ import dk.ee.zg.common.map.data.EntityType;
 
 public class Skeleton extends Entity {
 
+    /**
+     * The amount of attack damage the skeleton should have.
+     */
     private int attackDamage;
+    /**
+     * How fast the skeletons should use their attacks.
+     */
     private int attackSpeed;
+    /**
+     * How fast the skeletons should move.
+     */
     private int moveSpeed;
+    /**
+     * How much damage the skeleton should be able to take.
+     */
     private int hitpoints;
+    /**
+     * How much damage the skeleton negates each attack.
+     */
     private int defense;
+    /**
+     * The cost of the Eneemy for the spawner to know.
+     */
     private float cost;
 
-    public Skeleton(int attackDamage, int attackSpeed, int moveSpeed, int hitpoints, int defense, float cost,
-                    Vector2 spawnPoint) {
-        super(spawnPoint, 0, new Vector2(1/25f,1/25f), "Skeleton.png", EntityType.Enemy);
+    /**
+     * Main constructor for the skeleton.
+     * @param attackDamage {@link Skeleton#attackDamage }
+     * @param attackSpeed {@link Skeleton#attackSpeed }
+     * @param moveSpeed {@link Skeleton#moveSpeed}
+     * @param hitpoints {@link Skeleton#hitpoints}
+     * @param defense {@link Skeleton#defense}
+     * @param cost {@link Skeleton#cost }
+     * @param spawnPoint This is a set of x,y coordiantes to determine where it
+     *                   should be spawned
+     */
+    public Skeleton(final int attackDamage, final int attackSpeed,
+                    final int moveSpeed, final int hitpoints, final int defense,
+                    final float cost, final Vector2 spawnPoint) {
+        super(spawnPoint, 0, new Vector2(1 / 25f, 1 / 25f),
+                "Skeleton.png", EntityType.Enemy);
 
     }
 
@@ -24,7 +54,7 @@ public class Skeleton extends Entity {
         return attackDamage;
     }
 
-    public void setAttackDamage(int attackDamage) {
+    public void setAttackDamage(final int attackDamage) {
         this.attackDamage = attackDamage;
     }
 
@@ -32,7 +62,7 @@ public class Skeleton extends Entity {
         return attackSpeed;
     }
 
-    public void setAttackSpeed(int attackSpeed) {
+    public void setAttackSpeed(final int attackSpeed) {
         this.attackSpeed = attackSpeed;
     }
 
@@ -40,7 +70,7 @@ public class Skeleton extends Entity {
         return moveSpeed;
     }
 
-    public void setMoveSpeed(int moveSpeed) {
+    public void setMoveSpeed(final int moveSpeed) {
         this.moveSpeed = moveSpeed;
     }
 
@@ -48,7 +78,7 @@ public class Skeleton extends Entity {
         return hitpoints;
     }
 
-    public void setHitpoints(int hitpoints) {
+    public void setHitpoints(final int hitpoints) {
         this.hitpoints = hitpoints;
     }
 
@@ -56,7 +86,7 @@ public class Skeleton extends Entity {
         return defense;
     }
 
-    public void setDefense(int defense) {
+    public void setDefense(final int defense) {
         this.defense = defense;
     }
 

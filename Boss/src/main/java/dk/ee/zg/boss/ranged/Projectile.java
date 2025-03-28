@@ -11,29 +11,58 @@ import java.util.ServiceLoader;
 
 public class Projectile extends Entity {
 
+    /**
+     * The vector direction of the projectile.
+     */
     private final Vector2 direction;
+    /**
+     * How fast the projectile moves across the world.
+     */
     private final float speed;
-
+    /**
+     * Object of all worldEntities, since the projectile gets treated.
+     * as an enemy entity
+     */
     private final WorldEntities world;
+    /**
+     * Collision checks for both terrain and players.
+     */
     private final ICollisionEngine collisionEngine;
+    /**
+     * For knowing the player position to determine.
+     * both collision and direction
+     */
     private final Entity player;
-
+    /**
+     * The rotation angle of the projectile.
+     * makes sure the projectiles sprite is aimed
+     * towards the same direction
+     */
     private float rotationAngle;
 
 
-    public Projectile(Vector2 position,
-                      Vector2 direction,
-                      float speed,
-                      WorldEntities world,
-                      Entity player) {
-        super(new Vector2(position),0, new Vector2(1/32f,1/32f), "Fire.png", EntityType.Projectile);
+    /**
+     * Constructor for the projectile.
+     * utilizes entity super class
+     * @param position - The x,y coordinate of where it should spawn
+     * @param direction {@link Projectile#direction}
+     * @param speed {@link Projectile#speed}
+     * @param world {@link Projectile#world}
+     * @param player {@link Projectile#player}
+     */
+    public Projectile(final Vector2 position, final Vector2 direction,
+                      final float speed, final WorldEntities world,
+                      final Entity player) {
+        super(new Vector2(position), 0,
+                new Vector2(1 / 32f, 1 / 32f),
+                "Fire.png", EntityType.Projectile);
 
         this.player = player;
 
         this.direction = new Vector2(direction);
 
         if (this.direction.len() == 0) {
-            this.direction.set(0,1);
+            this.direction.set(0, 1);
         } else {
             this.direction.nor();
         }
@@ -55,6 +84,9 @@ public class Projectile extends Entity {
         return collisionEngineLoader.findFirst().orElse(null);
     }
 
+    /**
+     * Updates the position of the projectile.
+     */
     public void update() {
         float delta = Gdx.graphics.getDeltaTime();
         Vector2 pos = getPosition();
