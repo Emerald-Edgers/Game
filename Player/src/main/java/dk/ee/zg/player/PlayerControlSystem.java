@@ -111,10 +111,26 @@ public class PlayerControlSystem implements IEntityProcessService {
             isAttacking = true;
         }
 
+        if (isAttacking) {
+            attack(worldEntities);
+        }
+
         Optional<Player> player = worldEntities.getEntityByClass(Player.class);
 
         if (player.isPresent()) {
             move(player.get(), dirVec);
+        }
+    }
+
+    /**
+     * method for attacking with loaded weapon.
+     * @param worldEntities - Object of WorldEntities,
+     *                            contains a map of all entities on map.
+     */
+    private void attack(final WorldEntities worldEntities) {
+        Optional<Player> player = worldEntities.getEntityByClass(Player.class);
+
+        if (player.isPresent()) {
 
             Weapon weapon = player.get().getWeapon();
             //if move direction is not none, then set attack direction.
