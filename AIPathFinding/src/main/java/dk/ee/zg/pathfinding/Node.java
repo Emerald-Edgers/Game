@@ -1,6 +1,7 @@
 package dk.ee.zg.pathfinding;
 
-import com.badlogic.gdx.math.Vector2;
+
+import java.util.Objects;
 
 /**
  * data class, representing a Node in a*.
@@ -43,15 +44,15 @@ public class Node implements Comparable<Node> {
      * @param newY {@link Node#y}
      * @param newHCost {@link Node#hCost}
      * @param newParent {@link Node#parent}
+     * @param newGCost {@link Node#gCost}
      */
     public Node(final int newX, final int newY,
-                final float newHCost, final Node newParent, final float newGCost) {
+                final float newHCost,
+                final Node newParent, final float newGCost) {
         this.x = newX;
         this.y = newY;
         this.hCost = newHCost;
         this.parent = newParent;
-        //float movementCost = (Math.abs(x - this.parent.getX()) + Math.abs(y - this.parent.getY()) == 2) ? (float) Math.sqrt(2) : 1;
-        //this.gCost = this.parent.gCost + movementCost;
         this.gCost = newGCost;
         this.fCost = gCost + hCost;
     }
@@ -68,49 +69,83 @@ public class Node implements Comparable<Node> {
     public int compareTo(final Node o) {
         return Float.compare(this.fCost, o.fCost);
     }
-
-    //for use in checking if set contains this node,
-    //checking by coordinates instead of normally.
+    /**
+     * for use in checking if set contains this node,
+     * checking by coordinates instead of normally.
+     * @param o - other object to compare to
+     * @return - returns true if XY equals or object equals,
+     * returns false if not an instance or XY not equals.
+     */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Node)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Node)) {
+            return false;
+        }
         Node node = (Node) o;
         return x == node.x && y == node.y;
     }
 
+    /**
+     * basic impl of hashcode with Objects.hash.
+     * {@link Objects#hash(Object...)}
+     * @return - returns hashed int
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
 
-
-    public int getX() {
+    public final int getX() {
         return x;
     }
 
-    public int getY() {
+    public final int getY() {
         return y;
     }
 
-    public float getgCost() {
+    /**
+     * getter for gcost.
+     * @return - gcost
+     */
+    public final float getgCost() {
         return gCost;
     }
-
-    public float gethCost() {
+    /**
+     * getter for hcost.
+     * @return - hcost
+     */
+    public final float gethCost() {
         return hCost;
     }
-
-    public float getfCost() {
+    /**
+     * getter for fcost.
+     * @return - fcost
+     */
+    public final float getfCost() {
         return fCost;
     }
 
-    public Node getParent() {
+    public final Node getParent() {
         return parent;
     }
 
-    public void setgCost(float newGCost) {
+    /**
+     * sets g cost of node.
+     * @param newGCost - new cost of g
+     */
+    public void setgCost(final float newGCost) {
         this.gCost = newGCost;
         this.fCost = gCost + hCost;
     }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
+    /**
+     * sets parent of node.
+     * @param newParent - new parent of node
+     */
+    public void setParent(final Node newParent) {
+        this.parent = newParent;
     }
 }

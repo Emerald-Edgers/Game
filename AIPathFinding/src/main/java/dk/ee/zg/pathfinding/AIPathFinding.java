@@ -11,10 +11,8 @@ import dk.ee.zg.common.map.data.WorldObstacles;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 
@@ -33,24 +31,38 @@ public class AIPathFinding implements IPathFinder {
     /**
      * the tiled map used {@link TiledMap}.
      */
-    TiledMap map;
+    private TiledMap map;
 
+    /**
+     * impl process method for processing pathfinding,
+     * and converting to actual coordinates.
+     * @param origin - origin for pathfinding from, and moving
+     * @param target - target of pathfinding e.g. player
+     * @return - returns list of vector coordinates to define path.
+     */
     @Override
     public List<Vector2> process(final Entity origin, final Entity target) {
 
         return null;
     }
 
+    /**
+     * impl method for loading map to walkable grid.
+     * @param obstacles - instance of WorldObstacles,
+     *                  contains all collidable obstacles.
+     * @param tiledMap - TiledMap containing all tilemap data.
+     */
     @Override
-    public void load(final WorldObstacles obstacles, TiledMap map) {
-        TiledMapTileLayer tileLayer = (TiledMapTileLayer) map.getLayers().get(1);
+    public void load(final WorldObstacles obstacles, final TiledMap tiledMap) {
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer)
+                tiledMap.getLayers().get("Collision");
 
         int mapWidth = tileLayer.getWidth();
         int mapHeight = tileLayer.getHeight();
         walkableGrid = new boolean[mapWidth][mapHeight];
         //initialize walkable grid with size of the camera.
-        for (int x = 0; x < mapWidth; x++){
-            for (int y = 0; y < mapHeight; y++){
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
                 walkableGrid[x][y] = true;
             }
         }
@@ -65,7 +77,8 @@ public class AIPathFinding implements IPathFinder {
 
             if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
                 walkableGrid[x][y] = false;
-                System.out.println("Obstacle detected at: XY[" + x + ":" + y + "]");
+                System.out.println(
+                        "Obstacle detected at: XY[" + x + ":" + y + "]");
             }
         }
         //testing
@@ -75,11 +88,14 @@ public class AIPathFinding implements IPathFinder {
         walkableGrid[54][30] = false;
         walkableGrid[55][29] = false;
         walkableGrid[54][31] = false;
-        List<Node> nodesPath = findPath(15,15,55,30);
+        List<Node> nodesPath = findPath(15, 15, 55, 30);
         System.out.println("printing path:");
-        for (Node node : nodesPath){
-            System.out.println("taking step: XY[" + node.getX() + ":" + node.getY() + "]"  +
-                    " gcost: " + node.getgCost() + " hcost: " + node.gethCost() + " fcost: " + node.getfCost());
+        for (Node node : nodesPath) {
+            System.out.println(
+                    "taking step: XY[" + node.getX() + ":"
+                            + node.getY() + "]"
+                            + " gcost: " + node.getgCost() + " hcost: "
+                            + node.gethCost() + " fcost: " + node.getfCost());
         }
     }
 
@@ -89,18 +105,23 @@ public class AIPathFinding implements IPathFinder {
      * @param startY - start y position in walkable grid
      * @param goalX - goal x position in walkable grid
      * @param goalY - goal y position in walkable grid
+     * @return - returns list of Nodes to define path on grid.
      */
     private List<Node> findPath(final int startX, final int startY,
                           final int goalX, final int goalY) {
         PriorityQueue<Node> open = new PriorityQueue<>();
         Set<Node> closed = new HashSet<>();
 
-        Node startNode = new Node(startX, startY, heuristic(startX, startY, goalX, goalY), null, 0);
+        Node startNode = new Node(startX, startY,
+                heuristic(startX, startY, goalX, goalY), null, 0);
         open.add(startNode);
         while (!open.isEmpty()) {
-            Node currentNode = open.poll(); // Get and remove node with lowest fCost
-            System.out.println("current node: XY[" + currentNode.getX() + ":" + currentNode.getY() + "]"  +
-                    " gcost: " + currentNode.getgCost() + " hcost: " + currentNode.gethCost() + " fcost: " + currentNode.getfCost());
+            Node currentNode = open.poll();
+            System.out.println("current node: XY["
+                    + currentNode.getX() + ":" + currentNode.getY() + "]"
+                    + " gcost: " + currentNode.getgCost() + " hcost: "
+                    + currentNode.gethCost() + " fcost: "
+                    + currentNode.getfCost());
             //if node is goal
             if (currentNode.getX() == goalX && currentNode.getY() == goalY) {
                 System.out.println("found end");
@@ -115,11 +136,13 @@ public class AIPathFinding implements IPathFinder {
                     continue;
                 }
 
-                float movementCost = (succesorNode.getX() != currentNode.getX() &&
-                        succesorNode.getY() != currentNode.getY()) ? (float) Math.sqrt(2) : 1;
+                float movementCost = (succesorNode.getX() != currentNode.getX()
+                        && succesorNode.getY() != currentNode.getY())
+                        ? (float) Math.sqrt(2) : 1;
                 float tentativeGCost = currentNode.getgCost() + movementCost;
 
-                if (!open.contains(succesorNode) || tentativeGCost < succesorNode.getgCost()) {
+                if (!open.contains(succesorNode)
+                        || tentativeGCost < succesorNode.getgCost()) {
                     // New node, add to open list
                     succesorNode.setgCost(tentativeGCost);
                     succesorNode.setParent(currentNode);
@@ -137,11 +160,12 @@ public class AIPathFinding implements IPathFinder {
     /**
      * method used for constructing the final path,
      * from parent tree of current node.
-     * @param currentNode - currently open node
+     * @param endNode - currently open node
      * @return - returns the total path,
      * from start to end as list of nodes.
      */
-    private List<Node> constructPath(Node currentNode){
+    private List<Node> constructPath(final Node endNode) {
+        Node currentNode = endNode;
         List<Node> path = new ArrayList<>();
         while (currentNode != null) {
             path.addFirst(currentNode); // Add at the beginning to reverse order
@@ -158,19 +182,22 @@ public class AIPathFinding implements IPathFinder {
      * @param goalY - goal y position
      * @return - returns list of succesor nodes.
      */
-    private List<Node> getSuccesors(final Node node, final int goalX, final int goalY){
+    private List<Node> getSuccesors(
+            final Node node, final int goalX, final int goalY) {
         List<Node> succesors = new ArrayList<>();
         //directions to check  : Up, Right, Down, Left, + Diagonals
         int[][] directions = {{0, 1}, {1, 0}, {0, -1},
-                {-1, 0}, {1, 1}, {1, -1},{-1, 1},{-1, -1}};
+                {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
         for (int[] dir : directions) {
             int x = node.getX() + dir[0];
             int y = node.getY() + dir[1];
             if (walkableGrid[x][y]) {
-                float movementCost = (dir[0] == 0 || dir[1] == 0) ? 1 : (float) Math.sqrt(2);
+                float movementCost =
+                        (dir[0] == 0 || dir[1] == 0) ? 1 : (float) Math.sqrt(2);
                 float newGCost = node.getgCost() + movementCost;
-                succesors.add(new Node(x, y,heuristic(x, y, goalX, goalY), node, newGCost));
+                succesors.add(new Node(
+                        x, y, heuristic(x, y, goalX, goalY), node, newGCost));
             }
         }
         return succesors;
@@ -196,7 +223,8 @@ public class AIPathFinding implements IPathFinder {
         // return D * (dx + dy) + (D2 - 2 * D) * min(dx, dy)
         // When D = 1 and D2 = 1, this is called the Chebyshev distance.
         // When D = 1 and D2 = sqrt(2), this is called the octile distance.
-        return (float) (1 * (dx + dy) + (Math.sqrt(2) - 2 * 1) * Math.min(dx, dy));
+        return (float) (1 * (dx + dy)
+                + (Math.sqrt(2) - 2 * 1) * Math.min(dx, dy));
     }
 
 
