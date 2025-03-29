@@ -18,6 +18,7 @@
         <module>Collision</module>
         <module>CommonEnemy</module>
         <module>SimpleEnemySpawner</module>
+        <module>AIPathFinding</module>
     </modules>
 
     <properties>

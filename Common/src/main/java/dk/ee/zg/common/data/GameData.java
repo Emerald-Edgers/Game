@@ -53,6 +53,12 @@ public final class GameData {
      */
     private static final int MAXFPS = 30;
 
+    /**
+     * The amount of pixels a singular unit represents.
+     * (E.g.) set to 1/32, 1 unit = 32 px.
+     */
+    private static final float UNIT_SCALE = 1 / 32f;
+
     private GameData() {
 
     }
@@ -75,6 +81,10 @@ public final class GameData {
 
     public int getMAXFPS() {
         return MAXFPS;
+    }
+
+    public float getUNIT_SCALE() {
+        return UNIT_SCALE;
     }
 
     public float getDeltaTime() {
@@ -143,4 +153,5 @@ public final class GameData {
     public void setGame(final Game newGame) {
         this.game = newGame;
     }
+
 }

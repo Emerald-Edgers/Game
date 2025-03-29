@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
+import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -141,6 +142,9 @@ public class GameScreen implements Screen {
                 map = mapImpl;
                 map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
+        }
+        for (IPathFinder pathFinder : ServiceLoader.load(IPathFinder.class)) {
+            pathFinder.load(worldObstacles, map.getMap());
         }
     }
 
