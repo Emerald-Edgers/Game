@@ -26,12 +26,12 @@ public class AIPathFinding implements IPathFinder {
     /**
      * boolean 2d array, of walkable tiles.
      */
-    private boolean[][] walkableGrid;
+    private static boolean[][] walkableGrid;
 
     /**
      * the tiled map used {@link TiledMap}.
      */
-    private TiledMap map;
+    private static TiledMap map;
 
     /**
      * impl process method for processing pathfinding,
@@ -42,8 +42,27 @@ public class AIPathFinding implements IPathFinder {
      */
     @Override
     public List<Vector2> process(final Entity origin, final Entity target) {
-
-        return null;
+        TiledMapTileLayer tileLayer = (TiledMapTileLayer)
+                map.getLayers().get("Collision");
+        float tileWidth = tileLayer.getTileWidth() * gameData.getUNIT_SCALE();
+        float tileHeight = tileLayer.getTileHeight() * gameData.getUNIT_SCALE();
+        //since get position returns center pos of entity,
+        // it is only divided by half of tilewidth and height.
+        int startX = (int) (origin.getPosition().x / (tileWidth / 2));
+        int startY = (int) (origin.getPosition().y / (tileHeight / 2));
+        int goalX = (int) (target.getPosition().x / (tileWidth / 2));
+        int goalY = (int) (target.getPosition().y / (tileHeight / 2));
+        System.out.println(origin.getPosition()+ ""+ target.getPosition());
+        System.out.println("GOAl:" + goalX +" : "+ goalY);
+        List<Vector2> pathInPixelPos = new ArrayList<>();
+        for (Node node : findPath(startX, startY, goalX, goalY)) {
+            //node position multiplied with half of tile size,
+            // to get center of tile in pixel pos.
+            Vector2 tempPos = new Vector2(node.getX() * (tileWidth / 2),
+                    node.getY() * (tileHeight / 2));
+            pathInPixelPos.add(tempPos);
+        }
+        return pathInPixelPos;
     }
 
     /**
@@ -54,6 +73,7 @@ public class AIPathFinding implements IPathFinder {
      */
     @Override
     public void load(final WorldObstacles obstacles, final TiledMap tiledMap) {
+        this.map = tiledMap;
         TiledMapTileLayer tileLayer = (TiledMapTileLayer)
                 tiledMap.getLayers().get("Collision");
 
@@ -82,12 +102,17 @@ public class AIPathFinding implements IPathFinder {
             }
         }
         //testing
+        /*
         walkableGrid[53][30] = false;
         walkableGrid[54][29] = false;
         walkableGrid[53][29] = false;
         walkableGrid[54][30] = false;
         walkableGrid[55][29] = false;
         walkableGrid[54][31] = false;
+        walkableGrid[56][29] = false;
+        walkableGrid[55][31] = false;
+        walkableGrid[53][31] = false;
+        walkableGrid[54][32] = false;
         List<Node> nodesPath = findPath(15, 15, 55, 30);
         System.out.println("printing path:");
         for (Node node : nodesPath) {
@@ -97,6 +122,7 @@ public class AIPathFinding implements IPathFinder {
                             + " gcost: " + node.getgCost() + " hcost: "
                             + node.gethCost() + " fcost: " + node.getfCost());
         }
+        */
     }
 
     /**
@@ -115,6 +141,11 @@ public class AIPathFinding implements IPathFinder {
         Node startNode = new Node(startX, startY,
                 heuristic(startX, startY, goalX, goalY), null, 0);
         open.add(startNode);
+        System.out.println("start node: XY["
+                + startNode.getX() + ":" + startNode.getY() + "]"
+                + " gcost: " + startNode.getgCost() + " hcost: "
+                + startNode.gethCost() + " fcost: "
+                + startNode.getfCost());
         while (!open.isEmpty()) {
             Node currentNode = open.poll();
             System.out.println("current node: XY["
@@ -192,6 +223,9 @@ public class AIPathFinding implements IPathFinder {
         for (int[] dir : directions) {
             int x = node.getX() + dir[0];
             int y = node.getY() + dir[1];
+            if (x < 0 || x > walkableGrid.length || y < 0 || y > walkableGrid[x].length){
+                continue;
+            }
             if (walkableGrid[x][y]) {
                 float movementCost =
                         (dir[0] == 0 || dir[1] == 0) ? 1 : (float) Math.sqrt(2);
