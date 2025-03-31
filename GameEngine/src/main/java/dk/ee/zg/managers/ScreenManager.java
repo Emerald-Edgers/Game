@@ -6,38 +6,52 @@ import java.util.HashMap;
 import java.util.ServiceLoader;
 
 public class ScreenManager {
+    /**
+     * The currently active screen.
+     */
     private Screen activeScreen;
+
+    /**
+     * A map of all the registered screens.
+     */
     private HashMap<String, Screen> screens; // Use class name for screen name
 
+    /**
+     * Constructor: Starts the screen manager and populates the screens map.
+     */
     public ScreenManager() {
         init();
     }
 
     /**
-     * Finds all classes which implement screen, and adds them to screens
+     * Finds all classes which implement screen, and adds them to screens.
      */
     private void init() {
         screens = new HashMap<>();
         for (Screen screen : ServiceLoader.load(Screen.class)) {
-            screens.put(screen.getClass().getSimpleName().toLowerCase(), screen);
+            screens.put(
+                    screen.getClass().getSimpleName().toLowerCase(), screen);
         }
     }
 
-    public void switchScreen(String screenName) {
+    /**
+     * Changes the currently active screen to one of the given name.
+     * @param screenName    The class name of the screen to switch too.
+     */
+    public final void switchScreen(final String screenName) {
         Screen tempScreen = screens.get(screenName.toLowerCase());
         if (tempScreen == null) {
-            //TODO: Implement error for wrong screen key
+            System.err.println("Screen " + screenName + " not found");
         }
 
         activeScreen = tempScreen;
-
     }
 
-    public Screen getActiveScreen() {
+    public final Screen getActiveScreen() {
         return activeScreen;
     }
 
-    public HashMap<String, Screen> getScreens() {
+    public final HashMap<String, Screen> getScreens() {
         return screens;
     }
 }

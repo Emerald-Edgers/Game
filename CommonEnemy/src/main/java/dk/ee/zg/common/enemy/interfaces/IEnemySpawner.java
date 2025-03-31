@@ -10,14 +10,17 @@ public interface IEnemySpawner {
     void requestSpawnEnemy(WorldEntities world);
 
     /**
-     * Apart of the main game loop, code which runs once a frame.
+     * A part of the main game loop, code which runs once a frame.
      * @param frameDelta The delta-time of the current frame.
+     * @param world The world in which the spawner can spawn.
      */
-    void process(float frameDelta);
+    void process(float frameDelta, WorldEntities world);
 
     /**
-     * Apart of the main game startup sequence,
+     * A part of the main game startup sequence,
      * code which runs once on game start.
+     * @param world which contains information about
+     *              already existing entities in the world.
      */
-    void start();
+    void start(WorldEntities world);
 }

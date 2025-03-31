@@ -3,6 +3,7 @@ package dk.ee.zg.player;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IGamePluginService;
+import dk.ee.zg.common.weapon.WeaponManager;
 
 public class PlayerPlugin implements IGamePluginService {
     /**
@@ -21,8 +22,9 @@ public class PlayerPlugin implements IGamePluginService {
                 1, 1, 1, 1, 1, 1);
         player.setScale(new Vector2(1 / 32f, 1 / 32f));
         player.setPosition(new Vector2(5, 5));
+        player.setWeapon(WeaponManager.getInstance().getWeaponSelected());
+        player.loadStatsFromWeapon();
         worldEntities.addEntity(player);
-
     }
 
     /**

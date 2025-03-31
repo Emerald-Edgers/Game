@@ -11,6 +11,7 @@ public class Game extends com.badlogic.gdx.Game {
      */
     private final GameData gameData = GameData.getInstance();
 
+
     /**
      * Game initialization logic, runs once on game start.
      */
@@ -29,4 +30,5 @@ public class Game extends com.badlogic.gdx.Game {
         screenManager.switchScreen(screenName);
         this.setScreen(screenManager.getActiveScreen());
     }
+
 }

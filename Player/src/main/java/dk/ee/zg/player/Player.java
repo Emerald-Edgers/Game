@@ -37,11 +37,7 @@ public class Player extends Entity {
     private int moveSpeed;
 
     //increasing base secondary stats
-    /**
-     * hp is the current amount of health, a player has.
-     * if 0 = player dies.
-     */
-    private int hp;
+
     /**
      * critChance is the chance of dealing a crit hit.
      * used to calculate critical hit on enemy.
@@ -86,36 +82,38 @@ public class Player extends Entity {
     /**
      * constructor for the player, utilizes super class Entity.
      * {@link Entity}
-     * @param maxHP {@link Player#maxHP}
-     * @param attackDamage {@link Player#attackDamage}
-     * @param attackSpeed {@link Player#attackSpeed}
-     * @param moveSpeed {@link Player#moveSpeed}
-     * @param critChance {@link Player#critChance}
-     * @param critDamage {@link Player#critDamage}
-     * @param defense {@link Player#defense}
-     * @param lifesteal {@link Player#lifesteal}
-     * @param penetration {@link Player#penetration}
-     * @param range {@link Player#range}
-     * @param evasion {@link Player#evasion}
-     * @param healthRegen {@link Player#healthRegen}
+     * @param maxLife {@link Player#maxHP}
+     * @param atkDamage {@link Player#attackDamage}
+     * @param atkSpeed {@link Player#attackSpeed}
+     * @param mvSpeed {@link Player#moveSpeed}
+     * @param crChance {@link Player#critChance}
+     * @param crDamage {@link Player#critDamage}
+     * @param def {@link Player#defense}
+     * @param hpsteal {@link Player#lifesteal}
+     * @param pen {@link Player#penetration}
+     * @param r {@link Player#range}
+     * @param eva {@link Player#evasion}
+     * @param hpRegen {@link Player#healthRegen}
      */
-    public Player(int maxHP, int attackDamage, int attackSpeed, int moveSpeed,
-                  int critChance, int critDamage, int defense, int lifesteal, int penetration,
-                  int range, int evasion, int healthRegen) {
-        super(new Vector2(), 0, new Vector2(50,50), "MainShip.png", EntityType.Player);
-        this.maxHP = maxHP;
-        this.attackDamage = attackDamage;
-        this.attackSpeed = attackSpeed;
-        this.moveSpeed = moveSpeed;
-        this.hp = maxHP;
-        this.critChance = critChance;
-        this.critDamage = critDamage;
-        this.defense = defense;
-        this.lifesteal = lifesteal;
-        this.penetration = penetration;
-        this.range = range;
-        this.evasion = evasion;
-        this.healthRegen = healthRegen;
+    public Player(final int maxLife, final int atkDamage, final int atkSpeed,
+                  final int mvSpeed, final int crChance, final int crDamage,
+                  final int def, final int hpsteal, final int pen,
+                  final int r, final int eva, final int hpRegen) {
+        super(new Vector2(), 0, new Vector2(50, 50),
+                "MainShip.png", EntityType.Player);
+        this.maxHP = maxLife;
+        this.attackDamage = atkDamage;
+        this.attackSpeed = atkSpeed;
+        this.moveSpeed = mvSpeed;
+        this.setHp(maxLife);
+        this.critChance = crChance;
+        this.critDamage = crDamage;
+        this.defense = def;
+        this.lifesteal = hpsteal;
+        this.penetration = pen;
+        this.range = r;
+        this.evasion = eva;
+        this.healthRegen = hpRegen;
 
     }
 
@@ -129,105 +127,96 @@ public class Player extends Entity {
             this.attackDamage = weapon.getAttackDamage();
             this.attackSpeed = weapon.getAttackSpeed();
             this.moveSpeed = weapon.getMoveSpeed();
-            this.hp = this.maxHP;
+            this.setHp(this.maxHP);
         }
     }
 
-    public Weapon getWeapon() {
+    public final Weapon getWeapon() {
         return weapon;
     }
 
-    public void setWeapon(final Weapon weapon) {
-        this.weapon = weapon;
+    public final void setWeapon(final Weapon w) {
+        this.weapon = w;
     }
 
-    public int getMaxHP() {
+    public final int getMaxHP() {
         return maxHP;
     }
 
-    public int getAttackDamage() {
+    public final int getAttackDamage() {
         return attackDamage;
     }
 
-    public int getAttackSpeed() {
+    public final int getAttackSpeed() {
         return attackSpeed;
     }
 
-    public int getMoveSpeed() {
+    public final int getMoveSpeed() {
         return moveSpeed;
     }
 
-
-    public int getHp() {
-        return hp;
-    }
-
-    public void setHp(final int hp) {
-        this.hp = hp;
-    }
-
-    public int getCritChance() {
+    public final int getCritChance() {
         return critChance;
     }
 
-    public void setCritChance(final int critChance) {
-        this.critChance = critChance;
+    public final void setCritChance(final int i) {
+        this.critChance = i;
     }
 
-    public int getCritDamage() {
+    public final int getCritDamage() {
         return critDamage;
     }
 
-    public void setCritDamage(final int critDamage) {
-        this.critDamage = critDamage;
+    public final void setCritDamage(final int i) {
+        this.critDamage = i;
     }
 
-    public int getDefense() {
+    public final int getDefense() {
         return defense;
     }
 
-    public void setDefense(final int defense) {
-        this.defense = defense;
+    public final void setDefense(final int i) {
+        this.defense = i;
     }
 
-    public int getLifesteal() {
+    public final int getLifesteal() {
         return lifesteal;
     }
 
-    public void setLifesteal(final int lifesteal) {
-        this.lifesteal = lifesteal;
+    public final void setLifesteal(final int i) {
+        this.lifesteal = i;
     }
 
-    public int getPenetration() {
+    public final int getPenetration() {
         return penetration;
     }
 
-    public void setPenetration(int penetration) {
-        this.penetration = penetration;
+    public final void setPenetration(final int i) {
+        this.penetration = i;
     }
 
-    public int getRange() {
+    public final int getRange() {
         return range;
     }
 
-    public void setRange(final int range) {
-        this.range = range;
+    public final void setRange(final int i) {
+        this.range = i;
     }
 
-    public int getEvasion() {
+    public final int getEvasion() {
         return evasion;
     }
 
-    public void setEvasion(final int evasion) {
-        this.evasion = evasion;
+    public final void setEvasion(final int i) {
+        this.evasion = i;
     }
 
-    public int getHealthRegen() {
+    public final int getHealthRegen() {
         return healthRegen;
     }
 
-    public void setHealthRegen(final int healthRegen) {
-        this.healthRegen = healthRegen;
+    public final void setHealthRegen(final int i) {
+        this.healthRegen = i;
     }
 
 

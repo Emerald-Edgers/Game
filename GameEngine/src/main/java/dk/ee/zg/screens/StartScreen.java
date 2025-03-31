@@ -21,6 +21,7 @@ import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.data.KeyAction;
 import dk.ee.zg.common.weapon.Weapon;
 import dk.ee.zg.managers.ScreenManager;
+import dk.ee.zg.common.weapon.WeaponManager;
 import org.lwjgl.opengl.GL20;
 
 import java.util.ArrayList;
@@ -337,6 +338,8 @@ public class StartScreen implements Screen {
     private void handleKeyEvents() {
         if (gameData.getGameKey().isDown(
                 gameData.getGameKey().getActionToKey().get(KeyAction.SELECT))) {
+            WeaponManager.getInstance().
+                    setWeaponSelected(retrieveSelectedWeapon());
             ScreenManager screenManager = new ScreenManager();
             screenManager.switchScreen("GameScreen");
             gameData.getGame().setScreen(screenManager.getActiveScreen());

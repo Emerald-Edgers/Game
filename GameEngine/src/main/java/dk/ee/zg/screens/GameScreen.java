@@ -17,10 +17,8 @@ import dk.ee.zg.common.map.interfaces.IMap;
 import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.map.services.IGamePluginService;
-
 import java.util.Optional;
 import java.util.ServiceLoader;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -58,7 +56,8 @@ public class GameScreen implements Screen {
     private IMap map;
 
     /**
-     * Instance of {@link dk.ee.zg.common.enemy.interfaces.IEnemySpawner} currently loaded.
+     * Instance of
+     * {@link dk.ee.zg.common.enemy.interfaces.IEnemySpawner} currently loaded.
      */
     private IEnemySpawner enemySpawner;
 
@@ -146,7 +145,7 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, UNIT_SCALE);
+                map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
         }
     }
@@ -157,12 +156,13 @@ public class GameScreen implements Screen {
      * Sets the local variable {@code enemySpawner} to the found implementation.
      */
     private void initSpawner() {
-        ServiceLoader<IEnemySpawner> spawnerLoader = ServiceLoader.load(IEnemySpawner.class);
+        ServiceLoader<IEnemySpawner> spawnerLoader
+                = ServiceLoader.load(IEnemySpawner.class);
 
         enemySpawner = spawnerLoader.findFirst().orElse(null);
 
         if (enemySpawner != null) {
-            enemySpawner.start();
+            enemySpawner.start(worldEntities);
         }
     }
 
@@ -235,6 +235,7 @@ public class GameScreen implements Screen {
      * @param v The delta-time of the current frame.
      */
     private void update(final float v) {
+
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(worldEntities);
@@ -253,6 +254,8 @@ public class GameScreen implements Screen {
                 checkBounds();
             }
         }
+        //TODO optimize optimizeObstaclces to get called at a fixed interval.
+        worldObstacles.optimizeObstacles();
         camera.update();
     }
 
@@ -263,7 +266,7 @@ public class GameScreen implements Screen {
      */
     private void enemySpawnerUpdate(final float v) {
         if (enemySpawner != null) {
-            enemySpawner.process(v);
+            enemySpawner.process(v, worldEntities);
         }
     }
 
@@ -282,9 +285,11 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
+
         for (Entity entity : worldEntities.getEntities()) {
             entity.draw(batch);
         }
+
         batch.end(); // End drawing
     }
 
