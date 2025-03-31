@@ -3,6 +3,8 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.common.data.GameData;
@@ -234,11 +236,19 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
+        batch.setProjectionMatrix(camera.combined);
+        map.getRenderer().setView(camera);
+
         if (map != null) {
-            map.renderMap(); // Render the map
+            map.getRenderer().getBatch().begin();
+            System.out.println("Total layers: " + map.getMap().getLayers().getCount());
+            for (int i = 0; i < map.getMap().getLayers().getCount()-2; i++) {
+                map.getRenderer().renderTileLayer((TiledMapTileLayer) map.getMap().getLayers().get(i));
+            }
+            map.getRenderer().getBatch().end();
+            //map.renderMap(); // Render the map
         }
 
-        batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
 
         for (Entity entity : worldEntities.getEntities()) {
@@ -246,6 +256,13 @@ public class GameScreen implements Screen {
         }
 
         batch.end(); // End drawing
+
+        if (map != null) {
+            map.getRenderer().getBatch().begin();
+            System.out.println("Collision Layers: " + (map.getMap().getLayers().getCount()-2));
+            map.getRenderer().renderTileLayer((TiledMapTileLayer) map.getMap().getLayers().get(map.getMap().getLayers().getCount()-2));
+            map.getRenderer().getBatch().end();
+        }
     }
 
 
