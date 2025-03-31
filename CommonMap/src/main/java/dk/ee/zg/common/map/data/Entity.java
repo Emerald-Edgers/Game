@@ -48,7 +48,7 @@ public class Entity {
     }
 
     public Vector2 getPosition() {
-        Vector2 position = Vector2.Zero;
+        Vector2 position = new Vector2();
         sprite.getBoundingRectangle().getCenter(position);
         return position;
     }

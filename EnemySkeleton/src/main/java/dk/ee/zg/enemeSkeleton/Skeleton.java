@@ -1,4 +1,4 @@
-package dk.ee.zg;
+package dk.ee.zg.enemeSkeleton;
 
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.Entity;
@@ -48,6 +48,13 @@ public class Skeleton extends Entity {
         super(spawnPoint, 0, new Vector2(1 / 25f, 1 / 25f),
                 "Skeleton.png", EntityType.Enemy);
 
+        this.attackDamage = attackDamage;
+        this.attackSpeed = attackSpeed;
+        this.moveSpeed = moveSpeed;
+        this.hitpoints = hitpoints;
+        this.defense = defense;
+        this.cost = cost;
+
     }
 
     public int getAttackDamage() {
@@ -90,4 +97,11 @@ public class Skeleton extends Entity {
         this.defense = defense;
     }
 
+    public float getCost() {
+        return cost;
+    }
+
+    public void setCost(float cost) {
+        this.cost = cost;
+    }
 }

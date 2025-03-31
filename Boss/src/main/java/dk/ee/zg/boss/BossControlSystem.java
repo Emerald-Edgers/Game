@@ -5,10 +5,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.map.data.Entity;
-import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IEntityProcessService;
-
+import dk.ee.zg.player.Player;
 
 
 public class BossControlSystem implements IEntityProcessService {
@@ -29,7 +28,7 @@ public class BossControlSystem implements IEntityProcessService {
 
 
     /**
-     * Entrance to the boss controle system for controlling the boss.
+     * Entrance to the boss control system for controlling the boss.
      * like moving or using attack's,
      * @param world - object of WorldEntities,
      *              Contains all the entities in the world.
@@ -41,22 +40,21 @@ public class BossControlSystem implements IEntityProcessService {
 
         melAttackCooldown -= Gdx.graphics.getDeltaTime();
 
-        if (player == null) {
-            for (Entity e1 : world.getEntities()) {
-                if (e1.getEntityType() == EntityType.Player) {
-                    //System.out.println(e1.getPosition());
-                    player = e1;
-                    break;
+        if(player == null) {
+            for (Entity e1 : world.getEntities(Player.class)) {
+                if (e1 != null) {
+                    player = world.getEntities(Player.class).getFirst();
                 }
             }
         }
+
 
         for (Entity boss : world.getEntities(Boss.class)) {
 
             //move((Boss) boss, dir);
 
             if (melAttackCooldown <= 0) {
-                //rangedAttack((Boss) boss, world);
+                rangedAttack((Boss) boss, world);
                 melAttackCooldown = 2f;
             }
 
@@ -132,9 +130,9 @@ public class BossControlSystem implements IEntityProcessService {
 
     /**
      * Melee attack for the boss object, close non-aoe attack.
-     * in form of a ractangle hitbox
+     * in form of a rectangle hitbox
      * @param boss - Boss object which should use the attack
-     * @param direction - Direction of the attak
+     * @param direction - Direction of the attack
      * @return - Returns a rectangle in the direction of the attack
      *              with the correct offset
      */
@@ -193,19 +191,17 @@ public class BossControlSystem implements IEntityProcessService {
      */
     public void rangedAttack(final Boss boss, final WorldEntities world) {
         Vector2 target = new Vector2(player.getPosition());
-        //TODO: Implement spawning order
-        //Vector2 target = new Vector2(5,5);
-        System.out.println("Target:" + target);
+        //System.out.println("Target:" + target);
 
         Vector2 bossPos = boss.getPosition();
-        System.out.println("Boss:" + bossPos);
+        //System.out.println("Boss:" + bossPos);
         //Vector2 targetPos = target.getPosition(); //TODO
 
         Vector2 projectileDir = new Vector2(target.sub(bossPos));
-        System.out.println("projDir:" + projectileDir);
+        //System.out.println("projDir:" + projectileDir);
         projectileDir.nor();
 
-        float speed = boss.getAttackSpeed() * 2f;
+        float speed = boss.getAttackSpeed();
 
         Projectile projectile = new Projectile(boss.getPosition(),
                 projectileDir, speed, world, player);

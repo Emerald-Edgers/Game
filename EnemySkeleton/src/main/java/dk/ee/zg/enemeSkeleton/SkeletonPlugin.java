@@ -1,4 +1,4 @@
-package dk.ee.zg;
+package dk.ee.zg.enemeSkeleton;
 
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IEnemyCreator;
@@ -29,7 +29,7 @@ public class SkeletonPlugin implements IEnemyCreator {
      */
     @Override
     public void spawn(final float x, final float y, final WorldEntities world) {
-        skeleton = new Skeleton(10, 10, 10, 100, 10, cost, new Vector2(x, y));
+        skeleton = new Skeleton(10, 10, 1, 100, 10, cost, new Vector2(x, y));
 
         world.addEntity(skeleton);
     }
