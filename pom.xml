@@ -18,6 +18,8 @@
         <module>Collision</module>
         <module>CommonEnemy</module>
         <module>SimpleEnemySpawner</module>
+        <module>Boss</module>
+        <module>EnemySkeleton</module>
     </modules>
 
     <properties>
