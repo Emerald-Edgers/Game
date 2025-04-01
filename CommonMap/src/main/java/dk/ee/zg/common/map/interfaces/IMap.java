@@ -20,10 +20,16 @@ public interface IMap {
                  WorldObstacles worldObstacles);
 
     /**
-     * Render the currently loaded map.
+     * Render all layers below certain objects layer on loaded map.
      * This method should be called during the render loop.
      */
-    void renderMap();
+    void renderBottom();
+
+    /**
+     * Render top layers above on loaded map.
+     * This method should be called during the render loop.
+     */
+    void renderTop();
 
     /**
      * Get the currently loaded map.
