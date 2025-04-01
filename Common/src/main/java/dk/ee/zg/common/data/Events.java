@@ -16,4 +16,29 @@ public class Events {
 
     }
 
+    /**
+     * enemy killed event.
+     * e.g.: used for player gaining exp.
+     */
+    public static final class EnemyKilledEvent implements IEvent {
+        /**
+         * Experience value of defeated enemy,
+         * to be added to player.
+         */
+        private int experience;
+
+        /**
+         * constructor for EnemyKilledEvent.
+         * @param exp - experience to set
+         */
+        public EnemyKilledEvent(final int exp) {
+            this.experience = exp;
+        }
+
+        public int getExperience() {
+            return experience;
+        }
+    }
+
+
 }

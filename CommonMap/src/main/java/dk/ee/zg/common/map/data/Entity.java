@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
 
 import java.util.UUID;
 
@@ -93,7 +95,7 @@ public class Entity {
     }
 
     public void draw(SpriteBatch batch) {
-        sprite.setScale(scale.x,scale.y);
+        sprite.setScale(scale.x, scale.y);
         sprite.setPosition(position.x, position.y);
         sprite.draw(batch); // Draw the sprite
 
@@ -101,12 +103,17 @@ public class Entity {
 
     /**
      * universal method for getting hit.
+     * triggers enemy killed event, with 100 exp added.
      * @param damage - damage taken, dertermined,
      *               by the attacker
      */
-    public void hit(int damage){
-        if (entityType != EntityType.Obstacle){
+    public void hit(final int damage) {
+        if (entityType != EntityType.Obstacle) {
             this.hp -= damage;
+            //if dead, trigger enemykilledevent
+            if (this.hp <= 0) {
+                EventManager.triggerEvent(new Events.EnemyKilledEvent(100));
+            }
         }
     }
 }
