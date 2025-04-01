@@ -112,7 +112,7 @@ public class Entity {
             this.hp -= damage;
             //if dead, trigger enemykilledevent
             if (this.hp <= 0) {
-                EventManager.triggerEvent(new Events.EnemyKilledEvent(100));
+                EventManager.triggerEvent(new Events.EnemyKilledEvent(100, this.id));
             }
         }
     }

@@ -1,5 +1,7 @@
 package dk.ee.zg.common.data;
 
+import java.util.UUID;
+
 public class Events {
 
     /**
@@ -26,19 +28,27 @@ public class Events {
          * to be added to player.
          */
         private int experience;
-
+        /**
+         * enemy UUID.
+         */
+        private UUID uuid;
         /**
          * constructor for EnemyKilledEvent.
          * @param exp - experience to set
+         * @param id - uuid of enemy killed
          */
-        public EnemyKilledEvent(final int exp) {
+        public EnemyKilledEvent(final int exp, final UUID id) {
             this.experience = exp;
+            this.uuid = id;
         }
 
         public int getExperience() {
             return experience;
         }
-    }
 
+        public UUID getUuid() {
+            return uuid;
+        }
+    }
 
 }

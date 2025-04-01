@@ -1,6 +1,9 @@
 package dk.ee.zg.common.map.data;
 
 
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +18,18 @@ public class WorldEntities {
      * both enemies and player.
      */
     private final Map<UUID, Entity> entityMap = new HashMap<UUID, Entity>();
+
+    /**
+     * no args constructor, for basic setup
+     * e.g. listener setup
+     */
+    public WorldEntities() {
+        EventManager.addListener(Events.EnemyKilledEvent.class, enemyKilledEvent -> {
+            removeEntity(enemyKilledEvent.getUuid());
+        });
+    }
+
+
 
     /**
      * adds entity {@link Entity} object to entity map.
