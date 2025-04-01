@@ -24,7 +24,8 @@ public class WorldEntities {
      * e.g. listener setup
      */
     public WorldEntities() {
-        EventManager.addListener(Events.EnemyKilledEvent.class, enemyKilledEvent -> {
+        EventManager.addListener(Events.EnemyKilledEvent.class,
+                enemyKilledEvent -> {
             removeEntity(enemyKilledEvent.getUuid());
         });
     }
