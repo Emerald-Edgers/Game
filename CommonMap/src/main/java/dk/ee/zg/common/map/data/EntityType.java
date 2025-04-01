@@ -15,10 +15,10 @@ public enum EntityType {
      */
     Enemy,
     Boss,
-    Projectile
+    Projectile,
     /**
      * the player entity.
      */
-    Player,
+    Player
 
 }
