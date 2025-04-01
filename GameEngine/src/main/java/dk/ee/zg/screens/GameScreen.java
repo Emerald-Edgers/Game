@@ -236,7 +236,9 @@ public class GameScreen implements Screen {
 
         batch.setProjectionMatrix(camera.combined);
 
-        map.renderBottom();
+        if (map != null) {
+            map.renderBottom();
+        }
 
         batch.begin(); // Begin drawing
 
@@ -246,7 +248,9 @@ public class GameScreen implements Screen {
 
         batch.end(); // End drawing
 
-        map.renderTop();
+        if (map != null) {
+            map.renderTop();
+        }
 
     }
 
