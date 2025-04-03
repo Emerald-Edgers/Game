@@ -1,11 +1,13 @@
 package dk.ee.zg.common.enemy.data;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public abstract class Enemy extends Entity {
@@ -117,12 +119,8 @@ public abstract class Enemy extends Entity {
     /**
      * vector 2 positions from pathfinding.
      */
-    private List<Vector2> pathfindingVectorPos;
-    /**
-     * vector 2 positions from pathfinding,
-     * translated to smaller steps.
-     */
-    private List<Vector2> steps = new ArrayList<>();
+    private List<Vector2> pathfindingVectorPos = new ArrayList<>();
+
     /**
      * last triggered movement with pathfinding.
      */
@@ -139,46 +137,71 @@ public abstract class Enemy extends Entity {
      * AI cooldown, time till next AI pathfinding calculation.
      */
     private final long pathFindCooldown = 1000;
+    /**
+     * used for determining when currently moving to step.
+     */
+    private Vector2 lastTargetPos = null;  // Store last step to interpolate
 
+    /**
+     * vector 2 positions from pathfinding,
+     * translated to smaller steps.
+     */
+    private List<Vector2> steps = new LinkedList<>(); // Stores smaller steps
     /**
      * move method for using pathfinding.
      * @param pathFinder - instance of pathfinder impl
      * @param player - player entity instance
      */
-    public void moveWithPathFinding(final IPathFinder pathFinder,
-                                    final Entity player) {
+    public void moveWithPathFinding(
+            final IPathFinder pathFinder, final Entity player) {
 
-        if (pathfindingVectorPos == null || (System.currentTimeMillis()
-                - lastTriggeredPath)  > pathFindCooldown) {
+        // Recalculate path if needed
+        if (steps.isEmpty() && (pathfindingVectorPos.isEmpty()
+                || (System.currentTimeMillis()
+                - lastTriggeredPath) > pathFindCooldown)) {
             pathfindingVectorPos = pathFinder.process(this, player);
-            System.out.println(pathfindingVectorPos);
             lastTriggeredPath = System.currentTimeMillis();
-        }
-        if (steps == null){
-            generateSteps(10);
+            generateSubSteps(); // Generate smaller steps
         }
 
-        if ((System.currentTimeMillis() - lastTriggered)
-                > cooldown && pathfindingVectorPos != null) {
-            System.out.println("trigger");
-            if (pathfindingVectorPos.size() > 1) {
-                Vector2 pos = pathfindingVectorPos.removeFirst();
-                this.setPosition(pos);
-                System.out.println("taking step: " + pos);
-            }
+        // prepare the next set of substeps on cooldown timer
+        if ((System.currentTimeMillis() - lastTriggered) > cooldown
+                && !pathfindingVectorPos.isEmpty() && steps.isEmpty()) {
+            generateSubSteps();
             lastTriggered = System.currentTimeMillis();
         }
-    }
 
-    private void generateSteps(int parts){
-        for (Vector2 step : pathfindingVectorPos) {
-            Vector2 stepDiff = step.sub(this.getPosition());
-            //split to a tenth
-            Vector2 addititve = new Vector2((stepDiff).scl((float) 1 / parts));
-            for (int i = 0; i < parts; i++){
-                steps.add(new Vector2(this.getPosition()).add(addititve));
-            }
-
+        // Move step-by-step smoothly
+        if (!steps.isEmpty()) {
+            Vector2 nextStep = steps.removeFirst();
+            this.setPosition(nextStep);
         }
     }
+
+    /**
+     * Generates sub-steps based on speed and delta time.
+     */
+    private void generateSubSteps() {
+        if (pathfindingVectorPos.isEmpty()) {
+            return;
+        }
+        float speed = this.getMoveSpeed();
+        float deltaTime = Gdx.graphics.getDeltaTime();
+        Vector2 currentPos = new Vector2(this.getPosition());
+        lastTargetPos = pathfindingVectorPos.removeFirst();
+
+        float distance = currentPos.dst(lastTargetPos);
+        float stepSize = speed * deltaTime;
+        int numSteps = Math.max(1, (int) (distance / stepSize));
+
+        for (int i = 1; i <= numSteps; i++) {
+            float t = i / (float) numSteps;
+            Vector2 tempStep = new Vector2(
+                    currentPos.x + t * (lastTargetPos.x - currentPos.x),
+                    currentPos.y + t * (lastTargetPos.y - currentPos.y)
+            );
+            steps.add(tempStep);
+        }
+    }
+
 }

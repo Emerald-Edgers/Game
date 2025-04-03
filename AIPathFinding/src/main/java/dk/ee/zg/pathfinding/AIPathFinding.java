@@ -52,8 +52,6 @@ public class AIPathFinding implements IPathFinder {
         int startY = (int) (origin.getPosition().y / (tileHeight));
         int goalX = (int) (target.getPosition().x / (tileWidth));
         int goalY = (int) (target.getPosition().y / (tileHeight));
-        System.out.println(origin.getPosition()+ ""+ target.getPosition());
-        System.out.println("GOAl:" + goalX +" : "+ goalY);
         List<Vector2> pathInPixelPos = new ArrayList<>();
         for (Node node : findPath(startX, startY, goalX, goalY)) {
             //node position multiplied with half of tile size,
@@ -98,8 +96,6 @@ public class AIPathFinding implements IPathFinder {
 
             if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
                 walkableGrid[x][y] = false;
-                System.out.println(
-                        "Obstacle detected at: XY[" + x + ":" + y + "]");
             }
         }
         //testing
@@ -142,21 +138,10 @@ public class AIPathFinding implements IPathFinder {
         Node startNode = new Node(startX, startY,
                 heuristic(startX, startY, goalX, goalY), null, 0);
         open.add(startNode);
-        System.out.println("start node: XY["
-                + startNode.getX() + ":" + startNode.getY() + "]"
-                + " gcost: " + startNode.getgCost() + " hcost: "
-                + startNode.gethCost() + " fcost: "
-                + startNode.getfCost());
         while (!open.isEmpty()) {
             Node currentNode = open.poll();
-            System.out.println("current node: XY["
-                    + currentNode.getX() + ":" + currentNode.getY() + "]"
-                    + " gcost: " + currentNode.getgCost() + " hcost: "
-                    + currentNode.gethCost() + " fcost: "
-                    + currentNode.getfCost());
             //if node is goal
             if (currentNode.getX() == goalX && currentNode.getY() == goalY) {
-                System.out.println("found end");
                 return constructPath(currentNode);
             }
             closed.add(currentNode);
@@ -164,7 +149,6 @@ public class AIPathFinding implements IPathFinder {
             for (Node succesorNode : getSuccesors(currentNode, goalX, goalY)) {
                 //if closed contains successor node, skip it
                 if (closed.contains(succesorNode)) {
-                    System.out.println("found node in closed");
                     continue;
                 }
 

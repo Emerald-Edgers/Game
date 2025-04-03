@@ -105,14 +105,6 @@ public class GameScreen implements Screen {
         gameData = GameData.getInstance();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
-        Entity e1 = new Entity(new Vector2(2, 0),
-                0, new Vector2(0.1F, 0.1F),
-                "placeholder32x32.png", EntityType.Enemy);
-        Skeleton e2 = new Skeleton(10,10,1,
-                100,10, 10f, new Vector2(37,15));
-        worldEntities.addEntity(e1);
-        worldEntities.addEntity(e2);
-
     }
 
 
