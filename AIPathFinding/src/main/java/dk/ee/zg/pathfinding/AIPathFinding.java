@@ -48,18 +48,18 @@ public class AIPathFinding implements IPathFinder {
         float tileHeight = tileLayer.getTileHeight() * gameData.getUNIT_SCALE();
         //since get position returns center pos of entity,
         // it is only divided by half of tilewidth and height.
-        int startX = (int) (origin.getPosition().x / (tileWidth / 2));
-        int startY = (int) (origin.getPosition().y / (tileHeight / 2));
-        int goalX = (int) (target.getPosition().x / (tileWidth / 2));
-        int goalY = (int) (target.getPosition().y / (tileHeight / 2));
+        int startX = (int) (origin.getPosition().x / (tileWidth));
+        int startY = (int) (origin.getPosition().y / (tileHeight));
+        int goalX = (int) (target.getPosition().x / (tileWidth));
+        int goalY = (int) (target.getPosition().y / (tileHeight));
         System.out.println(origin.getPosition()+ ""+ target.getPosition());
         System.out.println("GOAl:" + goalX +" : "+ goalY);
         List<Vector2> pathInPixelPos = new ArrayList<>();
         for (Node node : findPath(startX, startY, goalX, goalY)) {
             //node position multiplied with half of tile size,
             // to get center of tile in pixel pos.
-            Vector2 tempPos = new Vector2(node.getX() * (tileWidth / 2),
-                    node.getY() * (tileHeight / 2));
+            Vector2 tempPos = new Vector2(node.getX() * (tileWidth),
+                    node.getY() * (tileHeight));
             pathInPixelPos.add(tempPos);
         }
         return pathInPixelPos;
@@ -84,6 +84,7 @@ public class AIPathFinding implements IPathFinder {
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapHeight; y++) {
                 walkableGrid[x][y] = true;
+
             }
         }
 
@@ -223,7 +224,12 @@ public class AIPathFinding implements IPathFinder {
         for (int[] dir : directions) {
             int x = node.getX() + dir[0];
             int y = node.getY() + dir[1];
-            if (x < 0 || x > walkableGrid.length || y < 0 || y > walkableGrid[x].length){
+            //if outside x
+            if (x < 0 || x > walkableGrid.length - 1) {
+                continue;
+            }
+            //if outside y
+            if (y < 0 || y > walkableGrid[x].length - 1) {
                 continue;
             }
             if (walkableGrid[x][y]) {

@@ -71,13 +71,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 50;
+    private static final float VIEWPORT_WIDTH = 32;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 75;
+    private static final float VIEWPORT_HEIGHT = 16 ;
 
     /**
      * The amount of pixels a singular unit represents.
