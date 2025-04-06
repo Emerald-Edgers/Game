@@ -279,11 +279,12 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
+        batch.setProjectionMatrix(camera.combined);
+
         if (map != null) {
-            map.renderMap(); // Render the map
+            map.renderBottom();
         }
 
-        batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
 
         for (Entity entity : worldEntities.getEntities()) {
@@ -291,6 +292,11 @@ public class GameScreen implements Screen {
         }
 
         batch.end(); // End drawing
+
+        if (map != null) {
+            map.renderTop();
+        }
+
     }
 
 

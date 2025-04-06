@@ -24,6 +24,11 @@ public class BaseMap implements IMap {
     private OrthogonalTiledMapRenderer renderer;
 
     /**
+     * The index the render Bottom and top uses.
+     */
+    private int objectsLayerIndex;
+
+    /**
      * Sets this instance's {@link TiledMap} to the map found.
      * Creates a new {@link OrthogonalTiledMapRenderer}
      * for map with given unitscale.
@@ -41,6 +46,7 @@ public class BaseMap implements IMap {
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
         getObstaclesFromLayer(map.getLayers().get(
                 "Collision"), worldObstacles, unitScale);
+        objectsLayerIndex = map.getLayers().getIndex("Objects");
     }
 
     /**
@@ -49,9 +55,32 @@ public class BaseMap implements IMap {
      * Calls {@code OrthogonalTiledMapRenderer.render()}
      */
     @Override
-    public void renderMap() {
+    public void renderBottom() {
+        renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
-        renderer.render();
+        for (int i = 0; i < objectsLayerIndex; i++) {
+            System.out.println(map.getLayers().get(i).getName());
+            renderer.renderTileLayer(
+                    (TiledMapTileLayer) map.getLayers().get(i));
+        }
+        renderer.getBatch().end();
+    }
+
+    /**
+     * Sets the view of this instance's {@link OrthogonalTiledMapRenderer}
+     * to the camera retrieved from {@link GameData}.
+     * Calls {@code OrthogonalTiledMapRenderer.render()}
+     */
+    @Override
+    public void renderTop() {
+        renderer.getBatch().begin();
+        renderer.setView(GameData.getInstance().getCamera());
+        for (int i = objectsLayerIndex; i < map.getLayers().getCount(); i++) {
+            System.out.println("TOP ------" + map.getLayers().get(i).getName());
+            renderer.renderTileLayer(
+                    (TiledMapTileLayer) map.getLayers().get(i));
+        }
+        renderer.getBatch().end();
     }
 
     /**
