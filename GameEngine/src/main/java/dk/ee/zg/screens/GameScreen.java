@@ -5,6 +5,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import dk.ee.zg.enemeSkeleton.Skeleton;
+import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.map.data.Entity;
@@ -68,13 +70,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 8;
+    private static final float VIEWPORT_WIDTH = 50;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 8;
+    private static final float VIEWPORT_HEIGHT = 75;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -105,7 +107,11 @@ public class GameScreen implements Screen {
         Entity e1 = new Entity(new Vector2(2, 0),
                 0, new Vector2(0.1F, 0.1F),
                 "placeholder32x32.png", EntityType.Enemy);
+        Skeleton e2 = new Skeleton(10,10,1,
+                100,10, 10f, new Vector2(37,15));
         worldEntities.addEntity(e1);
+        worldEntities.addEntity(e2);
+
     }
 
 
@@ -238,11 +244,12 @@ public class GameScreen implements Screen {
         enemySpawnerUpdate(v);
 
         for (Entity entity : worldEntities.getEntities()) {
+            if (entity instanceof Projectile) {
+                ((Projectile) entity).update();
+            }
             if (entity.getEntityType() == EntityType.Player) {
-                float cameraX = entity.getPosition().x
-                        + entity.getSprite().getWidth() / 2;
-                float cameraY = entity.getPosition().y
-                        + entity.getSprite().getHeight() / 2;
+                float cameraX = entity.getPosition().x;
+                float cameraY = entity.getPosition().y;
                 camera.position.set(cameraX, cameraY, 0);
                 checkBounds();
             }
