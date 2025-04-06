@@ -3,9 +3,7 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import dk.ee.zg.enemeSkeleton.Skeleton;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
@@ -71,13 +69,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 32;
+    private static final float VIEWPORT_WIDTH = 8;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 16 ;
+    private static final float VIEWPORT_HEIGHT = 8;
 
     /**
      * The amount of pixels a singular unit represents.
