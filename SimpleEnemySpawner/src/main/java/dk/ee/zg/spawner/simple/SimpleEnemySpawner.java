@@ -152,10 +152,10 @@ public class SimpleEnemySpawner implements IEnemySpawner {
         List<Integer> validEdges = new ArrayList<>(List.of(0, 1, 2, 3));
 
         if (bottomCorner.x <= 0) {
-            validEdges.remove(Integer.valueOf(0));
+            validEdges.remove(Integer.valueOf(0)); // Left edge
         }
         if (bottomCorner.y <= 0) {
-            validEdges.remove(Integer.valueOf(3));
+            validEdges.remove(Integer.valueOf(3)); //Bottom edge
         }
         if (topCorner.x >= 50) {
             validEdges.remove(Integer.valueOf(1)); // Right edge
