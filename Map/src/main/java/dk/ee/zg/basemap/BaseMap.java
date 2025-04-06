@@ -59,7 +59,6 @@ public class BaseMap implements IMap {
         renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
         for (int i = 0; i < objectsLayerIndex; i++) {
-            System.out.println(map.getLayers().get(i).getName());
             renderer.renderTileLayer(
                     (TiledMapTileLayer) map.getLayers().get(i));
         }
@@ -76,7 +75,6 @@ public class BaseMap implements IMap {
         renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
         for (int i = objectsLayerIndex; i < map.getLayers().getCount(); i++) {
-            System.out.println("TOP ------" + map.getLayers().get(i).getName());
             renderer.renderTileLayer(
                     (TiledMapTileLayer) map.getLayers().get(i));
         }
