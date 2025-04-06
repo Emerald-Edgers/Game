@@ -105,7 +105,6 @@ public class Projectile extends Entity {
         if (collisionEngine.collidesWithEntity(
                 this, player)) {
             //TODO: Implement Hit
-            System.out.println("YESYESYES");
         }
     }
 }

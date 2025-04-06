@@ -4,10 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IEnemy;
+import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.player.Player;
+
+import java.util.Optional;
+import java.util.ServiceLoader;
 
 public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
 
@@ -38,6 +42,8 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
 
     }
 
+
+
     @Override
     public void process(final WorldEntities world) {
 
@@ -49,9 +55,18 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
             }
         }
 
-
-        for (Entity skeleton : world.getEntities(Skeleton.class)) {
-            move((Skeleton) skeleton);
+        for (Entity skele : world.getEntities(Skeleton.class)) {
+            //System.out.println(skele.getPosition());
+            Skeleton skeleton = (Skeleton) skele;
+            Optional<IPathFinder> pathFinder =
+                    ServiceLoader.load(IPathFinder.class).findFirst();
+            // if pathfinder available move with pathfinding,
+            // else move with normal movement way.
+            if (pathFinder.isPresent()) {
+                skeleton.moveWithPathFinding(pathFinder.get(), player);
+            } else {
+                move(skeleton);
+            }
         }
 
 

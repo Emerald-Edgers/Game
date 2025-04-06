@@ -9,6 +9,7 @@ import dk.ee.zg.enemeSkeleton.Skeleton;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
+import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -70,13 +71,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 50;
+    private static final float VIEWPORT_WIDTH = 32;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 75;
+    private static final float VIEWPORT_HEIGHT = 16 ;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -104,14 +105,6 @@ public class GameScreen implements Screen {
         gameData = GameData.getInstance();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
-        Entity e1 = new Entity(new Vector2(2, 0),
-                0, new Vector2(0.1F, 0.1F),
-                "placeholder32x32.png", EntityType.Enemy);
-        Skeleton e2 = new Skeleton(10,10,1,
-                100,10, 10f, new Vector2(37,15));
-        worldEntities.addEntity(e1);
-        worldEntities.addEntity(e2);
-
     }
 
 
@@ -147,6 +140,9 @@ public class GameScreen implements Screen {
                 map = mapImpl;
                 map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
+        }
+        for (IPathFinder pathFinder : ServiceLoader.load(IPathFinder.class)) {
+            pathFinder.load(worldObstacles, map.getMap());
         }
     }
 
