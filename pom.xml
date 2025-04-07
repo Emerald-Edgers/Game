@@ -21,6 +21,7 @@
         <module>AIPathFinding</module>
         <module>Boss</module>
         <module>EnemySkeleton</module>
+        <module>CommonItem</module>
     </modules>
 
     <properties>
