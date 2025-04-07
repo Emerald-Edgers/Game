@@ -24,6 +24,11 @@ public class BaseMap implements IMap {
     private OrthogonalTiledMapRenderer renderer;
 
     /**
+     * The index the render Bottom and top uses.
+     */
+    private int objectsLayerIndex;
+
+    /**
      * Sets this instance's {@link TiledMap} to the map found.
      * Creates a new {@link OrthogonalTiledMapRenderer}
      * for map with given unitscale.
@@ -33,11 +38,15 @@ public class BaseMap implements IMap {
      *                     (E.g. 1 / 32 means 32 pixels per unit)
      */
     @Override
-    public void loadMap(final String mapName, final float unitScale, final WorldObstacles worldObstacles) {
+
+    public void loadMap(final String mapName,
+                        final float unitScale,
+                        final WorldObstacles worldObstacles) {
         map = new TmxMapLoader().load(mapName);
         renderer = new OrthogonalTiledMapRenderer(map, unitScale);
         getObstaclesFromLayer(map.getLayers().get(
                 "Collision"), worldObstacles, unitScale);
+        objectsLayerIndex = map.getLayers().getIndex("Objects");
     }
 
     /**
@@ -46,9 +55,30 @@ public class BaseMap implements IMap {
      * Calls {@code OrthogonalTiledMapRenderer.render()}
      */
     @Override
-    public void renderMap() {
+    public void renderBottom() {
+        renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
-        renderer.render();
+        for (int i = 0; i < objectsLayerIndex; i++) {
+            renderer.renderTileLayer(
+                    (TiledMapTileLayer) map.getLayers().get(i));
+        }
+        renderer.getBatch().end();
+    }
+
+    /**
+     * Sets the view of this instance's {@link OrthogonalTiledMapRenderer}
+     * to the camera retrieved from {@link GameData}.
+     * Calls {@code OrthogonalTiledMapRenderer.render()}
+     */
+    @Override
+    public void renderTop() {
+        renderer.getBatch().begin();
+        renderer.setView(GameData.getInstance().getCamera());
+        for (int i = objectsLayerIndex; i < map.getLayers().getCount(); i++) {
+            renderer.renderTileLayer(
+                    (TiledMapTileLayer) map.getLayers().get(i));
+        }
+        renderer.getBatch().end();
     }
 
     /**
@@ -74,6 +104,8 @@ public class BaseMap implements IMap {
      * Get the obstacles as a collection of rectangles from a specific layer.
      * @param layer The layer of which the obstacles is on.
      * @param obstacles The WorldObstacles class that is being used.
+     * @param unitScale    The scale of a singular unit$.
+     *                     (E.g. 1 / 32 means 32 pixels per unit)
      * @return Collection of obstacle rectangles.
      */
     @Override
@@ -82,22 +114,29 @@ public class BaseMap implements IMap {
                                                                obstacles,
                                                        final float unitScale) {
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) layer;
+
+        float tileWidth = tileLayer.getTileWidth() * unitScale;
+        float tileHeight = tileLayer.getTileHeight() * unitScale;
         for (int x = 0; x < tileLayer.getWidth(); x++) {
             for (int y = 0; y < tileLayer.getHeight(); y++) {
-                if (tileLayer.getCell(x, y).getTile().getProperties().
-                        containsKey("collision")) {
-                    int tileWidth = (int)
-                            (tileLayer.getTileWidth() * unitScale);
-                    int tileHeight = (int)
-                            (tileLayer.getTileHeight() * unitScale);
+
+                TiledMapTileLayer.Cell cell = tileLayer.getCell(x, y);
+                if (cell == null) {
+                    continue;
+                }
+                if (cell.getTile() == null) {
+                    continue;
+                }
+
+                if (cell.getTile().getProperties().containsKey("collision")) {
+                    Rectangle rectangle = new Rectangle(
+                            (x * tileWidth),
+                            (y * tileHeight),
+                            tileWidth,
+                            tileHeight);
                     obstacles.addObstacle(
                             UUID.randomUUID(),
-                            new Rectangle(
-                                    (x * tileWidth) - tileWidth,
-                                    (y * tileHeight) - tileHeight,
-                                    tileWidth,
-                                    tileHeight
-                            )
+                            rectangle
                     );
                 }
             }

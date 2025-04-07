@@ -5,10 +5,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import dk.ee.zg.enemeSkeleton.Skeleton;
+import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
+import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
+import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
-import dk.ee.zg.common.map.data.World;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.interfaces.IMap;
@@ -32,7 +35,6 @@ public class GameScreen implements Screen {
     private final WorldEntities worldEntities;
 
     /**
-
      * Instance of {@link WorldObstacles}
      * used for interacting with world obstacles.
      */
@@ -55,6 +57,12 @@ public class GameScreen implements Screen {
     private IMap map;
 
     /**
+     * Instance of
+     * {@link dk.ee.zg.common.enemy.interfaces.IEnemySpawner} currently loaded.
+     */
+    private IEnemySpawner enemySpawner;
+
+    /**
      * Instance of {@link SpriteBatch} used for drawing sprites to the screen.
      */
     private SpriteBatch batch;
@@ -63,13 +71,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 8;
+    private static final float VIEWPORT_WIDTH = 32;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 8;
+    private static final float VIEWPORT_HEIGHT = 16 ;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -97,10 +105,6 @@ public class GameScreen implements Screen {
         gameData = GameData.getInstance();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
-        Entity e1 = new Entity(new Vector2(2, 0),
-                0, new Vector2(0.1F, 0.1F),
-                "placeholder32x32.png", EntityType.Enemy);
-        worldEntities.addEntity(e1);
     }
 
 
@@ -118,6 +122,7 @@ public class GameScreen implements Screen {
         }
 
         initCamera();
+        initSpawner();
         initMap("main-map.tmx");
     }
 
@@ -135,6 +140,25 @@ public class GameScreen implements Screen {
                 map = mapImpl;
                 map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
+        }
+        for (IPathFinder pathFinder : ServiceLoader.load(IPathFinder.class)) {
+            pathFinder.load(worldObstacles, map.getMap());
+        }
+    }
+
+    /**
+     * Loads the first implementation of {@link IEnemySpawner} that the
+     * {@link ServiceLoader} finds.
+     * Sets the local variable {@code enemySpawner} to the found implementation.
+     */
+    private void initSpawner() {
+        ServiceLoader<IEnemySpawner> spawnerLoader
+                = ServiceLoader.load(IEnemySpawner.class);
+
+        enemySpawner = spawnerLoader.findFirst().orElse(null);
+
+        if (enemySpawner != null) {
+            enemySpawner.start(worldEntities);
         }
     }
 
@@ -195,7 +219,7 @@ public class GameScreen implements Screen {
      */
     @Override
     public void render(final float v) {
-        update();
+        update(v);
         draw();
         collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
@@ -204,24 +228,42 @@ public class GameScreen implements Screen {
     /**
      * Update loop, part of the main game loop. Is called before {@code draw()}.
      * Handles logic related to updating the game.
+     * @param v The delta-time of the current frame.
      */
-    private void update() {
+    private void update(final float v) {
+
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
             entity.process(worldEntities);
         }
 
+        enemySpawnerUpdate(v);
+
         for (Entity entity : worldEntities.getEntities()) {
+            if (entity instanceof Projectile) {
+                ((Projectile) entity).update();
+            }
             if (entity.getEntityType() == EntityType.Player) {
-                float cameraX = entity.getPosition().x
-                        + entity.getSprite().getWidth() / 2;
-                float cameraY = entity.getPosition().y
-                        + entity.getSprite().getHeight() / 2;
+                float cameraX = entity.getPosition().x;
+                float cameraY = entity.getPosition().y;
                 camera.position.set(cameraX, cameraY, 0);
                 checkBounds();
             }
         }
+        //TODO optimize optimizeObstaclces to get called at a fixed interval.
+        worldObstacles.optimizeObstacles();
         camera.update();
+    }
+
+    /**
+     * Handles the update of the spawner.
+     * Runs without error if no spawners were found.
+     * @param v The delta-time of the current frame.
+     */
+    private void enemySpawnerUpdate(final float v) {
+        if (enemySpawner != null) {
+            enemySpawner.process(v, worldEntities);
+        }
     }
 
     /**
@@ -233,11 +275,12 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
+        batch.setProjectionMatrix(camera.combined);
+
         if (map != null) {
-            map.renderMap(); // Render the map
+            map.renderBottom();
         }
 
-        batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
 
         for (Entity entity : worldEntities.getEntities()) {
@@ -245,6 +288,11 @@ public class GameScreen implements Screen {
         }
 
         batch.end(); // End drawing
+
+        if (map != null) {
+            map.renderTop();
+        }
+
     }
 
 

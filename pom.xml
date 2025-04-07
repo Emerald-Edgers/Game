@@ -16,6 +16,11 @@
         <module>CommonWeapon</module>
         <module>Sword</module>
         <module>Collision</module>
+        <module>CommonEnemy</module>
+        <module>SimpleEnemySpawner</module>
+        <module>AIPathFinding</module>
+        <module>Boss</module>
+        <module>EnemySkeleton</module>
     </modules>
 
     <properties>

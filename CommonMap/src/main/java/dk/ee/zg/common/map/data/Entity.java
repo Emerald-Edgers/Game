@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
 
 import java.util.UUID;
 
@@ -14,13 +16,16 @@ public class Entity {
      */
     private final UUID id;
     private final EntityType entityType;
-    private Vector2 position;
     private float rotation;
     private Vector2 scale;
     private String sprite_path;
 
-    private Sprite sprite;
+    private final Sprite sprite;
 
+    /**
+     * hp is the current amount of health, an entity has.
+     */
+    private int hp;
 
     public Sprite getSprite() {
         return sprite;
@@ -30,7 +35,6 @@ public class Entity {
 
     public Entity(Vector2 position, float rotation, Vector2 scale, String sprite_path, EntityType entityType) {
         this.id = UUID.randomUUID();
-        this.position = position;
         this.rotation = rotation;
         this.scale = scale;
         this.sprite_path = sprite_path;
@@ -38,6 +42,7 @@ public class Entity {
         Texture img = new Texture(sprite_path); // Load texture from file
         this.sprite = new Sprite(img); // Create a sprite from the texture
         sprite.setScale(scale.x,scale.y);
+        this.setPosition(position);
     }
 
     public UUID getId() {
@@ -49,11 +54,13 @@ public class Entity {
     }
 
     public Vector2 getPosition() {
+        Vector2 position = new Vector2();
+        sprite.getBoundingRectangle().getCenter(position);
         return position;
     }
 
     public void setPosition(Vector2 position) {
-        this.position = position;
+        sprite.setCenter(position.x, position.y);
     }
 
     public float getRotation() {
@@ -80,10 +87,35 @@ public class Entity {
         this.sprite_path = sprite_path;
     }
 
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(final int hp) {
+        this.hp = hp;
+    }
+
     public void draw(SpriteBatch batch) {
-        sprite.setScale(scale.x,scale.y);
-        sprite.setPosition(position.x, position.y);
+        sprite.setScale(scale.x, scale.y);
+        sprite.setRotation(rotation);
+
         sprite.draw(batch); // Draw the sprite
 
+    }
+
+    /**
+     * universal method for getting hit.
+     * triggers enemy killed event, with 100 exp added.
+     * @param damage - damage taken, dertermined,
+     *               by the attacker
+     */
+    public void hit(final int damage) {
+        if (entityType != EntityType.Obstacle) {
+            this.hp -= damage;
+            //if dead, trigger enemykilledevent
+            if (this.hp <= 0) {
+                EventManager.triggerEvent(new Events.EnemyKilledEvent(100, this.id));
+            }
+        }
     }
 }
