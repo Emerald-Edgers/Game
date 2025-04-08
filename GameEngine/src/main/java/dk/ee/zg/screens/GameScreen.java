@@ -2,10 +2,16 @@ package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import dk.ee.zg.enemeSkeleton.Skeleton;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
@@ -22,12 +28,20 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dk.ee.zg.popups.LevelUpPopup;
 
 public class GameScreen implements Screen {
     /**
      * Instance of the singleton class {@link GameData}.
      */
     private final GameData gameData;
+
+    private Stage stage;
+
+    /**
+     * Local instance of skin. Contains information regarding styling.
+     */
+    private Skin skin;
 
     /**
      * Instance of {@link WorldEntities} used for interacting with entities.
@@ -98,6 +112,16 @@ public class GameScreen implements Screen {
     private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
     /**
+     * Constant:    The size of bold text.
+     */
+    private static final int BOLD_FONT_SIZE = 74;
+
+    /**
+     * Constant:    The size of regular text.
+     */
+    private static final int REGULAR_FONT_SIZE = 56;
+
+    /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
@@ -121,9 +145,23 @@ public class GameScreen implements Screen {
             entity.start(worldEntities);
         }
 
+
+
         initCamera();
         initSpawner();
         initMap("main-map.tmx");
+
+        stage = new Stage(
+                new FitViewport(VIEWPORT_WIDTH,
+                        VIEWPORT_HEIGHT,
+                        camera));
+
+        skin = new Skin(Gdx.files.internal("pixthulhu-ui.json"));
+        //loadFonts(skin);
+        //setupStyles(skin);
+
+        LevelUpPopup levelUpPopup = new LevelUpPopup("confirm exit", skin);
+        levelUpPopup.show(stage);
     }
 
     /**
@@ -352,5 +390,79 @@ public class GameScreen implements Screen {
     public void dispose() {
         batch.dispose();
         map.getRenderer().dispose();
+        stage.dispose();
+        skin.dispose();
+    }
+
+    /**
+     * Method for separating the setup of various styles for ui components.
+     * Adds the styles to the given {@link Skin}.
+     *
+     * @param baseSkin instance to populate with styles.
+     */
+    private void setupStyles(final Skin baseSkin) {
+        Label.LabelStyle regularLabel = new Label.LabelStyle();
+        regularLabel.font = baseSkin.getFont("regular");
+        baseSkin.add("regular", regularLabel);
+
+        Label.LabelStyle boldLabel = new Label.LabelStyle();
+        boldLabel.font = baseSkin.getFont("bold");
+        baseSkin.add("bold", boldLabel);
+
+        ScrollPane.ScrollPaneStyle scrollStyle =
+                new ScrollPane.ScrollPaneStyle();
+        baseSkin.add("regular", scrollStyle);
+    }
+
+    /**
+     * Loads fonts for use with various text objects in the scene.
+     * Fonts are added to the local instance of {@link Skin}
+     *
+     * @param baseSkin instance which fonts should be saved to.
+     */
+    private void loadFonts(final Skin baseSkin) {
+        FreeTypeFontGenerator fontGenerator;
+        fontGenerator = new FreeTypeFontGenerator(
+                new FileHandle("GameEngine/src/main/resources"
+                        + "/CinzelDecorative-Regular.ttf")
+        );
+        FreeTypeFontGenerator.FreeTypeFontParameter regularParams
+                = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        regularParams.size = REGULAR_FONT_SIZE;
+
+        BitmapFont font = fontGenerator.generateFont(regularParams);
+
+        baseSkin.add("regular", font, BitmapFont.class);
+
+        fontGenerator = new FreeTypeFontGenerator(
+                new FileHandle("GameEngine/src/main/resources"
+                        + "/CinzelDecorative-Bold.ttf")
+        );
+        FreeTypeFontGenerator.FreeTypeFontParameter boldParams
+                = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        boldParams.size = BOLD_FONT_SIZE;
+
+        BitmapFont boldFont = fontGenerator.generateFont(boldParams);
+
+        baseSkin.add("bold", boldFont, BitmapFont.class);
+
+        fontGenerator.dispose();
+    }
+
+    /**
+     * Wrapper method to create consistent labels.
+     *
+     * @param text      displayed by the label.
+     * @param baseSkin      skin which the label should use.
+     * @param styleName which is should be used by the label.
+     *                  Must be saved in skin already.
+     * @param color     of the text to be displayed.
+     * @return new instance of label.
+     */
+    private Label createLabel(final String text, final Skin baseSkin,
+                              final String styleName, final Color color) {
+        Label label = new Label(text, baseSkin, styleName);
+        label.setColor(color);
+        return label;
     }
 }
