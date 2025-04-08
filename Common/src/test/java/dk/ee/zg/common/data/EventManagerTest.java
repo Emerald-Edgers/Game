@@ -28,11 +28,6 @@ class EventManagerTest {
         }
     }
 
-    @AfterEach
-    void tearDown() {
-        EventManager.clearListeners();
-    }
-
     @Test
     void testSingleListenersIsCalled() {
         AtomicBoolean wasCalled = new AtomicBoolean(false);

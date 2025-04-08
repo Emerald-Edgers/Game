@@ -59,14 +59,4 @@ public final class EventManager {
             }
         }
     }
-
-
-    /**
-     * Clears all registered Listeners.
-     * This is intended for test purposes only.
-     */
-    static void clearListeners() {
-        LISTENERS.clear();
-    }
-
 }
