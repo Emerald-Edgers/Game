@@ -22,6 +22,7 @@
         <module>Boss</module>
         <module>EnemySkeleton</module>
         <module>EnemyDragon</module>
+        <module>CommonTest</module>
     </modules>
 
     <properties>
