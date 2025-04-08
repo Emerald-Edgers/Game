@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 class LinearCollisionEngineTest {
     private LinearCollisionEngine linearCollisionEngine;
 
@@ -34,29 +38,29 @@ class LinearCollisionEngineTest {
     void setUp() {
         linearCollisionEngine = new LinearCollisionEngine();
 
-        worldEntities = Mockito.mock(WorldEntities.class);
-        worldObstacles = Mockito.mock(WorldObstacles.class);
+        worldEntities = mock(WorldEntities.class);
+        worldObstacles = mock(WorldObstacles.class);
 
-        e1 = Mockito.mock(Entity.class);
-        e2 = Mockito.mock(Entity.class);
-        e3 = Mockito.mock(Entity.class);
+        e1 = mock(Entity.class);
+        e2 = mock(Entity.class);
+        e3 = mock(Entity.class);
 
-        Sprite e1Sprite = Mockito.mock(Sprite.class);
-        Sprite e2Sprite = Mockito.mock(Sprite.class);
-        Sprite e3Sprite = Mockito.mock(Sprite.class);
+        Sprite e1Sprite = mock(Sprite.class);
+        Sprite e2Sprite = mock(Sprite.class);
+        Sprite e3Sprite = mock(Sprite.class);
 
         Rectangle e1Rectangle = new Rectangle(0, 0, 10, 10);
         Rectangle e2Rectangle = new Rectangle(5, 5, 10, 10);
         Rectangle e3Rectangle = new Rectangle(100, 100, 10, 10);
 
-        Mockito.when(e1.getSprite()).thenReturn(e1Sprite);
-        Mockito.when(e1Sprite.getBoundingRectangle()).thenReturn(e1Rectangle);
+        when(e1.getSprite()).thenReturn(e1Sprite);
+        when(e1Sprite.getBoundingRectangle()).thenReturn(e1Rectangle);
 
-        Mockito.when(e2.getSprite()).thenReturn(e2Sprite);
-        Mockito.when(e2Sprite.getBoundingRectangle()).thenReturn(e2Rectangle);
+        when(e2.getSprite()).thenReturn(e2Sprite);
+        when(e2Sprite.getBoundingRectangle()).thenReturn(e2Rectangle);
 
-        Mockito.when(e3.getSprite()).thenReturn(e3Sprite);
-        Mockito.when(e3Sprite.getBoundingRectangle()).thenReturn(e3Rectangle);
+        when(e3.getSprite()).thenReturn(e3Sprite);
+        when(e3Sprite.getBoundingRectangle()).thenReturn(e3Rectangle);
 
         obstacle1 = new Rectangle(0, 0, 10, 10);
         obstacle2 = new Rectangle(100, 100, 10, 10);
@@ -67,44 +71,44 @@ class LinearCollisionEngineTest {
         UUID id1 = UUID.randomUUID();
         UUID id2 = UUID.randomUUID();
 
-        Mockito.when(e1.getId()).thenReturn(id1);
-        Mockito.when(e2.getId()).thenReturn(id2);
+        when(e1.getId()).thenReturn(id1);
+        when(e2.getId()).thenReturn(id2);
 
-        Mockito.when(e1.getEntityType()).thenReturn(EntityType.Enemy);
-        Mockito.when(e2.getEntityType()).thenReturn(EntityType.Enemy);
+        when(e1.getEntityType()).thenReturn(EntityType.Enemy);
+        when(e2.getEntityType()).thenReturn(EntityType.Enemy);
 
-        Mockito.when(e1.getPosition()).thenReturn(new Vector2(0, 0));
-        Mockito.when(e2.getPosition()).thenReturn(new Vector2(0, 0));
+        when(e1.getPosition()).thenReturn(new Vector2(0, 0));
+        when(e2.getPosition()).thenReturn(new Vector2(0, 0));
 
-        Mockito.when(worldEntities.getEntities()).thenReturn(List.of(e1, e2));
+        when(worldEntities.getEntities()).thenReturn(List.of(e1, e2));
 
         linearCollisionEngine.process(worldEntities, worldObstacles);
 
         assertDoesNotThrow(() -> {
-            Mockito.verify(e1, Mockito.times(1))
-                    .setPosition(Mockito.any());
+            verify(e1, times(1))
+                    .setPosition(any());
         }, "Entity 1 should collide exactly once");
 
         assertDoesNotThrow(() -> {
-            Mockito.verify(e2, Mockito.times(1))
-                    .setPosition(Mockito.any());
+            verify(e2, times(1))
+                    .setPosition(any());
         }, "Entity 2 should collide exactly once");
     }
 
     @Test
     void testProcessWithSameCollidingEntities() {
         UUID id1 = UUID.randomUUID();
-        Mockito.when(e1.getId()).thenReturn(id1);
-        Mockito.when(e1.getEntityType()).thenReturn(EntityType.Enemy);
-        Mockito.when(e1.getPosition()).thenReturn(new Vector2(0, 0));
+        when(e1.getId()).thenReturn(id1);
+        when(e1.getEntityType()).thenReturn(EntityType.Enemy);
+        when(e1.getPosition()).thenReturn(new Vector2(0, 0));
 
-        Mockito.when(worldEntities.getEntities()).thenReturn(List.of(e1));
+        when(worldEntities.getEntities()).thenReturn(List.of(e1));
 
         linearCollisionEngine.process(worldEntities, worldObstacles);
 
         assertDoesNotThrow(() -> {
-            Mockito.verify(e1, Mockito.times(0))
-                    .setPosition(Mockito.any());
+            verify(e1, times(0))
+                    .setPosition(any());
         }, "Same entity should exit early");
     }
 
@@ -113,43 +117,43 @@ class LinearCollisionEngineTest {
         UUID id1 = UUID.randomUUID();
         UUID id3 = UUID.randomUUID();
 
-        Mockito.when(e1.getId()).thenReturn(id1);
-        Mockito.when(e1.getEntityType()).thenReturn(EntityType.Enemy);
-        Mockito.when(e1.getPosition()).thenReturn(new Vector2(0, 0));
+        when(e1.getId()).thenReturn(id1);
+        when(e1.getEntityType()).thenReturn(EntityType.Enemy);
+        when(e1.getPosition()).thenReturn(new Vector2(0, 0));
 
-        Mockito.when(e3.getId()).thenReturn(id3);
-        Mockito.when(e3.getEntityType()).thenReturn(EntityType.Enemy);
-        Mockito.when(e3.getPosition()).thenReturn(new Vector2(100, 100));
+        when(e3.getId()).thenReturn(id3);
+        when(e3.getEntityType()).thenReturn(EntityType.Enemy);
+        when(e3.getPosition()).thenReturn(new Vector2(100, 100));
 
-        Mockito.when(worldEntities.getEntities()).thenReturn(List.of(e1, e3));
+        when(worldEntities.getEntities()).thenReturn(List.of(e1, e3));
 
         linearCollisionEngine.process(worldEntities, worldObstacles);
 
         assertDoesNotThrow(() -> {
-            Mockito.verify(e1, Mockito.times(0))
-                    .setPosition(Mockito.any());
+            verify(e1, times(0))
+                    .setPosition(any());
         }, "Entity 1 should not collide");
         assertDoesNotThrow(() -> {
-            Mockito.verify(e3, Mockito.times(0))
-                    .setPosition(Mockito.any());
+            verify(e3, times(0))
+                    .setPosition(any());
         }, "Entity 3 should not collide");
     }
 
     @Test
     void testProcessEntityShouldCollideWithRectangle() {
         UUID id1 = UUID.randomUUID();
-        Mockito.when(e1.getId()).thenReturn(id1);
-        Mockito.when(e1.getEntityType()).thenReturn(EntityType.Enemy);
-        Mockito.when(e1.getPosition()).thenReturn(new Vector2(0, 0));
+        when(e1.getId()).thenReturn(id1);
+        when(e1.getEntityType()).thenReturn(EntityType.Enemy);
+        when(e1.getPosition()).thenReturn(new Vector2(0, 0));
 
-        Mockito.when(worldEntities.getEntities()).thenReturn(List.of(e1));
-        Mockito.when(worldObstacles.getVisibleObstacles()).thenReturn(List.of(obstacle1));
+        when(worldEntities.getEntities()).thenReturn(List.of(e1));
+        when(worldObstacles.getVisibleObstacles()).thenReturn(List.of(obstacle1));
 
         linearCollisionEngine.process(worldEntities, worldObstacles);
 
         assertDoesNotThrow(() -> {
-            Mockito.verify(e1, Mockito.times(1))
-                    .setPosition(Mockito.any());
+            verify(e1, times(1))
+                    .setPosition(any());
         }, "Entity 1 should collide with rectangle");
     }
 
@@ -196,12 +200,12 @@ class LinearCollisionEngineTest {
 
     @Test
     void testCollidesWithEntitiesReturnsFirstAddedEntityWhenColliding() {
-        Entity closeEntity = Mockito.mock(Entity.class);
-        Sprite closeSprite = Mockito.mock(Sprite.class);
+        Entity closeEntity = mock(Entity.class);
+        Sprite closeSprite = mock(Sprite.class);
         Rectangle closeRectangle = new Rectangle(1, 1, 3, 3);
 
-        Mockito.when(closeEntity.getSprite()).thenReturn(closeSprite);
-        Mockito.when(closeSprite.getBoundingRectangle()).thenReturn(closeRectangle);
+        when(closeEntity.getSprite()).thenReturn(closeSprite);
+        when(closeSprite.getBoundingRectangle()).thenReturn(closeRectangle);
 
         List<Entity> collisions = new ArrayList<>();
         collisions.add(e2);

@@ -12,6 +12,8 @@ import java.util.Collection;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 class WorldObstaclesTest {
 
     private WorldObstacles worldObstacles;
@@ -100,15 +102,15 @@ class WorldObstaclesTest {
         worldObstacles.addObstacle(id1, rect1);
         worldObstacles.addObstacle(id2, rect2);
 
-        try (MockedStatic<GameData> mockedGameData = Mockito.mockStatic(GameData.class)) {
-            GameData mockGameData = Mockito.mock(GameData.class);
+        try (MockedStatic<GameData> mockedGameData = mockStatic(GameData.class)) {
+            GameData mockGameData = mock(GameData.class);
             OrthographicCamera camera = new OrthographicCamera();
             camera.position.set(5, 5, 0);
             camera.viewportWidth = 10;
             camera.viewportHeight = 10;
 
             mockedGameData.when(GameData::getInstance).thenReturn(mockGameData);
-            Mockito.when(mockGameData.getCamera()).thenReturn(camera);
+            when(mockGameData.getCamera()).thenReturn(camera);
 
             worldObstacles.optimizeObstacles();
         }
@@ -124,15 +126,15 @@ class WorldObstaclesTest {
     void testOptimizeObstaclesReturnsNoVisibleObstaclesWhenAbsent() {
         worldObstacles.addObstacle(id2, rect2);
 
-        try (MockedStatic<GameData> mockedGameData = Mockito.mockStatic(GameData.class)) {
-            GameData mockGameData = Mockito.mock(GameData.class);
+        try (MockedStatic<GameData> mockedGameData = mockStatic(GameData.class)) {
+            GameData mockGameData = mock(GameData.class);
             OrthographicCamera camera = new OrthographicCamera();
             camera.position.set(5, 5, 0);
             camera.viewportWidth = 10;
             camera.viewportHeight = 10;
 
             mockedGameData.when(GameData::getInstance).thenReturn(mockGameData);
-            Mockito.when(mockGameData.getCamera()).thenReturn(camera);
+            when(mockGameData.getCamera()).thenReturn(camera);
 
             worldObstacles.optimizeObstacles();
         }
@@ -147,15 +149,15 @@ class WorldObstaclesTest {
         worldObstacles.addObstacle(id1, rect1);
         worldObstacles.addObstacle(id2, rect2);
 
-        try (MockedStatic<GameData> mockedGameData = Mockito.mockStatic(GameData.class)) {
-            GameData mockGameData = Mockito.mock(GameData.class);
+        try (MockedStatic<GameData> mockedGameData = mockStatic(GameData.class)) {
+            GameData mockGameData = mock(GameData.class);
             OrthographicCamera camera = new OrthographicCamera();
             camera.position.set(5, 5, 0);
             camera.viewportWidth = 10;
             camera.viewportHeight = 10;
 
             mockedGameData.when(GameData::getInstance).thenReturn(mockGameData);
-            Mockito.when(mockGameData.getCamera()).thenReturn(camera);
+            when(mockGameData.getCamera()).thenReturn(camera);
 
             worldObstacles.optimizeObstacles();
 
