@@ -5,22 +5,22 @@ import dk.ee.zg.common.item.Item;
 
 import java.util.UUID;
 
-public class LifeStealItem extends Item {
+public class CritChanceItem extends Item {
 
     /**
-     * Item that increases lifesteal stat.
+     * Item that increases crit chance stat.
      */
-    public LifeStealItem() {
+    public CritChanceItem() {
         super(
                 UUID.randomUUID(),
-                "cloak.png",
+                "critchance.png",
                 new Vector2(32f, 32f),
-                "Drain your enemies' life force with every hit."
-                        + "Converts damage dealt into health.",
-                0,   // critChance
+                "Focus your strikes with unmatched precision."
+                        + " Increases critical hit chance.",
+                10,   // critChance
                 0,    // critDamage multiplier
                 0,    // defense
-                10,    // lifesteal
+                0,    // lifesteal
                 0,   // penetration
                 0,    // range
                 0,    // evasion

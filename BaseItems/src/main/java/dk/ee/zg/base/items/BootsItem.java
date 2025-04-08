@@ -5,25 +5,24 @@ import dk.ee.zg.common.item.Item;
 
 import java.util.UUID;
 
-public class LifeStealItem extends Item {
+public class BootsItem extends Item {
 
     /**
-     * Item that increases lifesteal stat.
+     * Item that increases evasion stat.
      */
-    public LifeStealItem() {
+    public BootsItem() {
         super(
                 UUID.randomUUID(),
-                "cloak.png",
+                "boots.png",
                 new Vector2(32f, 32f),
-                "Drain your enemies' life force with every hit."
-                        + "Converts damage dealt into health.",
+                "New Shoes! Increases Evasion",
                 0,   // critChance
                 0,    // critDamage multiplier
                 0,    // defense
-                10,    // lifesteal
+                0,    // lifesteal
                 0,   // penetration
                 0,    // range
-                0,    // evasion
+                10,    // evasion
                 0     // healthRegen
         );
     }

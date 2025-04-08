@@ -21,12 +21,7 @@ public abstract class Item {
     private String spritePath;
 
     /**
-     * Sprite {@link Sprite} defining the sprite object for the item.
-     * */
-    private Sprite sprite;
-
-    /**
-     * Vector2 {@link Vector2} defining the sprite scale x and y for the weapon.
+     * Vector2 {@link Vector2} defining the sprite scale x and y for the item.
      */
     private Vector2 scale;
 
@@ -75,4 +70,125 @@ public abstract class Item {
      * Health regeneration provided per second or turn.
      */
     private int healthRegen;
+
+    /**
+     * Constructor for Item. Allows for creation of child items.
+     * @param itemId Objects id
+     * @param spriteFilePath path to the sprite
+     * @param itemScale defining the sprite scale x and y for the item.
+     * @param itemDescription description of the item.
+     * @param itemCritChance critChance stat.
+     * @param itemCritDamage critDamage stat.
+     * @param itemDefense defense stat.
+     * @param itemLifesteal lifesteal stat.
+     * @param itemPenetration penetration stat.
+     * @param itemRange range stat.
+     * @param itemEvasion evasion stat.
+     * @param itemHealthRegen healthRegen stat.
+     */
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    public Item(final UUID itemId, final String spriteFilePath,
+                final Vector2 itemScale, final String itemDescription,
+                final int itemCritChance, final int itemCritDamage,
+                final int itemDefense, final int itemLifesteal,
+                final int itemPenetration, final int itemRange,
+                final int itemEvasion, final int itemHealthRegen) {
+
+        this.id = itemId;
+        this.spritePath = spriteFilePath;
+        this.scale = itemScale;
+        this.description = itemDescription;
+        this.critChance = itemCritChance;
+        this.critDamage = itemCritDamage;
+        this.defense = itemDefense;
+        this.lifesteal = itemLifesteal;
+        this.penetration = itemPenetration;
+        this.range = itemRange;
+        this.evasion = itemEvasion;
+        this.healthRegen = itemHealthRegen;
+    }
+
+    /**
+     * @return item id.
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    /**
+     * @return sprite path.
+     */
+    public String getSpritePath() {
+        return spritePath;
+    }
+
+    /**
+     * @return item scale.
+     */
+    public Vector2 getScale() {
+        return scale;
+    }
+
+    /**
+     * @return item description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @return item crit chance.
+     */
+    public int getCritChance() {
+        return critChance;
+    }
+
+    /**
+     * @return item crit damage.
+     */
+    public int getCritDamage() {
+        return critDamage;
+    }
+
+    /**
+     * @return item defense
+     */
+    public int getDefense() {
+        return defense;
+    }
+
+    /**
+     * @return item lifesteal.
+     */
+    public int getLifesteal() {
+        return lifesteal;
+    }
+
+    /**
+     * @return item penetration.
+     */
+    public int getPenetration() {
+        return penetration;
+    }
+
+    /**
+     * @return item range.
+     */
+    public int getRange() {
+        return range;
+    }
+
+    /**
+     * @return item evastion.
+     */
+    public int getEvasion() {
+        return evasion;
+    }
+
+    /**
+     * @return item health regen.
+     */
+    public int getHealthRegen() {
+        return healthRegen;
+    }
 }

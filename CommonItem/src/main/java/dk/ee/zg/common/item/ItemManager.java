@@ -1,9 +1,12 @@
 package dk.ee.zg.common.item;
 
-import java.util.HashSet;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
+import java.util.Random;
 import java.util.Set;
+import java.util.HashSet;
+import java.util.ServiceLoader;
 
 public final class ItemManager {
     /**
@@ -24,6 +27,7 @@ public final class ItemManager {
 
     private ItemManager() {
         this.loadedItems = findLoadedItems();
+        System.out.println(loadedItems.size());
     }
 
     /**
@@ -32,7 +36,16 @@ public final class ItemManager {
      * @return A random list of n amount of items.
      */
     public List<Item> createItemSelection(final int amount) {
-        return null;
+        List<Item> itemSelection = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < amount; i++) {
+            int randomIndex = random.nextInt(loadedItems.size());
+            Item randomItem = (Item) loadedItems.toArray()[randomIndex];
+            itemSelection.add(randomItem);
+        }
+
+        return itemSelection;
     }
 
     /**

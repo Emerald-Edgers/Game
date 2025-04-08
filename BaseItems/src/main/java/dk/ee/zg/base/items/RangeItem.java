@@ -5,24 +5,24 @@ import dk.ee.zg.common.item.Item;
 
 import java.util.UUID;
 
-public class LifeStealItem extends Item {
+public class RangeItem extends Item {
 
     /**
-     * Item that increases lifesteal stat.
+     * Item that increases range stat.
      */
-    public LifeStealItem() {
+    public RangeItem() {
         super(
                 UUID.randomUUID(),
-                "cloak.png",
+                "range.png",
                 new Vector2(32f, 32f),
-                "Drain your enemies' life force with every hit."
-                        + "Converts damage dealt into health.",
+                "Your monkey index is rising!"
+                        + "Range is increased.",
                 0,   // critChance
                 0,    // critDamage multiplier
                 0,    // defense
-                10,    // lifesteal
+                0,    // lifesteal
                 0,   // penetration
-                0,    // range
+                10,    // range
                 0,    // evasion
                 0     // healthRegen
         );

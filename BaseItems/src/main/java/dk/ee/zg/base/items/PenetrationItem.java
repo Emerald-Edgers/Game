@@ -5,23 +5,23 @@ import dk.ee.zg.common.item.Item;
 
 import java.util.UUID;
 
-public class LifeStealItem extends Item {
+public class PenetrationItem extends Item {
 
     /**
-     * Item that increases lifesteal stat.
+     * Item that increases penetration stat.
      */
-    public LifeStealItem() {
+    public PenetrationItem() {
         super(
                 UUID.randomUUID(),
-                "cloak.png",
+                "penetration.png",
                 new Vector2(32f, 32f),
-                "Drain your enemies' life force with every hit."
-                        + "Converts damage dealt into health.",
+                "Bypass your enemy’s defenses with ease. "
+                        + "Increases armor and magic penetration.",
                 0,   // critChance
                 0,    // critDamage multiplier
                 0,    // defense
-                10,    // lifesteal
-                0,   // penetration
+                0,    // lifesteal
+                10,   // penetration
                 0,    // range
                 0,    // evasion
                 0     // healthRegen

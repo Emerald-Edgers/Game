@@ -5,26 +5,26 @@ import dk.ee.zg.common.item.Item;
 
 import java.util.UUID;
 
-public class LifeStealItem extends Item {
+public class HealthRegenItem extends Item {
 
     /**
-     * Item that increases lifesteal stat.
+     * Item that increases healthregen stat.
      */
-    public LifeStealItem() {
+    public HealthRegenItem() {
         super(
                 UUID.randomUUID(),
-                "cloak.png",
+                "healthregen.png",
                 new Vector2(32f, 32f),
-                "Drain your enemies' life force with every hit."
-                        + "Converts damage dealt into health.",
+                "Slowly recovers health over time. "
+                        + "Keep fighting, your vitality will never fail you.",
                 0,   // critChance
                 0,    // critDamage multiplier
                 0,    // defense
-                10,    // lifesteal
+                0,    // lifesteal
                 0,   // penetration
                 0,    // range
                 0,    // evasion
-                0     // healthRegen
+                10     // healthRegen
         );
     }
 }

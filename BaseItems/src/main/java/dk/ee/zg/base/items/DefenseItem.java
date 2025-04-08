@@ -5,22 +5,21 @@ import dk.ee.zg.common.item.Item;
 
 import java.util.UUID;
 
-public class LifeStealItem extends Item {
+public class DefenseItem extends Item {
 
     /**
-     * Item that increases lifesteal stat.
+     * Item that increases defense stat.
      */
-    public LifeStealItem() {
+    public DefenseItem() {
         super(
                 UUID.randomUUID(),
-                "cloak.png",
+                "defense.png",
                 new Vector2(32f, 32f),
-                "Drain your enemies' life force with every hit."
-                        + "Converts damage dealt into health.",
+                "Increases Defense!",
                 0,   // critChance
                 0,    // critDamage multiplier
-                0,    // defense
-                10,    // lifesteal
+                10,    // defense
+                0,    // lifesteal
                 0,   // penetration
                 0,    // range
                 0,    // evasion

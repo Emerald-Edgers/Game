@@ -5,26 +5,26 @@ import dk.ee.zg.common.item.Item;
 
 import java.util.UUID;
 
-public class LifeStealItem extends Item {
+public class VeggiesItem extends Item {
 
     /**
-     * Item that increases lifesteal stat.
+     * Item that increases health regen and evasion stat.
      */
-    public LifeStealItem() {
+    public VeggiesItem() {
         super(
                 UUID.randomUUID(),
-                "cloak.png",
+                "veggies.png",
                 new Vector2(32f, 32f),
-                "Drain your enemies' life force with every hit."
-                        + "Converts damage dealt into health.",
+                "Packed with nutrients to keep you lean and healthy. "
+                        + "Increases health regen and evasion.",
                 0,   // critChance
                 0,    // critDamage multiplier
                 0,    // defense
-                10,    // lifesteal
+                0,    // lifesteal
                 0,   // penetration
                 0,    // range
-                0,    // evasion
-                0     // healthRegen
+                5,    // evasion
+                5     // healthRegen
         );
     }
 }
