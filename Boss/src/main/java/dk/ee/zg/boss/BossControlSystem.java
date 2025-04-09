@@ -12,6 +12,8 @@ import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.player.Player;
 
+import java.util.Optional;
+
 
 public class BossControlSystem implements IEntityProcessService {
 
@@ -50,12 +52,10 @@ public class BossControlSystem implements IEntityProcessService {
         melAttackCooldown -= Gdx.graphics.getDeltaTime();
         animationChangeCooldown -= Gdx.graphics.getDeltaTime();
 
-        if(player == null) {
-            for (Entity e1 : world.getEntities(Player.class)) {
-                if (e1 != null) {
-                    player = world.getEntities(Player.class).getFirst();
-                }
-            }
+        if (player == null) {
+            Optional<Entity> tempPlayer =
+                    world.getEntities(Player.class).stream().findFirst();
+            tempPlayer.ifPresent(entity -> player = entity);
         }
 
 

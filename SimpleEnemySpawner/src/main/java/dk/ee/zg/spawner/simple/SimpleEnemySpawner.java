@@ -5,8 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemyCreator;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
-import dk.ee.zg.common.map.data.Entity;
-import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
 
 import java.util.ArrayList;
@@ -108,8 +106,8 @@ public class SimpleEnemySpawner implements IEnemySpawner {
         float spawnX;
         float spawnY;
 
-        int edge = random.nextInt(4);
 
+        int edge = findSpawnEdge(bottomCorner, topCorner);
         switch (edge) {
             case 0: // Left edge
                 spawnX = random.nextFloat(bottomCorner.x,
@@ -138,6 +136,42 @@ public class SimpleEnemySpawner implements IEnemySpawner {
         }
 
         enemy.spawn(spawnX, spawnY, world);
+    }
+
+    /**
+     * Method for finding the current valid spawn edges.
+     * Ensures enemies doesn't spawn in the black.
+     * @param bottomCorner the bottom corner of the rectangle.
+     * @param topCorner the top corner of the rectangle.
+     * @return An integer representing the valid spawn edge.
+     * where 0 = left, 1 = right, 2 = top and 3 = bottom.
+     */
+    private int findSpawnEdge(
+            final Vector2 bottomCorner,
+            final Vector2 topCorner) {
+        List<Integer> validEdges = new ArrayList<>(List.of(0, 1, 2, 3));
+
+        if (bottomCorner.x <= 0) {
+            validEdges.remove(Integer.valueOf(0)); // Left edge
+        }
+        if (bottomCorner.y <= 0) {
+            validEdges.remove(Integer.valueOf(3)); //Bottom edge
+        }
+        if (topCorner.x >= 50) {
+            validEdges.remove(Integer.valueOf(1)); // Right edge
+        }
+        if (topCorner.y >= 75) {
+            validEdges.remove(Integer.valueOf(2)); // Top edge
+        }
+
+        int validEdge;
+        if (validEdges.isEmpty()) {
+            validEdge = 0;
+        } else {
+            validEdge = random.nextInt(validEdges.size());
+        }
+
+        return validEdge;
     }
 
     /**

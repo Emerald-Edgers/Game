@@ -157,35 +157,57 @@ public class PlayerControlSystem implements IEntityProcessService {
 
         }
 
+
         dirVec.nor(); // normalize to ensure diagonal get no speed boost
 
         AttackDirection currentDirection = AttackDirection.valueOf(player1.getFacingDirection().name());
 
         move(player1,dirVec);
 
+        if (isAttacking) {
+            attack(worldEntities);
+        }
+
         if (player.isPresent()) {
             //move(player.get(), dirVec);
 
             Weapon weapon = player.get().getWeapon();
+
             //if move direction is not none, then set attack direction.
             if (weapon != null && moveDirection != MoveDirection.NONE) {
                 weapon.setAttackDirection(
                         AttackDirection.valueOf(moveDirection.name()));
             }
+        }
+
+
+
+    }
+
+    /**
+     * method for attacking with loaded weapon.
+     * @param worldEntities - Object of WorldEntities,
+     *                            contains a map of all entities on map.
+     */
+    private void attack(final WorldEntities worldEntities) {
+        Optional<Player> player = worldEntities.getEntityByClass(Player.class);
+
+        if (player.isPresent()) {
+
+            Weapon weapon = player.get().getWeapon();
 
             if (isAttacking && weapon != null) {
-                Vector2 center = new Vector2();
+                Vector2 center = player.get().getPosition();
                 Vector2 size = new Vector2();
-                player.get().getSprite().
-                        getBoundingRectangle().getCenter(center);
                 player.get().getSprite().getBoundingRectangle().getSize(size);
                 attackHitbox = weapon.attack(
                         center, size);
+              
                 setPlayerAnimationState(player1, AnimationState.ATTACK, weapon.getAttackDirection());
                 System.out.println("called attack" + currentDirection);
 
                 isAttacking = false;
-
+              
             } else if (!isAttacking) {
                 attackHitbox = null;
             }

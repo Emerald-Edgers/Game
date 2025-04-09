@@ -9,41 +9,18 @@ import dk.ee.zg.common.map.data.EntityType;
 
 public class Skeleton extends Entity implements IAnimatable {
 
-    /**
-     * The amount of attack damage the skeleton should have.
-     */
-    private int attackDamage;
-    /**
-     * How fast the skeletons should use their attacks.
-     */
-    private int attackSpeed;
-    /**
-     * How fast the skeletons should move.
-     */
-    private int moveSpeed;
-    /**
-     * How much damage the skeleton should be able to take.
-     */
-    private int hitpoints;
-    /**
-     * How much damage the skeleton negates each attack.
-     */
-    private int defense;
-    /**
-     * The cost of the Eneemy for the spawner to know.
-     */
-    private float cost;
+
 
     private AnimationState currentState = AnimationState.IDLE;
 
     /**
      * Main constructor for the skeleton.
-     * @param attackDamage {@link Skeleton#attackDamage }
-     * @param attackSpeed {@link Skeleton#attackSpeed }
-     * @param moveSpeed {@link Skeleton#moveSpeed}
-     * @param hitpoints {@link Skeleton#hitpoints}
-     * @param defense {@link Skeleton#defense}
-     * @param cost {@link Skeleton#cost }
+     * @param attackDamage The amount of attack damage the skeleton should have.
+     * @param attackSpeed The amount of attack speed the skeleton should have.
+     * @param moveSpeed The amount of move speed the skeleton should have.
+     * @param hitpoints The amount of hp the skeleton should have.
+     * @param defense The amount of defense the skeleton should have.
+     * @param cost The cost skeleton should have.
      * @param spawnPoint This is a set of x,y coordiantes to determine where it
      *                   should be spawned
      */

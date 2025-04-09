@@ -110,7 +110,6 @@ public class Projectile extends Entity implements IAnimatable {
         if (collisionEngine.collidesWithEntity(
                 this, player)) {
             //TODO: Implement Hit
-            //System.out.println("YESYESYES");
         }
     }
 
