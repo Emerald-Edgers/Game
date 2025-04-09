@@ -2,7 +2,14 @@ package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import dk.ee.zg.boss.Boss;
+import dk.ee.zg.enemeSkeleton.Skeleton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
@@ -20,6 +27,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import org.lwjgl.opengl.GL20;
 
 public class GameScreen implements Screen {
     /**
@@ -66,6 +74,12 @@ public class GameScreen implements Screen {
     private SpriteBatch batch;
 
     /**
+     * Instance of {@link ShapeRenderer} to use for drawing
+     * hitboxes during debug mode.
+     */
+    private ShapeRenderer debugHitboxRenderer;
+
+    /**
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
@@ -94,6 +108,11 @@ public class GameScreen implements Screen {
      * Should eventually be capable of calculating this based upon the map.
      */
     private static final int MAP_HEIGHT_PIXELS = 150 * 16;
+
+    /**
+     * Debug mode, draws various helper visuals for debugging the game.
+     */
+    private static final boolean DEBUG_MODE = true;
 
     /**
      * Constructor for GameScreen.
@@ -238,6 +257,9 @@ public class GameScreen implements Screen {
         enemySpawnerUpdate(v);
 
         for (Entity entity : worldEntities.getEntities()) {
+
+            entity.update(v);
+
             if (entity instanceof Projectile) {
                 ((Projectile) entity).update();
             }
@@ -279,6 +301,7 @@ public class GameScreen implements Screen {
             map.renderBottom();
         }
 
+        batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
 
         for (Entity entity : worldEntities.getEntities()) {
@@ -286,11 +309,42 @@ public class GameScreen implements Screen {
         }
 
         batch.end(); // End drawing
-
+      
         if (map != null) {
             map.renderTop();
         }
 
+        if (DEBUG_MODE) {
+            debugDraw();
+        }
+    }
+
+    private void debugDraw(){
+        debugHitboxRenderer = new ShapeRenderer();
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        debugHitboxRenderer.setProjectionMatrix(camera.combined);
+        debugHitboxRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (Entity entity : worldEntities.getEntities()) {
+            if (entity.getHitbox() != null) {
+                debugHitboxRenderer.setColor(1f, 0f, 0f, 0.8f);
+                Rectangle rectangle = entity.getHitbox();
+                debugHitboxRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+            }
+        }
+
+        for (Rectangle obstacle : worldObstacles.getObstacles()) {
+            debugHitboxRenderer.setColor(1f, 0.5f, 0f, 0.8f);
+            debugHitboxRenderer.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        }
+
+        debugHitboxRenderer.end();
+        debugHitboxRenderer.flush();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
 
@@ -350,5 +404,9 @@ public class GameScreen implements Screen {
     public void dispose() {
         batch.dispose();
         map.getRenderer().dispose();
+
+        if (debugHitboxRenderer != null) {
+            debugHitboxRenderer.dispose();
+        }
     }
 }

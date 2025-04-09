@@ -1,7 +1,11 @@
 package dk.ee.zg.boss.ranged;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.enemy.interfaces.IAnimatable;
+import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -9,7 +13,7 @@ import dk.ee.zg.common.map.services.ICollisionEngine;
 
 import java.util.ServiceLoader;
 
-public class Projectile extends Entity {
+public class Projectile extends Entity implements IAnimatable {
 
     /**
      * The vector direction of the projectile.
@@ -55,7 +59,7 @@ public class Projectile extends Entity {
                       final Entity player) {
         super(new Vector2(position), 0,
                 new Vector2(1 / 32f, 1 / 32f),
-                "Fire.png", EntityType.Projectile);
+                "Fireball.png", EntityType.Projectile,true);
 
         this.player = player;
 
@@ -75,6 +79,10 @@ public class Projectile extends Entity {
         setRotation(rotationAngle);
 
         this.collisionEngine = getCollisionEngine();
+
+        setHitbox(new Rectangle(0, 0, 0.5f, 0.5f));
+        
+        initializeAnimations();
     }
 
     private ICollisionEngine getCollisionEngine() {
@@ -106,5 +114,15 @@ public class Projectile extends Entity {
                 this, player)) {
             //TODO: Implement Hit
         }
+    }
+
+    @Override
+    public void initializeAnimations() {
+        createAnimation("IDLE","Fireball.png",5,1,1f/5f, Animation.PlayMode.LOOP);
+    }
+
+    @Override
+    public void setState(AnimationState state) {
+
     }
 }

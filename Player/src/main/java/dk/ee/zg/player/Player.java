@@ -1,14 +1,22 @@
 package dk.ee.zg.player;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.data.EventManager;
 import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
+import dk.ee.zg.common.weapon.AttackDirection;
 import dk.ee.zg.common.weapon.Weapon;
+import dk.ee.zg.common.enemy.interfaces.IAnimatable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class Player extends Entity {
+public class Player extends Entity implements IAnimatable {
     /**
      * weapon typecast to Weapon abstract class from specific implementation.
      * {@link Weapon}
@@ -93,6 +101,13 @@ public class Player extends Entity {
      */
     private int healthRegen;
 
+    private AnimationState currentState = AnimationState.IDLE;
+
+    private Map<AnimationState, String> stateToAnimateMap;
+    private Map<String,String> directionAnimationMap;
+
+    private AttackDirection facingDirection = AttackDirection.RIGHT;
+
     /**
      * constructor for the player, utilizes super class Entity.
      * {@link Entity}
@@ -114,7 +129,7 @@ public class Player extends Entity {
                   final int def, final int hpsteal, final int pen,
                   final int r, final int eva, final int hpRegen) {
         super(new Vector2(), 0, new Vector2(50, 50),
-                "MainShip.png", EntityType.Player);
+                "Animations/Carry_Idle/Carry_Idle_Down-Sheet.png", EntityType.Player,true);
         this.maxHP = maxLife;
         this.attackDamage = atkDamage;
         this.attackSpeed = atkSpeed;
@@ -129,7 +144,14 @@ public class Player extends Entity {
         this.evasion = eva;
         this.healthRegen = hpRegen;
         initEventListeners();
+      
+        setHitbox(new Rectangle(0, 0, 0.5f, 0.75f));
+
+        initializeAnimations();
+        setState(AnimationState.IDLE, this.facingDirection);
     }
+
+
 
     /**
      * method for setting event listeners to,
@@ -278,6 +300,84 @@ public class Player extends Entity {
         this.level = lvl;
     }
 
+    @Override
+    public void initializeAnimations() {
+        createAnimation("IDLE_DOWN","Animations/Carry_Idle/Carry_Idle_Down-Sheet.png",4,1,0.1f, Animation.PlayMode.LOOP);
+        createAnimation("IDLE_SIDE","Animations/Carry_Idle/Carry_Idle_Side-Sheet.png",4,1,0.1f, Animation.PlayMode.LOOP);
+        //createAnimation("IDLE_UP","Animations/Carry_Idle/Carry_Idle_Up-Sheet.png",4,1,0.1f, Animation.PlayMode.LOOP);
+
+        createAnimation("ATTACK_SIDE","Animations/Pierce_Base/Pierce_Side-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
+        createAnimation("ATTACK_UP","Animations/Pierce_Base/Pierce_Top-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
+        createAnimation("ATTACK_DOWN","Animations/Pierce_Base/Pierce_Down-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
+
+        createAnimation("RUN_DOWN","Animations/Carry_Run/Carry_Run_Down-Sheet.png",6,1,0.1f, Animation.PlayMode.LOOP);
+        createAnimation("RUN_UP","Animations/Carry_Run/Carry_Run_Up-Sheet.png",6,1,0.1f,Animation.PlayMode.LOOP);
+        createAnimation("RUN_SIDE","Animations/Carry_Run/Carry_Run_Side-Sheet.png",6,1,0.1f,Animation.PlayMode.LOOP);
+
+        stateToAnimateMap = new HashMap<>();
+
+        stateToAnimateMap.put(AnimationState.IDLE,"IDLE_DOWN");
+        stateToAnimateMap.put(AnimationState.RUN,"RUN_DOWN");
+        stateToAnimateMap.put(AnimationState.ATTACK,"ATTACK_SIDE");
+
+        directionAnimationMap = new HashMap<>();
+
+        directionAnimationMap.put("IDLE_" + AttackDirection.UP.name(), "IDLE_DOWN");
+        directionAnimationMap.put("IDLE_" + AttackDirection.DOWN.name(), "IDLE_DOWN");
+        directionAnimationMap.put("IDLE_" + AttackDirection.LEFT.name(), "IDLE_SIDE");
+        directionAnimationMap.put("IDLE_" + AttackDirection.RIGHT.name(), "IDLE_SIDE");
+
+        directionAnimationMap.put("RUN_" + AttackDirection.UP.name(), "RUN_UP");
+        directionAnimationMap.put("RUN_" + AttackDirection.DOWN.name(), "RUN_DOWN");
+        directionAnimationMap.put("RUN_" + AttackDirection.RIGHT.name(), "RUN_SIDE");
+        directionAnimationMap.put("RUN_" + AttackDirection.LEFT.name(), "RUN_SIDE");
+
+        directionAnimationMap.put("ATTACK_" + AttackDirection.UP.name(), "ATTACK_UP");
+        directionAnimationMap.put("ATTACK_" + AttackDirection.DOWN.name(), "ATTACK_DOWN");
+        directionAnimationMap.put("ATTACK_" + AttackDirection.RIGHT.name(), "ATTACK_SIDE");
+        directionAnimationMap.put("ATTACK_" + AttackDirection.LEFT.name(), "ATTACK_SIDE");
+
+
+
+    }
+
+    public void setState(AnimationState state, AttackDirection direction) {
+        if (state != currentState || direction != facingDirection) {
+            currentState = state;
+            facingDirection = direction;
+
+            String directionKey = state.name() + "_" + direction.name();
+            String animationName = directionAnimationMap.get(directionKey);
+
+            if (animationName == null) {
+                animationName = stateToAnimateMap.get(state);
+            }
+
+            if (animationName != null) {
+                setCurrentAnimation(animationName);
+
+                if (direction == AttackDirection.LEFT && (animationName.contains("_SIDE"))) {
+                    getSprite().setFlip(true, false);
+                } else {
+                    getSprite().setFlip(false, false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void setState(AnimationState state) {
+        setState(state,facingDirection);
+    }
+
+    public AnimationState getCurrentState() {
+        return currentState;
+    }
+
+    public AttackDirection getFacingDirection() {
+        return facingDirection;
+    }
+  
     public final float getExperience() {
         return experience;
     }

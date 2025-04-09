@@ -1,9 +1,12 @@
 package dk.ee.zg.boss;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.boss.ranged.Projectile;
+import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IEntityProcessService;
@@ -28,6 +31,12 @@ public class BossControlSystem implements IEntityProcessService {
      */
     private Entity player;
 
+    private static float animationChangeCooldown = 1000f;
+    private AnimationState requestedAnimationState = null;
+
+    private boolean deathPlayed = false;
+
+
 
     /**
      * Entrance to the boss control system for controlling the boss.
@@ -41,6 +50,7 @@ public class BossControlSystem implements IEntityProcessService {
         BossControlSystem.setMoveDirection(Direction.DOWN);
 
         melAttackCooldown -= Gdx.graphics.getDeltaTime();
+        animationChangeCooldown -= Gdx.graphics.getDeltaTime();
 
         if (player == null) {
             Optional<Entity> tempPlayer =
@@ -49,15 +59,71 @@ public class BossControlSystem implements IEntityProcessService {
         }
 
 
-        for (Entity boss : world.getEntities(Boss.class)) {
+        for (Entity bossEntity : world.getEntities(Boss.class)) {
+            Boss boss = (Boss) bossEntity;
 
-            //move((Boss) boss, dir);
+            updateBossAnimation(boss);
 
-            if (melAttackCooldown <= 0) {
-                rangedAttack((Boss) boss, world);
-                melAttackCooldown = 2f;
+            if (deathPlayed && boss.isAnimationFinished()) {
+                world.removeEntity(bossEntity.getId());
             }
 
+            if (boss.getCurrentState() == AnimationState.DEATH) {
+                Animation<TextureRegion> deathAnimation = boss.getAnimations().get("DEATH");
+                if (deathAnimation != null && deathAnimation.isAnimationFinished(boss.getStateTime())) {
+                    world.removeEntity(bossEntity.getId());
+                }
+            } else {
+                setBossAnimationState(boss, AnimationState.IDLE);
+            }
+
+            //move(boss, dir);
+
+            if (melAttackCooldown <= 0) {
+                setBossAnimationState(boss, AnimationState.ATTACK);
+                rangedAttack(boss, world);
+                melAttackCooldown = 2f;
+            } else {
+                //setBossAnimationState(boss, AnimationState.IDLE);
+            }
+
+        }
+
+    }
+
+    private boolean setBossAnimationState(Boss boss, AnimationState state) {
+        AnimationState currentState = boss.getCurrentState();
+
+        if (currentState == AnimationState.DEATH) {
+            return false;
+        }
+
+        if (currentState == AnimationState.ATTACK) {
+            Animation<TextureRegion> currentAnimation = boss.getAnimations().get("ATTACK");
+            if (currentState != null && !currentAnimation.isAnimationFinished(boss.getStateTime())) {
+                return false;
+            }
+        }
+        boss.setState(state);
+        return true;
+    }
+
+    private void updateBossAnimation(Boss boss) {
+        int currentTime = (int) animationChangeCooldown;
+        if (animationChangeCooldown <= 0) {
+            if (!deathPlayed) {
+                setBossAnimationState(boss, AnimationState.DEATH);
+                System.out.println("DeathPlayed");
+                deathPlayed = true;
+            }
+        } else if (currentTime % 10 == 0) {
+            setBossAnimationState(boss, AnimationState.ATTACK);
+        }else if (requestedAnimationState != null) {
+            if (setBossAnimationState(boss, requestedAnimationState)) {
+                requestedAnimationState = null;
+            }
+        } else if (boss.getCurrentState() != AnimationState.IDLE && boss.isAnimationFinished() && boss.getCurrentState() != AnimationState.DEATH) {
+            setBossAnimationState(boss, AnimationState.IDLE);
         }
 
     }
@@ -68,12 +134,15 @@ public class BossControlSystem implements IEntityProcessService {
      * @param dirVec - The vector values in which the boss moves
      */
     public void move(final Boss boss, final Vector2 dirVec) {
+        Vector2 direction = new Vector2(dirVec);
         Vector2 vec = boss.getPosition();
 
-        vec.add(dirVec.scl(
+        vec.add(direction.scl(
                 boss.getMoveSpeed() * Gdx.graphics.getDeltaTime()));
 
         boss.setPosition(vec);
+
+        //setBossAnimationState(boss, AnimationState.RUN);
 
     }
 
@@ -191,14 +260,10 @@ public class BossControlSystem implements IEntityProcessService {
      */
     public void rangedAttack(final Boss boss, final WorldEntities world) {
         Vector2 target = new Vector2(player.getPosition());
-        //System.out.println("Target:" + target);
 
         Vector2 bossPos = boss.getPosition();
-        //System.out.println("Boss:" + bossPos);
-        //Vector2 targetPos = target.getPosition(); //TODO
 
         Vector2 projectileDir = new Vector2(target.sub(bossPos));
-        //System.out.println("projDir:" + projectileDir);
         projectileDir.nor();
 
         float speed = boss.getAttackSpeed();

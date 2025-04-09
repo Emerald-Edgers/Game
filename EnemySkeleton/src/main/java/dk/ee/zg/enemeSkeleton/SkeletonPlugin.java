@@ -1,5 +1,6 @@
 package dk.ee.zg.enemeSkeleton;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IEnemyCreator;
 import dk.ee.zg.common.map.data.WorldEntities;
