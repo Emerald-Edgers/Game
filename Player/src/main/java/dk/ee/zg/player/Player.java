@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.AnimationState;
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.weapon.AttackDirection;
@@ -28,6 +30,18 @@ public class Player extends Entity implements IAnimatable {
      * used to calculate regeneration, and take damage
      */
     private int maxHP;
+
+    /**
+     * level of player,
+     * increased upon experience {@link Player#experience} hitting threshold.
+     */
+    private int level = 0;
+    /**
+     * experience of player,
+     * used for levelling up when value reaches threshold.
+     */
+    private float experience = 0;
+
     /**
      * attackDamage is the amount of base damage, a player inflicts.
      * used to calculate actual damage to inflict upon enemy.
@@ -129,12 +143,26 @@ public class Player extends Entity implements IAnimatable {
         this.range = r;
         this.evasion = eva;
         this.healthRegen = hpRegen;
-
+        initEventListeners();
+      
         setHitbox(new Rectangle(0, 0, 0.5f, 0.75f));
 
         initializeAnimations();
         setState(AnimationState.IDLE, this.facingDirection);
+    }
 
+
+
+    /**
+     * method for setting event listeners to,
+     * functions related.
+     * {@link dk.ee.zg.common.data.EventManager}
+     */
+    private void initEventListeners() {
+        EventManager.addListener(Events.EnemyKilledEvent.class,
+                enemyKilledEvent -> {
+            gainExperience(enemyKilledEvent.getExperience());
+        });
     }
 
     /**
@@ -150,6 +178,31 @@ public class Player extends Entity implements IAnimatable {
             this.setHp(this.maxHP);
         }
     }
+
+    /**
+     * method for accepting experience to be added,
+     * to player, might levelup player.
+     * @param exp - experience value to add.
+     */
+    private void gainExperience(final int exp) {
+        experience += exp;
+        // threshold defined by manipulating level.
+        //currently linear x100 of level
+        if (experience > level * 100) {
+            levelUp();
+        }
+    }
+
+    /**
+     * method to levelup player,
+     * and handles additional actions.
+     * e.g. triggering player levelup event.
+     */
+    private void levelUp() {
+        level++;
+        EventManager.triggerEvent(new Events.PlayerLevelUpEvent());
+    }
+
 
     public final Weapon getWeapon() {
         return weapon;
@@ -239,6 +292,13 @@ public class Player extends Entity implements IAnimatable {
         this.healthRegen = i;
     }
 
+    public final int getLevel() {
+        return level;
+    }
+
+    public final void setLevel(final int lvl) {
+        this.level = lvl;
+    }
 
     @Override
     public void initializeAnimations() {
@@ -308,16 +368,6 @@ public class Player extends Entity implements IAnimatable {
     @Override
     public void setState(AnimationState state) {
         setState(state,facingDirection);
-
-        /*if (state != currentState) {
-            currentState = state;
-            String animationName = stateToAnimateMap.get(state);
-            if (animationName != null) {
-                setCurrentAnimation(animationName);
-            }
-        }
-
-         */
     }
 
     public AnimationState getCurrentState() {
@@ -326,5 +376,13 @@ public class Player extends Entity implements IAnimatable {
 
     public AttackDirection getFacingDirection() {
         return facingDirection;
+    }
+  
+    public final float getExperience() {
+        return experience;
+    }
+
+    public final void setExperience(final float exp) {
+        this.experience = exp;
     }
 }

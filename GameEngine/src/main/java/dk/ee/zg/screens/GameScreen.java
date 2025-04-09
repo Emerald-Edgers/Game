@@ -10,9 +10,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.boss.Boss;
 import dk.ee.zg.enemeSkeleton.Skeleton;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
+import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -81,13 +83,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 16;
+    private static final float VIEWPORT_WIDTH = 8;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 10;
+    private static final float VIEWPORT_HEIGHT = 8;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -120,14 +122,6 @@ public class GameScreen implements Screen {
         gameData = GameData.getInstance();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
-        Entity e1 = new Entity(new Vector2(2, 0),
-                0, new Vector2(0.1F, 0.1F),
-                "placeholder32x32.png", EntityType.Enemy);
-        Skeleton e2 = new Skeleton(10,10,1,
-                100,10, 10f, new Vector2(37,15));
-        worldEntities.addEntity(e1);
-        worldEntities.addEntity(e2);
-
     }
 
 
@@ -163,6 +157,9 @@ public class GameScreen implements Screen {
                 map = mapImpl;
                 map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
             }
+        }
+        for (IPathFinder pathFinder : ServiceLoader.load(IPathFinder.class)) {
+            pathFinder.load(worldObstacles, map.getMap());
         }
     }
 
@@ -298,10 +295,11 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(Gdx.gl20.GL_COLOR_BUFFER_BIT);
 
-        if (map != null) {
-            map.renderMap(); // Render the map
-        }
+        batch.setProjectionMatrix(camera.combined);
 
+        if (map != null) {
+            map.renderBottom();
+        }
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
@@ -311,6 +309,10 @@ public class GameScreen implements Screen {
         }
 
         batch.end(); // End drawing
+      
+        if (map != null) {
+            map.renderTop();
+        }
 
         if (DEBUG_MODE) {
             debugDraw();

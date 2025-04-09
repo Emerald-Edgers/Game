@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.AnimationState;
 import org.w3c.dom.Text;
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -176,7 +178,6 @@ public class Entity {
     }
 
     public void draw(SpriteBatch batch) {
-
         if (useAnimation && currentAnimation != null && animations.containsKey(currentAnimation)) {
             TextureRegion currentFrame = animations.get(currentAnimation).getKeyFrame(stateTime);
 
@@ -204,17 +205,21 @@ public class Entity {
             sprite.setRotation(rotation);
             sprite.draw(batch); // Draw the sprite
         }
-
     }
 
     /**
      * universal method for getting hit.
+     * triggers enemy killed event, with 100 exp added.
      * @param damage - damage taken, dertermined,
      *               by the attacker
      */
-    public void hit(int damage){
-        if (entityType != EntityType.Obstacle){
+    public void hit(final int damage) {
+        if (entityType != EntityType.Obstacle) {
             this.hp -= damage;
+            //if dead, trigger enemykilledevent
+            if (this.hp <= 0) {
+                EventManager.triggerEvent(new Events.EnemyKilledEvent(100, this.id));
+            }
         }
     }
 
