@@ -128,8 +128,8 @@ public class PlayerControlSystem implements IEntityProcessService {
             setPlayerAnimationState(player1,AnimationState.RUN, AttackDirection.RIGHT);
 
         } else if (movingLeft && movingUp) {
-            moveDirection = MoveDirection.RIGHT;
-            setPlayerAnimationState(player1, AnimationState.RUN, AttackDirection.RIGHT);
+            moveDirection = MoveDirection.LEFT;
+            setPlayerAnimationState(player1, AnimationState.RUN, AttackDirection.LEFT);
 
         } else if (movingLeft && movingDown) {
             moveDirection = MoveDirection.LEFT;

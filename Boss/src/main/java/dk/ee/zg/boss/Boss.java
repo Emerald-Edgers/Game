@@ -1,6 +1,7 @@
 package dk.ee.zg.boss;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IAnimatable;
 import dk.ee.zg.common.map.data.AnimationState;
@@ -55,6 +56,8 @@ public class Boss extends Entity implements IAnimatable {
         this.moveSpeed = moveSpeed;
         this.hitpoints = hitpoints;
         this.defense = defense;
+
+        setHitbox(new Rectangle(0, 0, 1f, 1.7f));
 
         setState(AnimationState.IDLE);
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.AnimationState;
 import org.w3c.dom.Text;
@@ -30,6 +31,7 @@ public class Entity {
     private String currentAnimation;
     private float stateTime;
     private boolean useAnimation;
+    private Rectangle hitbox;
 
     /**
      * hp is the current amount of health, an entity has.
@@ -104,6 +106,14 @@ public class Entity {
      addAnimation(name, animation);
     }
 
+    public Rectangle getHitbox() {
+        return hitbox;
+    }
+
+    public void setHitbox(Rectangle hitbox) {
+        this.hitbox = hitbox;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -120,6 +130,13 @@ public class Entity {
 
     public void setPosition(Vector2 position) {
         sprite.setCenter(position.x, position.y);
+        if (hitbox != null) {
+            updateHitboxPlacement();
+        }
+    }
+
+    public void updateHitboxPlacement() {
+        hitbox.setCenter(getPosition().x, getPosition().y);
     }
 
     public float getRotation() {

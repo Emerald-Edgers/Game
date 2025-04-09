@@ -61,6 +61,10 @@ public class LinearCollisionEngine implements ICollisionEngine {
     }
 
     private Rectangle getBoundingRectangleForCollision(Entity entity) {
+        if (entity.getHitbox() != null) {
+            return entity.getHitbox();
+        }
+
         if (entity.isUsingAnimation() && entity.getCurrentAnimation() != null) {
             Map<String, Animation<TextureRegion>> animations = entity.getAnimations();
             String currentAnimationName = entity.getCurrentAnimation();

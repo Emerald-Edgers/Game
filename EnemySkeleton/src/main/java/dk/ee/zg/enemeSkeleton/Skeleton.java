@@ -1,6 +1,7 @@
 package dk.ee.zg.enemeSkeleton;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IAnimatable;
 import dk.ee.zg.common.map.data.AnimationState;
@@ -62,6 +63,8 @@ public class Skeleton extends Entity implements IAnimatable {
         this.defense = defense;
         this.cost = cost;
 
+        setHitbox(new Rectangle(0, 0, 0.7f, 1.1f));
+
         setState(AnimationState.RUN);
 
     }
@@ -112,6 +115,11 @@ public class Skeleton extends Entity implements IAnimatable {
 
     public void setCost(float cost) {
         this.cost = cost;
+    }
+
+    @Override
+    public void updateHitboxPlacement() {
+        getHitbox().setCenter(getPosition().x, getPosition().y - 0.65f);
     }
 
     public void initializeAnimations() {

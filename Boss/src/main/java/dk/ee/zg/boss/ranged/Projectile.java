@@ -2,6 +2,7 @@ package dk.ee.zg.boss.ranged;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IAnimatable;
 import dk.ee.zg.common.map.data.AnimationState;
@@ -79,6 +80,8 @@ public class Projectile extends Entity implements IAnimatable {
 
         this.collisionEngine = getCollisionEngine();
 
+        setHitbox(new Rectangle(0, 0, 0.5f, 0.5f));
+        
         initializeAnimations();
     }
 

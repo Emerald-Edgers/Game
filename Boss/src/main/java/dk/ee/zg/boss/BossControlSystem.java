@@ -260,14 +260,10 @@ public class BossControlSystem implements IEntityProcessService {
      */
     public void rangedAttack(final Boss boss, final WorldEntities world) {
         Vector2 target = new Vector2(player.getPosition());
-        //System.out.println("Target:" + target);
 
         Vector2 bossPos = boss.getPosition();
-        //System.out.println("Boss:" + bossPos);
-        //Vector2 targetPos = target.getPosition(); //TODO
 
         Vector2 projectileDir = new Vector2(target.sub(bossPos));
-        //System.out.println("projDir:" + projectileDir);
         projectileDir.nor();
 
         float speed = boss.getAttackSpeed();

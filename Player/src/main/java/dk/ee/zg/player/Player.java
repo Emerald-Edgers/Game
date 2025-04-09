@@ -1,6 +1,7 @@
 package dk.ee.zg.player;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
@@ -128,6 +129,8 @@ public class Player extends Entity implements IAnimatable {
         this.range = r;
         this.evasion = eva;
         this.healthRegen = hpRegen;
+
+        setHitbox(new Rectangle(0, 0, 0.5f, 0.75f));
 
         initializeAnimations();
         setState(AnimationState.IDLE, this.facingDirection);
