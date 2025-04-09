@@ -1,11 +1,7 @@
 package dk.ee.zg.popups;
 
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import dk.ee.zg.common.item.Item;
@@ -14,15 +10,32 @@ import java.util.List;
 
 public class LevelUpPopup extends Dialog {
 
-    public LevelUpPopup(String title, Skin skin) {
+    /**
+     * Constructor for LevelPupUp.
+     * @param title Title of the dialog box.
+     * @param skin Skin of the dialog box
+     */
+    public LevelUpPopup(final String title, final Skin skin) {
         super(title, skin);
     }
 
-    public LevelUpPopup(String title, Skin skin, String windowStyleName) {
+    /**
+     * Constructor for LevelPupUp.
+     * @param title Title of the dialog box.
+     * @param skin Skin of the dialog box
+     * @param windowStyleName name of the styling of the window.
+     */
+    public LevelUpPopup(final String title, final Skin skin,
+                        final String windowStyleName) {
         super(title, skin, windowStyleName);
     }
 
-    public LevelUpPopup(String title, WindowStyle windowStyle) {
+    /**
+     * Constructor for LevelPupUp.
+     * @param title Title of the dialog box.
+     * @param windowStyle styling of the window in the dialog box
+     */
+    public LevelUpPopup(final String title, final WindowStyle windowStyle) {
         super(title, windowStyle);
     }
 
@@ -40,9 +53,12 @@ public class LevelUpPopup extends Dialog {
 
     }
 
-
+    /**
+     * Result is the selection of the dialog box.
+     * @param object
+     */
     @Override
-    protected void result(Object object) {
+    protected void result(final Object object) {
         Item item = (Item) object;
         ItemManager.getInstance().equipItem(item);
         this.hide(null);
