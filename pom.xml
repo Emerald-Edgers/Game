@@ -23,6 +23,7 @@
         <module>EnemySkeleton</module>
         <module>CommonItem</module>
         <module>BaseItems</module>
+        <module>EnemyDragon</module>
     </modules>
 
     <properties>
