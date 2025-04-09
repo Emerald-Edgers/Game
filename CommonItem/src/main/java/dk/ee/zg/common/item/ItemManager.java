@@ -8,7 +8,11 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.ServiceLoader;
 
+import dk.ee.zg.common.data.EquipItemEvent;
+import dk.ee.zg.common.data.EventManager;
+
 public final class ItemManager {
+
     /**
      * Set of all loaded items.
      */
@@ -78,6 +82,22 @@ public final class ItemManager {
      */
     public void equipItem(final Item item) {
         equippedItems.add(item);
+        EventManager.triggerEvent(new EquipItemEvent(
+                item.getCritChance(),
+                item.getCritDamage(),
+                item.getDefense(),
+                item.getLifesteal(),
+                item.getPenetration(),
+                item.getRange(),
+                item.getEvasion(),
+                item.getHealthRegen()));
+    }
+
+    /**
+     * @return set of loaded items.
+     */
+    public Set<Item> getLoadedItems() {
+        return loadedItems;
     }
 
 }

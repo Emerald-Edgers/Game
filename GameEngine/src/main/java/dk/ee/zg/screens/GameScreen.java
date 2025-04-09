@@ -6,7 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.EventManager;
@@ -14,6 +14,7 @@ import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
+import dk.ee.zg.common.item.ItemManager;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -34,6 +35,10 @@ public class GameScreen implements Screen {
      */
     private final GameData gameData;
 
+    /**
+     * Instance of the stage being used on this screen.
+     * Used for adding pop up.
+     */
     private Stage stage;
 
     /**
@@ -84,7 +89,7 @@ public class GameScreen implements Screen {
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 16 ;
+    private static final float VIEWPORT_HEIGHT = 16;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -138,15 +143,20 @@ public class GameScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
-            TextureAtlas atlas = new TextureAtlas(new FileHandle("GameEngine/src" +
-                    "/main/resources/skin/uiskin.atlas"));
+        if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
+            EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
+                TextureAtlas atlas = new TextureAtlas(
+                        new FileHandle("GameEngine/src/main/resources/"
+                                + "skin/uiskin.atlas"));
 
-            LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!",
-                    new Skin(new FileHandle("GameEngine/src/main/resources/skin" +
-                            "/uiskin.json"), atlas));
-            levelUpPopup.show(stage);
-        });
+                LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!",
+                        new Skin(
+                                new FileHandle(
+                                        "GameEngine/src/main/resources/"
+                                                + "skin/uiskin.json"), atlas));
+                levelUpPopup.show(stage);
+            });
+        }
     }
 
     /**
