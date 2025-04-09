@@ -308,16 +308,6 @@ public class Player extends Entity implements IAnimatable {
     @Override
     public void setState(AnimationState state) {
         setState(state,facingDirection);
-
-        /*if (state != currentState) {
-            currentState = state;
-            String animationName = stateToAnimateMap.get(state);
-            if (animationName != null) {
-                setCurrentAnimation(animationName);
-            }
-        }
-
-         */
     }
 
     public AnimationState getCurrentState() {
