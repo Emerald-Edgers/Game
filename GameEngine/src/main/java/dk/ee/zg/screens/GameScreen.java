@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import dk.ee.zg.boss.Boss;
 import dk.ee.zg.enemeSkeleton.Skeleton;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
@@ -70,13 +71,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 50;
+    private static final float VIEWPORT_WIDTH = 16;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 75;
+    private static final float VIEWPORT_HEIGHT = 10;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -244,6 +245,9 @@ public class GameScreen implements Screen {
         enemySpawnerUpdate(v);
 
         for (Entity entity : worldEntities.getEntities()) {
+
+            entity.update(v);
+
             if (entity instanceof Projectile) {
                 ((Projectile) entity).update();
             }

@@ -1,10 +1,13 @@
 package dk.ee.zg.enemeSkeleton;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.enemy.interfaces.IAnimatable;
+import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
-public class Skeleton extends Entity {
+public class Skeleton extends Entity implements IAnimatable {
 
     /**
      * The amount of attack damage the skeleton should have.
@@ -31,6 +34,8 @@ public class Skeleton extends Entity {
      */
     private float cost;
 
+    private AnimationState currentState = AnimationState.IDLE;
+
     /**
      * Main constructor for the skeleton.
      * @param attackDamage {@link Skeleton#attackDamage }
@@ -46,7 +51,9 @@ public class Skeleton extends Entity {
                     final int moveSpeed, final int hitpoints, final int defense,
                     final float cost, final Vector2 spawnPoint) {
         super(spawnPoint, 0, new Vector2(1 / 25f, 1 / 25f),
-                "Skeleton.png", EntityType.Enemy);
+                "Idle-Sheet-Skeleton.png", EntityType.Enemy,true);
+
+        initializeAnimations();
 
         this.attackDamage = attackDamage;
         this.attackSpeed = attackSpeed;
@@ -54,6 +61,8 @@ public class Skeleton extends Entity {
         this.hitpoints = hitpoints;
         this.defense = defense;
         this.cost = cost;
+
+        setState(AnimationState.RUN);
 
     }
 
@@ -103,5 +112,32 @@ public class Skeleton extends Entity {
 
     public void setCost(float cost) {
         this.cost = cost;
+    }
+
+    public void initializeAnimations() {
+        createAnimation("RUN", "Run-Sheet-Skeleton.png", 6, 1, 1f/6f, Animation.PlayMode.LOOP);
+        createAnimation("IDLE", "Idle-Sheet-Skeleton.png", 4, 1, 1f/4f, Animation.PlayMode.LOOP);
+    }
+
+    public void setState(AnimationState state) {
+        if (state != currentState) {
+            currentState = state;
+            switch (state) {
+                case IDLE:
+                    setCurrentAnimation("IDLE");
+                    break;
+                case RUN:
+                    setCurrentAnimation("RUN");
+                    break;
+                case ATTACK:
+                    setCurrentAnimation("ATTACK");
+                    break;
+            }
+        }
+
+    }
+
+    public AnimationState getCurrentState() {
+        return currentState;
     }
 }

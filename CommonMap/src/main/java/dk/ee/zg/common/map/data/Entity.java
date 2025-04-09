@@ -1,10 +1,16 @@
 package dk.ee.zg.common.map.data;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.map.data.AnimationState;
+import org.w3c.dom.Text;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Entity {
@@ -19,6 +25,11 @@ public class Entity {
     private String sprite_path;
 
     private final Sprite sprite;
+
+    private Map<String, Animation<TextureRegion>> animations;
+    private String currentAnimation;
+    private float stateTime;
+    private boolean useAnimation;
 
     /**
      * hp is the current amount of health, an entity has.
@@ -41,6 +52,56 @@ public class Entity {
         this.sprite = new Sprite(img); // Create a sprite from the texture
         sprite.setScale(scale.x,scale.y);
         this.setPosition(position);
+
+        this.animations = new HashMap<>();
+        this.useAnimation = false;
+        this.stateTime = 0f;
+    }
+
+    public Entity(Vector2 position, float rotation, Vector2 scale, String sprite_path, EntityType entityType, boolean useAnimation) {
+        this(position, rotation, scale, sprite_path, entityType);
+        this.useAnimation = useAnimation;
+    }
+
+    public void addAnimation(String name, Animation<TextureRegion> animation) {
+        animations.put(name, animation);
+        if (currentAnimation == null) {
+            currentAnimation = name;
+        }
+    }
+
+    public void setCurrentAnimation(String name) {
+        if (animations.containsKey(name)) {
+            currentAnimation = name;
+            stateTime = 0f;
+        }
+    }
+
+    public boolean isAnimationFinished() {
+        if (currentAnimation == null || !animations.containsKey(currentAnimation)) {
+            return true;
+        }
+        Animation<TextureRegion> animation = animations.get(currentAnimation);
+        return animation.isAnimationFinished(stateTime);
+    }
+
+    public void createAnimation(String name, String sprite_path, int frameCols, int frameRows, float frameDuration, Animation.PlayMode playMode) {
+     Texture sheet = new Texture(sprite_path);
+
+     TextureRegion[][] tmp = TextureRegion.split(
+             sheet, sheet.getWidth() / frameCols, sheet.getHeight() / frameRows);
+
+     TextureRegion[] frames = new TextureRegion[frameCols * frameRows];
+     int index = 0;
+     for (int i = 0; i < frameRows; i++) {
+         for (int j = 0; j < frameCols; j++) {
+             frames[index++] = tmp[i][j];
+         }
+     }
+
+     Animation<TextureRegion> animation = new Animation<>(frameDuration, frames);
+     animation.setPlayMode(playMode);
+     addAnimation(name, animation);
     }
 
     public UUID getId() {
@@ -93,10 +154,39 @@ public class Entity {
         this.hp = hp;
     }
 
+    public void update(float delta) {
+        stateTime += delta;
+    }
+
     public void draw(SpriteBatch batch) {
-        sprite.setScale(scale.x,scale.y);
-        sprite.setRotation(rotation);
-        sprite.draw(batch); // Draw the sprite
+
+        if (useAnimation && currentAnimation != null && animations.containsKey(currentAnimation)) {
+            TextureRegion currentFrame = animations.get(currentAnimation).getKeyFrame(stateTime);
+
+            currentFrame.flip(sprite.isFlipX(), sprite.isFlipY());
+
+            float width = currentFrame.getRegionWidth() * scale.x;
+            float height = currentFrame.getRegionHeight() * scale.y;
+
+            Vector2 position = getPosition();
+            float x = position.x - width / 2;
+            float y = position.y - height / 2;
+
+            batch.draw(
+                    currentFrame,
+                    x, y,
+                    width/2,height/2,
+                    width,height,
+                    1,1,
+                    rotation
+            );
+
+            currentFrame.flip(sprite.isFlipX(), sprite.isFlipY());
+        } else {
+            sprite.setScale(scale.x,scale.y);
+            sprite.setRotation(rotation);
+            sprite.draw(batch); // Draw the sprite
+        }
 
     }
 
@@ -110,4 +200,26 @@ public class Entity {
             this.hp -= damage;
         }
     }
+
+    public boolean isUsingAnimation() {
+        return useAnimation;
+    }
+
+    public void setUseAnimation(boolean useAnimation) {
+        this.useAnimation = useAnimation;
+    }
+
+    public String getCurrentAnimation() {
+        return currentAnimation;
+    }
+
+    public Map<String, Animation<TextureRegion>> getAnimations() {
+        return animations;
+    };
+
+    public float getStateTime() {
+        return stateTime;
+    }
+
+
 }

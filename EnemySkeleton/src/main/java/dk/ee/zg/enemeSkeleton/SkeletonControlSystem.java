@@ -1,9 +1,12 @@
 package dk.ee.zg.enemeSkeleton;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IEnemy;
+import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IEntityProcessService;
@@ -50,8 +53,11 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
         }
 
 
-        for (Entity skeleton : world.getEntities(Skeleton.class)) {
-            move((Skeleton) skeleton);
+        for (Entity skeletonEntity : world.getEntities(Skeleton.class)) {
+            Skeleton skeleton = (Skeleton) skeletonEntity;
+            move(skeleton);
+            updateSkeletonAnimation(skeleton);
+            setSkeletonAnimationState(skeleton,AnimationState.RUN);
         }
 
 
@@ -92,8 +98,28 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
 
         skeleton.setPosition(newPosition);
 
+    }
 
+    private boolean setSkeletonAnimationState(Skeleton skeleton, AnimationState state) {
+        AnimationState currentState = skeleton.getCurrentState();
 
+        if(currentState == AnimationState.DEATH) {
+            return false;
+        }
+        if (currentState == AnimationState.ATTACK) {
+            Animation<TextureRegion> currentAnimation = skeleton.getAnimations().get("ATTACK");
+            if (currentAnimation != null && !currentAnimation.isAnimationFinished(skeleton.getStateTime())) {
+                return false;
+            }
+        }
+        skeleton.setState(state);
+        return true;
+    }
+
+    private void updateSkeletonAnimation(Skeleton skeleton) {
+        if (skeleton.getCurrentState() != AnimationState.IDLE && skeleton.isAnimationFinished() && skeleton.getCurrentState() != AnimationState.DEATH) {
+            setSkeletonAnimationState(skeleton, AnimationState.IDLE);
+        }
     }
 
 }
