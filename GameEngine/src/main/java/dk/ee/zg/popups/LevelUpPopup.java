@@ -1,7 +1,10 @@
 package dk.ee.zg.popups;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -32,21 +35,17 @@ public class LevelUpPopup extends Dialog {
             Drawable drawable =
                     new TextureRegionDrawable(item.getTexture());
             ImageButton imageButton = new ImageButton(drawable);
-            Label.LabelStyle tooltipStyle =
-                    new Label.LabelStyle(getStyle().titleFont, Color.WHITE);
-            //Tooltip.TooltipStyle
-            //imageButton.addListener(tooltip);
             button(imageButton, item);
         }
 
     }
 
+
     @Override
     protected void result(Object object) {
-        System.out.println(object);
         Item item = (Item) object;
-        System.out.println("LevelUpPopup result: " + item.getDescription());
         ItemManager.getInstance().equipItem(item);
+        this.hide(null);
     }
 
 }

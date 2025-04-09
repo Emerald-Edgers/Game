@@ -17,7 +17,7 @@ public final class ItemManager {
     /**
      * List all the players items.
      */
-    private List<Item> equippedItem;
+    private List<Item> equippedItems;
 
     /**
      * {@link ItemManager} instance of weapon manager class,
@@ -27,6 +27,7 @@ public final class ItemManager {
 
     private ItemManager() {
         this.loadedItems = findLoadedItems();
+        this.equippedItems = new ArrayList<>();
     }
 
     /**
@@ -76,7 +77,7 @@ public final class ItemManager {
      * @param item item to be equipped.
      */
     public void equipItem(final Item item) {
-        equippedItem.add(item);
+        equippedItems.add(item);
     }
 
 }
