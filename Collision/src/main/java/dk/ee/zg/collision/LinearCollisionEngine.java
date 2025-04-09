@@ -44,6 +44,7 @@ public class LinearCollisionEngine implements ICollisionEngine {
                     continue;
                 }
 
+
                 if (collidesWithEntity(e1, e2)) {
                     resolveCollisionEntities(e1, e2);
                 }

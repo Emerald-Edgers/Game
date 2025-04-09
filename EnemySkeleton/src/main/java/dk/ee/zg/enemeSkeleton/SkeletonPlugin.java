@@ -30,7 +30,7 @@ public class SkeletonPlugin implements IEnemyCreator {
      */
     @Override
     public void spawn(final float x, final float y, final WorldEntities world) {
-        skeleton = new Skeleton(10, 10, 1, 100, 10, cost, new Vector2(x, y));
+        skeleton = new Skeleton(10, 10, 2, 100, 10, cost, new Vector2(x, y));
 
         world.addEntity(skeleton);
     }
