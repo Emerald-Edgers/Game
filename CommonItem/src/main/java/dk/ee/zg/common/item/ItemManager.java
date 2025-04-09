@@ -27,7 +27,6 @@ public final class ItemManager {
 
     private ItemManager() {
         this.loadedItems = findLoadedItems();
-        System.out.println(loadedItems.size());
     }
 
     /**
@@ -70,6 +69,14 @@ public final class ItemManager {
         }
 
         return items;
+    }
+
+    /**
+     * Add an item to the list of equippeditems.
+     * @param item item to be equipped.
+     */
+    public void equipItem(final Item item) {
+        equippedItem.add(item);
     }
 
 }

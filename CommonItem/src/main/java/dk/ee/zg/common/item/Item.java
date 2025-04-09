@@ -1,6 +1,8 @@
 package dk.ee.zg.common.item;
 
 import java.util.UUID;
+
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
@@ -19,6 +21,11 @@ public abstract class Item {
      * File path to the sprite image.
      */
     private String spritePath;
+
+    /**
+     * Texture for rendering the item.
+     */
+    private Texture texture;
 
     /**
      * Vector2 {@link Vector2} defining the sprite scale x and y for the item.
@@ -106,6 +113,7 @@ public abstract class Item {
         this.range = itemRange;
         this.evasion = itemEvasion;
         this.healthRegen = itemHealthRegen;
+        this.texture = new Texture(spritePath);
     }
 
     /**
@@ -190,5 +198,12 @@ public abstract class Item {
      */
     public int getHealthRegen() {
         return healthRegen;
+    }
+
+    /**
+     * @return item texture.
+     */
+    public Texture getTexture() {
+        return texture;
     }
 }
