@@ -32,7 +32,6 @@ public class Entity {
     private Map<String, Animation<TextureRegion>> animations;
     private String currentAnimation;
     private float stateTime;
-    private boolean useAnimation;
     private Rectangle hitbox;
 
     /**
@@ -58,13 +57,7 @@ public class Entity {
         this.setPosition(position);
 
         this.animations = new HashMap<>();
-        this.useAnimation = false;
         this.stateTime = 0f;
-    }
-
-    public Entity(Vector2 position, float rotation, Vector2 scale, String sprite_path, EntityType entityType, boolean useAnimation) {
-        this(position, rotation, scale, sprite_path, entityType);
-        this.useAnimation = useAnimation;
     }
 
     public void addAnimation(String name, Animation<TextureRegion> animation) {
@@ -178,7 +171,7 @@ public class Entity {
     }
 
     public void draw(SpriteBatch batch) {
-        if (useAnimation && currentAnimation != null && animations.containsKey(currentAnimation)) {
+        if (currentAnimation != null && animations.containsKey(currentAnimation)) {
             TextureRegion currentFrame = animations.get(currentAnimation).getKeyFrame(stateTime);
 
             currentFrame.flip(sprite.isFlipX(), sprite.isFlipY());
@@ -221,14 +214,6 @@ public class Entity {
                 EventManager.triggerEvent(new Events.EnemyKilledEvent(100, this.id));
             }
         }
-    }
-
-    public boolean isUsingAnimation() {
-        return useAnimation;
-    }
-
-    public void setUseAnimation(boolean useAnimation) {
-        this.useAnimation = useAnimation;
     }
 
     public String getCurrentAnimation() {

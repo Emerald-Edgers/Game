@@ -40,54 +40,6 @@ public class Skeleton extends Enemy implements IAnimatable {
 
     }
 
-    public int getAttackDamage() {
-        return attackDamage;
-    }
-
-    public void setAttackDamage(final int attackDamage) {
-        this.attackDamage = attackDamage;
-    }
-
-    public int getAttackSpeed() {
-        return attackSpeed;
-    }
-
-    public void setAttackSpeed(final int attackSpeed) {
-        this.attackSpeed = attackSpeed;
-    }
-
-    public int getMoveSpeed() {
-        return moveSpeed;
-    }
-
-    public void setMoveSpeed(final int moveSpeed) {
-        this.moveSpeed = moveSpeed;
-    }
-
-    public int getHitpoints() {
-        return hitpoints;
-    }
-
-    public void setHitpoints(final int hitpoints) {
-        this.hitpoints = hitpoints;
-    }
-
-    public int getDefense() {
-        return defense;
-    }
-
-    public void setDefense(final int defense) {
-        this.defense = defense;
-    }
-
-    public float getCost() {
-        return cost;
-    }
-
-    public void setCost(float cost) {
-        this.cost = cost;
-    }
-
     @Override
     public void updateHitboxPlacement() {
         getHitbox().setCenter(getPosition().x, getPosition().y - 0.65f);

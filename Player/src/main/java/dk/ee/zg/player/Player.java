@@ -129,7 +129,7 @@ public class Player extends Entity implements IAnimatable {
                   final int def, final int hpsteal, final int pen,
                   final int r, final int eva, final int hpRegen) {
         super(new Vector2(), 0, new Vector2(50, 50),
-                "Animations/Carry_Idle/Carry_Idle_Down-Sheet.png", EntityType.Player,true);
+                "Animations/Carry_Idle/Carry_Idle_Down-Sheet.png", EntityType.Player);
         this.maxHP = maxLife;
         this.attackDamage = atkDamage;
         this.attackSpeed = atkSpeed;

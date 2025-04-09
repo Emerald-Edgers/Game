@@ -179,8 +179,7 @@ public class PlayerControlSystem implements IEntityProcessService {
             }
         }
 
-
-
+        updatePlayerAnimation(player1);
     }
 
     /**
@@ -225,8 +224,6 @@ public class PlayerControlSystem implements IEntityProcessService {
                 }
             }
         }
-
-        updatePlayerAnimation(player1);
     }
 
     /**

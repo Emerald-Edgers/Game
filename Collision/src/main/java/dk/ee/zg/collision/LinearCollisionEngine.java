@@ -66,7 +66,7 @@ public class LinearCollisionEngine implements ICollisionEngine {
             return entity.getHitbox();
         }
 
-        if (entity.isUsingAnimation() && entity.getCurrentAnimation() != null) {
+        if (entity.getCurrentAnimation() != null) {
             Map<String, Animation<TextureRegion>> animations = entity.getAnimations();
             String currentAnimationName = entity.getCurrentAnimation();
 

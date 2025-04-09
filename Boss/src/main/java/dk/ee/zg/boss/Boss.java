@@ -3,59 +3,34 @@ package dk.ee.zg.boss;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import dk.ee.zg.common.enemy.data.Enemy;
 import dk.ee.zg.common.enemy.interfaces.IAnimatable;
 import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
 
-public class Boss extends Entity implements IAnimatable {
-
-    /**
-     * attackDamage is used to set the amount of damage the boss should do.
-     * used to check damage calculations over players defences
-     */
-    private final int attackDamage;
-    /**
-     * attackSpeed is used to set the speed at which the boss attacks.
-     */
-    private final int attackSpeed;
-    /**
-     * moveSpeed is used to set the speed at which the boss moves.
-     */
-    private final int moveSpeed;
-    /**
-     * hitpoints is used to set the amount of health the boss has.
-     */
-    private final int hitpoints;
-    /**
-     * defense is used to set the amount of damage the boss can withstand.
-     */
-    private final int defense;
-
+public class Boss extends Enemy implements IAnimatable {
     private AnimationState currentState = AnimationState.IDLE;
 
     /**
-     * constructor for the boss, utilizes super class Entity.
+     * constructor for the boss, utilizes super class Enemy.
      * {@link Entity}
-     * @param attackDamage {@link Boss#attackDamage}
-     * @param attackSpeed {@link Boss#attackSpeed}
-     * @param moveSpeed {@link Boss#moveSpeed}
-     * @param hitpoints {@link Boss#hitpoints}
-     * @param defense {@link Boss#defense}
+     * @param attackDamage {@link Enemy#attackDamage}
+     * @param attackSpeed {@link Enemy#attackSpeed}
+     * @param moveSpeed {@link Enemy#moveSpeed}
+     * @param hitpoints {@link Enemy#hitpoints}
+     * @param defense {@link Enemy#defense}
      */
     public Boss(final int attackDamage, final int attackSpeed,
                 final int moveSpeed, final int hitpoints, final int defense) {
-        super(new Vector2(0, 0), 0, new Vector2(1 / 15f, 1 / 15f),
-                "Idle-Sheet-Boss.png", EntityType.Enemy, true);
+        super(new Vector2(0, 0), 0,
+                new Vector2(1 / 15f, 1 / 15f),
+                "Idle-Sheet-Boss.png", EntityType.Enemy,
+                attackDamage, attackSpeed,
+                moveSpeed, hitpoints, defense, 0);
 
         initializeAnimations();
-
-        this.attackDamage = attackDamage;
-        this.attackSpeed = attackSpeed;
-        this.moveSpeed = moveSpeed;
-        this.hitpoints = hitpoints;
-        this.defense = defense;
 
         setHitbox(new Rectangle(0, 0, 1f, 1.7f));
 
@@ -92,22 +67,4 @@ public class Boss extends Entity implements IAnimatable {
     public AnimationState getCurrentState() {
         return currentState;
     }
-
-
-    public int getAttackDamage() {
-        return attackDamage;
-    }
-    public int getAttackSpeed() {
-        return attackSpeed;
-    }
-    public int getMoveSpeed() {
-        return moveSpeed;
-    }
-    public int getHitpoints() {
-        return hitpoints;
-    }
-    public int getDefense() {
-        return defense;
-    }
-
 }

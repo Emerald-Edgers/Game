@@ -59,7 +59,7 @@ public class Projectile extends Entity implements IAnimatable {
                       final Entity player) {
         super(new Vector2(position), 0,
                 new Vector2(1 / 32f, 1 / 32f),
-                "Fireball.png", EntityType.Projectile,true);
+                "Fireball.png", EntityType.Projectile);
 
         this.player = player;
 
