@@ -89,7 +89,6 @@ public class PlayerControlSystem implements IEntityProcessService {
         if (gameData.getGameKey().isPressed(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.Attack))) {
             isAttacking = true;
-            System.out.println("pressed space");
         }
 
         moveDirection = MoveDirection.NONE;
@@ -198,7 +197,7 @@ public class PlayerControlSystem implements IEntityProcessService {
             if (isAttacking && weapon != null) {
                 Vector2 center = player.get().getPosition();
                 Vector2 size = new Vector2();
-                player.get().getSprite().getBoundingRectangle().getSize(size);
+                player.get().getHitbox().getSize(size);
                 attackHitbox = weapon.attack(
                         center, size);
                 setPlayerAnimationState(player1, AnimationState.ATTACK, weapon.getAttackDirection());
@@ -210,7 +209,6 @@ public class PlayerControlSystem implements IEntityProcessService {
             }
 
             if (attackHitbox != null) {
-
                 Optional<ICollisionEngine> collisionEngine = ServiceLoader.
                         load(ICollisionEngine.class).findFirst();
                 if (collisionEngine.isPresent()) {
@@ -219,6 +217,7 @@ public class PlayerControlSystem implements IEntityProcessService {
                                     attackHitbox, worldEntities.getEntities());
 
                     for (Entity e : enemiesHit) {
+                        System.out.println("Hit Enemy");
                         e.hit(player.get().getAttackDamage());
                     }
                 }

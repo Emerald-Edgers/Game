@@ -2,14 +2,9 @@ package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import dk.ee.zg.boss.Boss;
-import dk.ee.zg.enemeSkeleton.Skeleton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
@@ -109,10 +104,6 @@ public class GameScreen implements Screen {
      */
     private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
-    /**
-     * Debug mode, draws various helper visuals for debugging the game.
-     */
-    private static final boolean DEBUG_MODE = true;
 
     /**
      * Constructor for GameScreen.
@@ -120,6 +111,7 @@ public class GameScreen implements Screen {
      */
     public GameScreen() {
         gameData = GameData.getInstance();
+        debugHitboxRenderer = new ShapeRenderer();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
     }
@@ -314,14 +306,12 @@ public class GameScreen implements Screen {
             map.renderTop();
         }
 
-        if (DEBUG_MODE) {
+        if (gameData.isDebug()) {
             debugDraw();
         }
     }
 
     private void debugDraw(){
-        debugHitboxRenderer = new ShapeRenderer();
-
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
