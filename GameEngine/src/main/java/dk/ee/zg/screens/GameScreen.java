@@ -3,6 +3,7 @@ package dk.ee.zg.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
@@ -136,7 +137,8 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
+                map.loadMap(mapPath, UNIT_SCALE,
+                        worldObstacles, new TmxMapLoader());
             }
         }
         for (IPathFinder pathFinder : ServiceLoader.load(IPathFinder.class)) {
