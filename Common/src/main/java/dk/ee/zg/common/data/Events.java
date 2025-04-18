@@ -15,7 +15,22 @@ public class Events {
      * e.g.: used for showing levelup popup.
      */
     public static final class PlayerLevelUpEvent implements IEvent {
+        /**
+         * Experience value of defeated enemy,
+         * to be added to player.
+         */
+        private int newLvl;
+        /**
+         * constructor for EnemyKilledEvent.
+         * @param newLvl - new level of player
+         */
+        public PlayerLevelUpEvent(final int newLvl) {
+            this.newLvl = newLvl;
+        }
 
+        public int getNewLvl() {
+            return newLvl;
+        }
     }
 
     /**
