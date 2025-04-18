@@ -97,9 +97,9 @@ public class GameScreen implements Screen {
     private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
     /**
-     * the HUD object for heads up display
+     * the HUD object for heads up display.
      */
-    private final HUD Hud = new HUD();
+    private final HUD hud = new HUD();
 
     /**
      * Constructor for GameScreen.
@@ -228,7 +228,7 @@ public class GameScreen implements Screen {
         draw();
         collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
-        Hud.drawHUD(batch, worldEntities);
+        hud.drawHUD(batch, worldEntities);
     }
 
     /**

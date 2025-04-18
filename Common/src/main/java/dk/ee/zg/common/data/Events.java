@@ -22,10 +22,10 @@ public class Events {
         private int newLvl;
         /**
          * constructor for EnemyKilledEvent.
-         * @param newLvl - new level of player
+         * @param lvl - new level of player
          */
-        public PlayerLevelUpEvent(final int newLvl) {
-            this.newLvl = newLvl;
+        public PlayerLevelUpEvent(final int lvl) {
+            this.newLvl = lvl;
         }
 
         public int getNewLvl() {

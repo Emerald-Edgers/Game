@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import dk.ee.zg.common.data.EventManager;
-import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.player.Player;
@@ -51,7 +49,7 @@ public class HUD {
      */
     private float elapsedTimeInSecs;
 
-    
+
 
     /**
      * constructor, sets up camera and renderer.
@@ -98,24 +96,6 @@ public class HUD {
      * draw method for items equipped Bar.
      */
     private void drawItemsEquippedBar() {
-        float maxHP = player.getMaxHP();
-        float currentHP = player.getHp();
-
-        float barWidth = 320;
-        float barHeight = 20;
-        float x = 60;
-        float y = 60;
-
-        // Background (gray)
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.setColor(Color.DARK_GRAY);
-        shapeRenderer.rect(x, y, barWidth, barHeight);
-
-        // Foreground (red, scaled to %)
-        shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(x, y, (currentHP / maxHP) * barWidth, barHeight);
-        shapeRenderer.end();
 
     }
 
