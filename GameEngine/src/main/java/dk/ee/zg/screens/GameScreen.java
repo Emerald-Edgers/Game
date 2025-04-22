@@ -1,6 +1,7 @@
 package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -140,8 +141,10 @@ public class GameScreen implements Screen {
         initCamera();
         initSpawner();
         initMap("main-map.tmx");
-
-        Gdx.input.setInputProcessor(stage);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(Gdx.input.getInputProcessor());
+        Gdx.input.setInputProcessor(multiplexer);
 
         if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
             EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {

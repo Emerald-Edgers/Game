@@ -18,6 +18,7 @@ public class LevelUpPopup extends Dialog {
      */
     public LevelUpPopup(final String title, final Skin skin) {
         super(title, skin);
+        setScale(2f);
     }
 
     /**
