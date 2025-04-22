@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.ServiceLoader;
 
-import dk.ee.zg.common.data.EquipItemEvent;
+import dk.ee.zg.common.data.Events.EquipItemEvent;
 import dk.ee.zg.common.data.EventManager;
 
 public final class ItemManager {
