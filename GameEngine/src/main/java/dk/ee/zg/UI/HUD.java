@@ -75,6 +75,7 @@ public class HUD {
             GameData.getInstance().getDisplayWidth();
         SCREEN_HEIGHT =
             GameData.getInstance().getDisplayHeight();
+        System.out.println(SCREEN_WIDTH+ " :  " + SCREEN_HEIGHT);
         //get player instance if null
         if (player == null) {
             Optional<Player> optionalPlayer =
@@ -144,15 +145,16 @@ public class HUD {
         shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.rect(x, y, SCREEN_WIDTH, barHeight);
 
-        // Foreground (red, scaled to %)
+        // Foreground (blue, scaled to %)
+        float xpPercentage = currentXP / (player.getLevel() * 1000); // e.g., 0.75 if 75% done
         shapeRenderer.setColor(Color.BLUE);
-        shapeRenderer.rect(x, y, (currentXP / SCREEN_WIDTH), barHeight);
+        shapeRenderer.rect(x, y, xpPercentage * SCREEN_WIDTH, barHeight);
         shapeRenderer.end();
 
         //text
         batch.begin();
         lvlFont.draw(batch, "LVL: " + player.getLevel(),
-                (SCREEN_WIDTH / 2f) - 64, (SCREEN_HEIGHT / 2f) + 64);
+                (SCREEN_WIDTH / 2f), (SCREEN_HEIGHT / 2f));
         batch.end();
     }
 

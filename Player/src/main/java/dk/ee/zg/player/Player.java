@@ -188,7 +188,7 @@ public class Player extends Entity implements IAnimatable {
         experience += exp;
         // threshold defined by manipulating level.
         //currently linear x100 of level
-        if (experience > level * 100) {
+        if (experience > level * 1000) {
             levelUp();
         }
     }
