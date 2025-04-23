@@ -31,6 +31,10 @@ class LinearCollisionEngineTest {
     private Entity e2;
     private Entity e3;
 
+    private UUID id1;
+    private UUID id2;
+    private UUID id3;
+
     private Rectangle obstacle1;
     private Rectangle obstacle2;
 
@@ -53,14 +57,21 @@ class LinearCollisionEngineTest {
         Rectangle e2Rectangle = new Rectangle(5, 5, 10, 10);
         Rectangle e3Rectangle = new Rectangle(100, 100, 10, 10);
 
+        id1 = UUID.randomUUID();
+        id2 = UUID.randomUUID();
+        id3 = UUID.randomUUID();
+
         when(e1.getSprite()).thenReturn(e1Sprite);
         when(e1Sprite.getBoundingRectangle()).thenReturn(e1Rectangle);
+        when(e1.getId()).thenReturn(id1);
 
         when(e2.getSprite()).thenReturn(e2Sprite);
         when(e2Sprite.getBoundingRectangle()).thenReturn(e2Rectangle);
+        when(e2.getId()).thenReturn(id2);
 
         when(e3.getSprite()).thenReturn(e3Sprite);
         when(e3Sprite.getBoundingRectangle()).thenReturn(e3Rectangle);
+        when(e3.getId()).thenReturn(id3);
 
         obstacle1 = new Rectangle(0, 0, 10, 10);
         obstacle2 = new Rectangle(100, 100, 10, 10);
