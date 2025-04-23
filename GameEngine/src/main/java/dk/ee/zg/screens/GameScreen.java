@@ -5,7 +5,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import dk.ee.zg.UI.HUD;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
@@ -106,6 +108,11 @@ public class GameScreen implements Screen {
 
 
     /**
+     * the HUD object for heads up display.
+     */
+    private final HUD hud = new HUD();
+
+    /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
@@ -133,6 +140,7 @@ public class GameScreen implements Screen {
         initCamera();
         initSpawner();
         initMap("main-map.tmx");
+
     }
 
     /**
@@ -147,7 +155,8 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
+                map.loadMap(mapPath, UNIT_SCALE,
+                        worldObstacles, new TmxMapLoader());
             }
         }
         for (IPathFinder pathFinder : ServiceLoader.load(IPathFinder.class)) {
@@ -232,6 +241,7 @@ public class GameScreen implements Screen {
         draw();
         collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
+        hud.drawHUD(batch, worldEntities);
     }
 
     /**
@@ -336,6 +346,8 @@ public class GameScreen implements Screen {
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
     }
+
+
 
 
     /**

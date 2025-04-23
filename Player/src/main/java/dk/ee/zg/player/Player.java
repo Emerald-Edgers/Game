@@ -200,7 +200,7 @@ public class Player extends Entity implements IAnimatable {
      */
     private void levelUp() {
         level++;
-        EventManager.triggerEvent(new Events.PlayerLevelUpEvent());
+        EventManager.triggerEvent(new Events.PlayerLevelUpEvent(level));
     }
 
 
