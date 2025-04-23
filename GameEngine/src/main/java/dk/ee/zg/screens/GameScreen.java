@@ -1,17 +1,25 @@
 package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.UI.HUD;
 import dk.ee.zg.boss.ranged.Projectile;
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
+import dk.ee.zg.common.item.ItemManager;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -24,6 +32,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dk.ee.zg.popups.LevelUpPopup;
 import org.lwjgl.opengl.GL20;
 
 public class GameScreen implements Screen {
@@ -31,6 +40,12 @@ public class GameScreen implements Screen {
      * Instance of the singleton class {@link GameData}.
      */
     private final GameData gameData;
+
+    /**
+     * Instance of the stage being used on this screen.
+     * Used for adding pop up.
+     */
+    private Stage stage;
 
     /**
      * Instance of {@link WorldEntities} used for interacting with entities.
@@ -80,12 +95,14 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
+
     private static final float VIEWPORT_WIDTH = 15;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
+
     private static final float VIEWPORT_HEIGHT = 15;
 
     /**
@@ -137,10 +154,39 @@ public class GameScreen implements Screen {
             entity.start(worldEntities);
         }
 
+
+
         initCamera();
         initSpawner();
         initMap("main-map.tmx");
 
+        //Changes input to accept UI input. Stage must not get keyboard focus
+        // in order to move player while pop up is showing.
+        stage = new Stage(
+                new FitViewport(
+                        GameData.getInstance().getDisplayWidth(),
+                        GameData.getInstance().getDisplayHeight()));
+        stage.setKeyboardFocus(null);
+        stage.setScrollFocus(null);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(Gdx.input.getInputProcessor());
+        Gdx.input.setInputProcessor(multiplexer);
+
+        if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
+            EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
+                TextureAtlas atlas = new TextureAtlas(
+                        new FileHandle("GameEngine/src/main/resources/"
+                                + "skin/uiskin.atlas"));
+
+                LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!",
+                        new Skin(
+                                new FileHandle(
+                                        "GameEngine/src/main/resources/"
+                                                + "skin/uiskin.json"), atlas));
+                levelUpPopup.animateShow(stage);
+            });
+        }
     }
 
     /**
@@ -315,6 +361,9 @@ public class GameScreen implements Screen {
         if (map != null) {
             map.renderTop();
         }
+        // Required for input events and tooltips to be processed.
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
 
         if (gameData.isDebug()) {
             debugDraw();
@@ -372,6 +421,7 @@ public class GameScreen implements Screen {
         viewport.update(width, height, true);
         gameData.setDisplayWidth(width);
         gameData.setDisplayHeight(height);
+        stage.getViewport().update(width, height, true);
     }
 
     /**
@@ -406,9 +456,10 @@ public class GameScreen implements Screen {
     public void dispose() {
         batch.dispose();
         map.getRenderer().dispose();
-
+        stage.dispose();
         if (debugHitboxRenderer != null) {
             debugHitboxRenderer.dispose();
         }
     }
+
 }

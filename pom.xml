@@ -21,6 +21,8 @@
         <module>AIPathFinding</module>
         <module>Boss</module>
         <module>EnemySkeleton</module>
+        <module>CommonItem</module>
+        <module>BaseItems</module>
         <module>EnemyDragon</module>
         <module>CommonTest</module>
     </modules>
