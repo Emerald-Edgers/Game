@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.player.Player;
@@ -60,7 +62,9 @@ public class HUD {
         camera.setToOrtho(true, SCREEN_WIDTH, SCREEN_HEIGHT);
         shapeRenderer = new ShapeRenderer();
 
-
+        EventManager.addListener(Events.EquipItemEvent.class, equipItemEvent -> {
+            System.out.println(equipItemEvent);
+        });
     }
 
     /**
@@ -75,7 +79,7 @@ public class HUD {
             GameData.getInstance().getDisplayWidth();
         SCREEN_HEIGHT =
             GameData.getInstance().getDisplayHeight();
-        System.out.println(SCREEN_WIDTH+ " :  " + SCREEN_HEIGHT);
+
         //get player instance if null
         if (player == null) {
             Optional<Player> optionalPlayer =
@@ -85,6 +89,7 @@ public class HUD {
             }
         }
 
+        camera.setToOrtho(true, SCREEN_WIDTH, SCREEN_HEIGHT);
         // set projection matrixes
         shapeRenderer.setProjectionMatrix(camera.combined);
         batch.setProjectionMatrix(camera.combined);
@@ -154,7 +159,7 @@ public class HUD {
         //text
         batch.begin();
         lvlFont.draw(batch, "LVL: " + player.getLevel(),
-                (SCREEN_WIDTH / 2f), (SCREEN_HEIGHT / 2f));
+                (SCREEN_WIDTH / 2f) - 64, (SCREEN_HEIGHT / 2f) + 64);
         batch.end();
     }
 
