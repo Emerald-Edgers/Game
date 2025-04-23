@@ -2,6 +2,7 @@ package dk.ee.zg.common.map.interfaces;
 
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import dk.ee.zg.common.map.data.WorldObstacles;
@@ -14,10 +15,12 @@ public interface IMap {
      * @param unitScale    The scale of a singular unit.
      *                     (E.g. 1 / 32 means 32 pixels per unit)'
      * @param worldObstacles The world obstacles.
+     * @param mapLoader     The maploader to be injected for loading.
      */
     void loadMap(String mapName,
                  float unitScale,
-                 WorldObstacles worldObstacles);
+                 WorldObstacles worldObstacles,
+                 TmxMapLoader mapLoader);
 
     /**
      * Render all layers below certain objects layer on loaded map.

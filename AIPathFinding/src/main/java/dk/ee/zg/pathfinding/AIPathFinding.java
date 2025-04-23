@@ -82,7 +82,6 @@ public class AIPathFinding implements IPathFinder {
         for (int x = 0; x < mapWidth; x++) {
             for (int y = 0; y < mapHeight; y++) {
                 walkableGrid[x][y] = true;
-
             }
         }
 
@@ -251,6 +250,7 @@ public class AIPathFinding implements IPathFinder {
                 + (Math.sqrt(2) - 2 * 1) * Math.min(dx, dy));
     }
 
-
-
+    public static boolean[][] getWalkableGrid() {
+        return walkableGrid;
+    }
 }

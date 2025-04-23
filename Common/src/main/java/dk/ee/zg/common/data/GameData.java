@@ -59,6 +59,13 @@ public final class GameData {
      */
     private static final float UNIT_SCALE = 1 / 32f;
 
+
+    /**
+     * Debug mode, draws various helper visuals for debugging the game.
+     */
+    private static final boolean DEBUG_MODE = true;
+
+
     private GameData() {
 
     }
@@ -152,6 +159,10 @@ public final class GameData {
      */
     public void setGame(final Game newGame) {
         this.game = newGame;
+    }
+
+    public boolean isDebug() {
+        return DEBUG_MODE;
     }
 
 }
