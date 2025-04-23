@@ -1,9 +1,12 @@
 package dk.ee.zg.enemeSkeleton;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IEnemy;
+import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -15,6 +18,9 @@ import java.util.ServiceLoader;
 
 public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
 
+    /**
+     * The player which the skeletons should target.
+     */
     private Entity player;
 
     /**
@@ -43,21 +49,30 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
     }
 
 
-
+    /**
+     * Process that runs once per frame, will attempt to locate the player.
+     * If no player is found the loop breaks.
+     * @param world - Object of WorldEntities,
+     *                     contains a map of all entities on map
+     */
     @Override
     public void process(final WorldEntities world) {
 
         if (player == null) {
-            for (Entity e1 : world.getEntities(Player.class)) {
-                if (e1 != null) {
-                    player = world.getEntities(Player.class).getFirst();
-                }
+            Optional<Entity> tempPlayer = world.getEntities(
+                    Player.class).stream().findFirst();
+            if (tempPlayer.isPresent()) {
+                player = tempPlayer.get();
+            } else {
+                return;
             }
         }
 
         for (Entity skele : world.getEntities(Skeleton.class)) {
             //System.out.println(skele.getPosition());
             Skeleton skeleton = (Skeleton) skele;
+            updateSkeletonAnimation(skeleton);
+            setSkeletonAnimationState(skeleton,AnimationState.RUN);
             Optional<IPathFinder> pathFinder =
                     ServiceLoader.load(IPathFinder.class).findFirst();
             // if pathfinder available move with pathfinding,
@@ -88,15 +103,13 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
      * Moves the skeleton based on the player's position.
      * @param skeleton {@link Skeleton}
      */
-    public void move(final Skeleton skeleton) {
+    private void move(final Skeleton skeleton) {
 
         Vector2 skeletonPos = skeleton.getPosition();
         Vector2 playerPos = player.getPosition();
 
-        //System.out.println("playerPos:" + playerPos);
-        //System.out.println("skeletonPos:" + skeletonPos);
-
-        Vector2 dir = new Vector2(playerPos.x - skeletonPos.x, playerPos.y - skeletonPos.y);
+        Vector2 dir = new Vector2(
+                playerPos.x - skeletonPos.x, playerPos.y - skeletonPos.y);
         dir.nor();
         float speed = skeleton.getMoveSpeed();
 
@@ -107,8 +120,28 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
 
         skeleton.setPosition(newPosition);
 
+    }
 
+    private boolean setSkeletonAnimationState(Skeleton skeleton, AnimationState state) {
+        AnimationState currentState = skeleton.getCurrentState();
 
+        if(currentState == AnimationState.DEATH) {
+            return false;
+        }
+        if (currentState == AnimationState.ATTACK) {
+            Animation<TextureRegion> currentAnimation = skeleton.getAnimations().get("ATTACK");
+            if (currentAnimation != null && !currentAnimation.isAnimationFinished(skeleton.getStateTime())) {
+                return false;
+            }
+        }
+        skeleton.setState(state);
+        return true;
+    }
+
+    private void updateSkeletonAnimation(Skeleton skeleton) {
+        if (skeleton.getCurrentState() != AnimationState.IDLE && skeleton.isAnimationFinished() && skeleton.getCurrentState() != AnimationState.DEATH) {
+            setSkeletonAnimationState(skeleton, AnimationState.IDLE);
+        }
     }
 
 }

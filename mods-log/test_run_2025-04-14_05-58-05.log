@@ -1,0 +1,69 @@
+2025-04-14 05:58:05,642 - INFO - Starting test runs
+2025-04-14 05:58:05,642 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:10,697 - INFO - ✅ Success
+
+2025-04-14 05:58:10,697 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:15,751 - INFO - ✅ Success
+
+2025-04-14 05:58:15,751 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:20,805 - INFO - ✅ Success
+
+2025-04-14 05:58:20,805 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:25,859 - INFO - ✅ Success
+
+2025-04-14 05:58:25,860 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:30,917 - ERROR - ❌ Failed with error:
+2025-04-14 05:58:30,917 - ERROR - Error: [W][05:58:25.973723] pw.conf      | [          conf.c: 1204 pw_conf_load_conf_for_context()] setting config.name to client-rt.conf is deprecated, using client.conf
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "dk.ee.zg.common.map.data.Entity.getPosition()" because "this.player" is null
+	at dk.ee.zg.boss.BossControlSystem.rangedAttack(BossControlSystem.java:193)
+	at dk.ee.zg.boss.BossControlSystem.process(BossControlSystem.java:57)
+	at dk.ee.zg.screens.GameScreen.update(GameScreen.java:237)
+	at dk.ee.zg.screens.GameScreen.render(GameScreen.java:222)
+	at com.badlogic.gdx.Game.render(Game.java:48)
+	at com.badlogic.gdx.backends.lwjgl3.Lwjgl3Window.update(Lwjgl3Window.java:430)
+	at com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application.loop(Lwjgl3Application.java:181)
+	at com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application.<init>(Lwjgl3Application.java:153)
+	at dk.ee.zg.DesktopLauncher.main(DesktopLauncher.java:18)
+
+2025-04-14 05:58:30,917 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:35,976 - ERROR - ❌ Failed with error:
+2025-04-14 05:58:35,976 - ERROR - Error: [W][05:58:31.024774] pw.conf      | [          conf.c: 1204 pw_conf_load_conf_for_context()] setting config.name to client-rt.conf is deprecated, using client.conf
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "dk.ee.zg.common.map.interfaces.IMap.getMap()" because "this.map" is null
+	at dk.ee.zg.screens.GameScreen.initMap(GameScreen.java:145)
+	at dk.ee.zg.screens.GameScreen.show(GameScreen.java:125)
+	at com.badlogic.gdx.Game.setScreen(Game.java:63)
+	at dk.ee.zg.screens.StartScreen.handleKeyEvents(StartScreen.java:345)
+	at dk.ee.zg.screens.StartScreen.render(StartScreen.java:320)
+	at com.badlogic.gdx.Game.render(Game.java:48)
+	at com.badlogic.gdx.backends.lwjgl3.Lwjgl3Window.update(Lwjgl3Window.java:430)
+	at com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application.loop(Lwjgl3Application.java:181)
+	at com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application.<init>(Lwjgl3Application.java:153)
+	at dk.ee.zg.DesktopLauncher.main(DesktopLauncher.java:18)
+
+2025-04-14 05:58:35,976 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:41,030 - INFO - ✅ Success
+
+2025-04-14 05:58:41,030 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:46,085 - INFO - ✅ Success
+
+2025-04-14 05:58:46,085 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:51,139 - INFO - ✅ Success
+
+2025-04-14 05:58:51,139 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:58:56,194 - INFO - ✅ Success
+
+2025-04-14 05:58:56,194 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:59:01,248 - INFO - ✅ Success
+
+2025-04-14 05:59:01,248 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:59:06,302 - INFO - ✅ Success
+
+2025-04-14 05:59:06,302 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:59:11,356 - INFO - ✅ Success
+
+2025-04-14 05:59:11,356 - INFO - Testing combo: ('Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:59:16,411 - INFO - ✅ Success
+
+2025-04-14 05:59:16,411 - INFO - Testing combo: ('CommonMap-1.0-SNAPSHOT.jar', 'Sword-1.0-SNAPSHOT.jar', 'Collision-1.0-SNAPSHOT.jar', 'AIPathFinding-1.0-SNAPSHOT.jar', 'EnemyDragon-1.0-SNAPSHOT.jar', 'CommonTest-1.0-SNAPSHOT.jar', 'CommonEnemy-1.0-SNAPSHOT.jar', 'Boss-1.0-SNAPSHOT.jar', 'Map-1.0-SNAPSHOT.jar', 'Player-1.0-SNAPSHOT.jar', 'SimpleEnemySpawner-1.0-SNAPSHOT.jar', 'CommonWeapon-1.0-SNAPSHOT.jar', 'Common-1.0-SNAPSHOT.jar', 'EnemySkeleton-1.0-SNAPSHOT.jar')
+2025-04-14 05:59:21,468 - INFO - ✅ Success
+
