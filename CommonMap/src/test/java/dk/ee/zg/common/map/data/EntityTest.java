@@ -43,6 +43,7 @@ class EntityTest {
         BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         image.setRGB(0, 0, 0xFFFFFFFF);
         File file = new File("src/test/resources/test.png");
+        file.getParentFile().mkdirs();
         ImageIO.write(image, "png", file);
     }
 
