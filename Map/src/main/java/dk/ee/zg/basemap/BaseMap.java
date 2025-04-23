@@ -59,8 +59,10 @@ public class BaseMap implements IMap {
         renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
         for (int i = 0; i < objectsLayerIndex; i++) {
-            renderer.renderTileLayer(
-                    (TiledMapTileLayer) map.getLayers().get(i));
+            if (map.getLayers().get(i) instanceof TiledMapTileLayer) {
+                renderer.renderTileLayer(
+                        (TiledMapTileLayer) map.getLayers().get(i));
+            }
         }
         renderer.getBatch().end();
     }
@@ -75,8 +77,10 @@ public class BaseMap implements IMap {
         renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
         for (int i = objectsLayerIndex; i < map.getLayers().getCount(); i++) {
-            renderer.renderTileLayer(
-                    (TiledMapTileLayer) map.getLayers().get(i));
+            if (map.getLayers().get(i) instanceof TiledMapTileLayer) {
+                renderer.renderTileLayer(
+                        (TiledMapTileLayer) map.getLayers().get(i));
+            }
         }
         renderer.getBatch().end();
     }
