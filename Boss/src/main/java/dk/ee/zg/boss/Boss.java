@@ -32,35 +32,22 @@ public class Boss extends Enemy implements IAnimatable {
 
         initializeAnimations();
 
-        setHitbox(new Rectangle(0, 0, 1f, 1.7f));
+        setHitbox(new Rectangle(0,0, 1f, 1.7f));
 
         setState(AnimationState.IDLE);
 
     }
 
     public void initializeAnimations() {
-        createAnimation("IDLE", "Idle-Sheet-Boss.png", 4, 1, 1f/4f, Animation.PlayMode.NORMAL);
-        createAnimation("ATTACK", "Run-Sheet-Boss.png",6,1,1f/6f, Animation.PlayMode.NORMAL);
+        createAnimation("IDLE", "Idle-Sheet-Boss.png", 8, 1, 1f/12f, Animation.PlayMode.LOOP);
+        createAnimation("ATTACK", "Ranged-Attack-Boss.png",18,1,1f/12f, Animation.PlayMode.NORMAL);
         createAnimation("DEATH", "Death-Sheet-Boss.png",6,1,1f/6f, Animation.PlayMode.NORMAL);
     }
 
     public void setState(AnimationState state) {
         if (state != currentState) {
             currentState = state;
-            switch (state) {
-                case IDLE:
-                    setCurrentAnimation("IDLE");
-                    break;
-                case RUN:
-                    setCurrentAnimation("RUN");
-                    break;
-                case ATTACK:
-                    setCurrentAnimation("ATTACK");
-                    break;
-                case DEATH:
-                    setCurrentAnimation("DEATH");
-                    break;
-            }
+            setCurrentAnimation(state.toString());
         }
     }
 

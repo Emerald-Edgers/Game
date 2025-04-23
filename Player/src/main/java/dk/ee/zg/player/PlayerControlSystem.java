@@ -88,7 +88,13 @@ public class PlayerControlSystem implements IEntityProcessService {
         //if attack was just pressed
         if (gameData.getGameKey().isPressed(gameData.getGameKey()
                 .getActionToKey().get(KeyAction.Attack))) {
-            isAttacking = true;
+            if (player1.isAnimationFinished()
+                    || player1.getCurrentState() == AnimationState.IDLE
+                    || player1.getCurrentState() == AnimationState.RUN) {
+                isAttacking = true;
+            } else {
+                return;
+            }
         }
 
         moveDirection = MoveDirection.NONE;

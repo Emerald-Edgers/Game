@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
@@ -80,11 +81,9 @@ public class BossControlSystem implements IEntityProcessService {
             //move(boss, dir);
 
             if (melAttackCooldown <= 0) {
-                setBossAnimationState(boss, AnimationState.ATTACK);
+                //setBossAnimationState(boss, AnimationState.ATTACK);
                 rangedAttack(boss, world);
-                melAttackCooldown = 2f;
-            } else {
-                //setBossAnimationState(boss, AnimationState.IDLE);
+                melAttackCooldown = 6f;
             }
 
         }
@@ -109,16 +108,13 @@ public class BossControlSystem implements IEntityProcessService {
     }
 
     private void updateBossAnimation(Boss boss) {
-        int currentTime = (int) animationChangeCooldown;
         if (animationChangeCooldown <= 0) {
             if (!deathPlayed) {
                 setBossAnimationState(boss, AnimationState.DEATH);
                 System.out.println("DeathPlayed");
                 deathPlayed = true;
             }
-        } else if (currentTime % 10 == 0) {
-            setBossAnimationState(boss, AnimationState.ATTACK);
-        }else if (requestedAnimationState != null) {
+        } else if (requestedAnimationState != null) {
             if (setBossAnimationState(boss, requestedAnimationState)) {
                 requestedAnimationState = null;
             }
@@ -259,18 +255,26 @@ public class BossControlSystem implements IEntityProcessService {
      *              it has to know the player entity to throw it towards
      */
     public void rangedAttack(final Boss boss, final WorldEntities world) {
-        Vector2 target = new Vector2(player.getPosition());
+        setBossAnimationState(boss, AnimationState.ATTACK);
 
-        Vector2 bossPos = boss.getPosition();
+        float animationTimer = 0.80f;
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                Vector2 target = new Vector2(player.getPosition());
 
-        Vector2 projectileDir = new Vector2(target.sub(bossPos));
-        projectileDir.nor();
+                Vector2 bossPos = boss.getPosition();
 
-        float speed = boss.getAttackSpeed();
+                Vector2 projectileDir = new Vector2(target.sub(bossPos));
+                projectileDir.nor();
 
-        Projectile projectile = new Projectile(boss.getPosition(),
-                projectileDir, speed, world, player);
-        world.addEntity(projectile);
+                float speed = boss.getAttackSpeed() * 1.2f;
+
+                Projectile projectile = new Projectile(bossPos,
+                        projectileDir, speed, world, player);
+                world.addEntity(projectile);
+            }
+        },animationTimer);
     }
 
     /**

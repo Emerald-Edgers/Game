@@ -129,11 +129,6 @@ public class LinearCollisionEngine implements ICollisionEngine {
                 e2Rect.y + e2Rect.height)
                 - Math.max(e1Rect.y, e2Rect.y);
 
-        if (xOverlap <= 0 || yOverlap <=0) {
-            return;
-        }
-
-
         Vector2 diffVec = new Vector2();
 
         if (xOverlap < yOverlap) {
