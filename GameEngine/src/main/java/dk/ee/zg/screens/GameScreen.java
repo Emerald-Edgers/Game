@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import dk.ee.zg.UI.HUD;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
@@ -97,6 +98,11 @@ public class GameScreen implements Screen {
     private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
     /**
+     * the HUD object for heads up display.
+     */
+    private final HUD hud = new HUD();
+
+    /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
@@ -123,6 +129,7 @@ public class GameScreen implements Screen {
         initCamera();
         initSpawner();
         initMap("main-map.tmx");
+
     }
 
     /**
@@ -223,6 +230,7 @@ public class GameScreen implements Screen {
         draw();
         collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
+        hud.drawHUD(batch, worldEntities);
     }
 
     /**
@@ -294,6 +302,8 @@ public class GameScreen implements Screen {
         }
 
     }
+
+
 
 
     /**

@@ -178,7 +178,7 @@ public class Player extends Entity {
      */
     private void levelUp() {
         level++;
-        EventManager.triggerEvent(new Events.PlayerLevelUpEvent());
+        EventManager.triggerEvent(new Events.PlayerLevelUpEvent(level));
     }
 
 
