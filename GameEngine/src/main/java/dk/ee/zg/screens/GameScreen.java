@@ -84,13 +84,13 @@ public class GameScreen implements Screen {
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 8;
+    private static final float VIEWPORT_WIDTH = 16;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 8;
+    private static final float VIEWPORT_HEIGHT = 9;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -119,7 +119,6 @@ public class GameScreen implements Screen {
         gameData = GameData.getInstance();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
-        stage = new Stage();
     }
 
 
@@ -141,6 +140,15 @@ public class GameScreen implements Screen {
         initCamera();
         initSpawner();
         initMap("main-map.tmx");
+
+        //Changes input to accept UI input. Stage must not get keyboard focus
+        // in order to move player while pop up is showing.
+        stage = new Stage(
+                new FitViewport(
+                        GameData.getInstance().getDisplayWidth(),
+                        GameData.getInstance().getDisplayHeight()));
+        stage.setKeyboardFocus(null);
+        stage.setScrollFocus(null);
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(stage);
         multiplexer.addProcessor(Gdx.input.getInputProcessor());
@@ -157,7 +165,7 @@ public class GameScreen implements Screen {
                                 new FileHandle(
                                         "GameEngine/src/main/resources/"
                                                 + "skin/uiskin.json"), atlas));
-                levelUpPopup.show(stage);
+                levelUpPopup.animateShow(stage);
             });
         }
     }
@@ -328,8 +336,9 @@ public class GameScreen implements Screen {
         if (map != null) {
             map.renderTop();
         }
+        // Required for input events and tooltips to be processed.
+        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-
     }
 
 
@@ -355,6 +364,7 @@ public class GameScreen implements Screen {
         viewport.update(width, height, true);
         gameData.setDisplayWidth(width);
         gameData.setDisplayHeight(height);
+        stage.getViewport().update(width, height, true);
     }
 
     /**
