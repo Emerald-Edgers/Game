@@ -25,12 +25,12 @@ public class HUD {
     /**
      * width of the screen.
      */
-    private static final int SCREEN_WIDTH =
+    private int SCREEN_WIDTH =
             GameData.getInstance().getDisplayWidth();
     /**
      * height of the screen.
      */
-    private static final int SCREEN_HEIGHT =
+    private int SCREEN_HEIGHT =
             GameData.getInstance().getDisplayHeight();
     /**
      * player instance, used for HUD.
@@ -71,6 +71,10 @@ public class HUD {
      */
     public void drawHUD(final SpriteBatch batch,
                         final WorldEntities worldEntities) {
+        SCREEN_WIDTH =
+            GameData.getInstance().getDisplayWidth();
+        SCREEN_HEIGHT =
+            GameData.getInstance().getDisplayHeight();
         //get player instance if null
         if (player == null) {
             Optional<Player> optionalPlayer =
