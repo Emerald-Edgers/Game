@@ -3,8 +3,10 @@ package dk.ee.zg.UI;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import dk.ee.zg.common.data.EventManager;
@@ -13,6 +15,8 @@ import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.player.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class HUD {
@@ -50,8 +54,10 @@ public class HUD {
      * elapsed time in game.
      */
     private float elapsedTimeInSecs;
-
-
+    /**
+     * List of item textures.
+     */
+    private List<Texture> itemImgsToRender = new ArrayList<Texture>();
 
     /**
      * constructor, sets up camera and renderer.
@@ -62,8 +68,9 @@ public class HUD {
         camera.setToOrtho(true, SCREEN_WIDTH, SCREEN_HEIGHT);
         shapeRenderer = new ShapeRenderer();
 
-        EventManager.addListener(Events.EquipItemEvent.class, equipItemEvent -> {
-            System.out.println(equipItemEvent);
+        EventManager.addListener(Events.EquipItemEvent.class,
+                equipItemEvent -> {
+            itemImgsToRender.add(equipItemEvent.getTexture());
         });
     }
 
@@ -94,7 +101,7 @@ public class HUD {
         shapeRenderer.setProjectionMatrix(camera.combined);
         batch.setProjectionMatrix(camera.combined);
 
-        drawItemsEquippedBar();
+        drawItemsEquippedBar(batch);
         drawHPBar();
         drawXPBar(batch);
         drawTimer(batch);
@@ -104,8 +111,44 @@ public class HUD {
 
     /**
      * draw method for items equipped Bar.
+     * @param batch spritebatch to draw on.
      */
-    private void drawItemsEquippedBar() {
+    private void drawItemsEquippedBar(final SpriteBatch batch) {
+        int xOffset = 20;
+        int itemXSpacing = 5;
+        int i = 0;
+        for (Texture texture : itemImgsToRender) {
+            int x = (i * (texture.getWidth() + itemXSpacing)) + xOffset;
+            int y = 50;
+            int rows = (x + xOffset + itemXSpacing) / SCREEN_WIDTH;
+            if (rows >= 1) {
+                // start on new line
+                x = (x - (SCREEN_WIDTH * (rows))) + itemXSpacing;
+                y += texture.getHeight() * (rows);
+            }
+
+            // Draw border
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.setColor(Color.DARK_GRAY);
+            shapeRenderer.rect(x, y, texture.getWidth(), texture.getHeight());
+            shapeRenderer.end();
+
+            // Draw Line
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.setColor(Color.WHITE);
+            shapeRenderer.rect(x, y, texture.getWidth(), texture.getHeight());
+            shapeRenderer.end();
+
+            //draw image
+            TextureRegion region = new TextureRegion(texture);
+            region.flip(false, true); // flip Y only
+            batch.begin();
+            batch.draw(region, x, y);
+            batch.end();
+            i++;
+        }
 
     }
 
@@ -118,8 +161,8 @@ public class HUD {
 
         float barWidth = 320;
         float barHeight = 20;
-        float x = 60;
-        float y = 60;
+        float x = 40;
+        float y = 20;
 
         // Background (gray)
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -151,7 +194,9 @@ public class HUD {
         shapeRenderer.rect(x, y, SCREEN_WIDTH, barHeight);
 
         // Foreground (blue, scaled to %)
-        float xpPercentage = currentXP / (player.getLevel() * 1000); // e.g., 0.75 if 75% done
+        float currentXpToLvlThreshold = currentXP
+                - (float) ((player.getLevel()) * 1000);
+        float xpPercentage = currentXpToLvlThreshold / 1000;
         shapeRenderer.setColor(Color.BLUE);
         shapeRenderer.rect(x, y, xpPercentage * SCREEN_WIDTH, barHeight);
         shapeRenderer.end();

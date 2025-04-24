@@ -187,8 +187,16 @@ public class Player extends Entity implements IAnimatable {
     private void gainExperience(final int exp) {
         experience += exp;
         // threshold defined by manipulating level.
-        //currently linear x100 of level
-        if (experience > level * 1000) {
+        //currently linear x1000 of level
+        System.out.println(experience);
+        int levelups = (int) (experience / (1000) ) - level;
+        System.out.println(levelups);
+        if (level != 0) {
+            levelups = (int) (experience / (level * 1000)) - level;
+
+        }
+
+        for (int i = 0; i < levelups; i++) {
             levelUp();
         }
     }
