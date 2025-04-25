@@ -21,9 +21,12 @@
         <module>AIPathFinding</module>
         <module>Boss</module>
         <module>EnemySkeleton</module>
+        <module>CommonItem</module>
+        <module>BaseItems</module>
         <module>EnemyDragon</module>
         <module>Cleaver</module>
         <module>Milk</module>
+        <module>CommonTest</module>
     </modules>
 
     <properties>
@@ -43,6 +46,18 @@
                 <groupId>com.badlogicgames.gdx</groupId>
                 <artifactId>gdx</artifactId>
                 <version>${libgdx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.10.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.11.0</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

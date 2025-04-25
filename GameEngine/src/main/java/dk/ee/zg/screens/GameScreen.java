@@ -1,13 +1,25 @@
 package dk.ee.zg.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import dk.ee.zg.UI.HUD;
 import dk.ee.zg.boss.ranged.Projectile;
+import dk.ee.zg.common.data.EventManager;
+import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
+import dk.ee.zg.common.item.ItemManager;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -20,12 +32,20 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import dk.ee.zg.popups.LevelUpPopup;
+import org.lwjgl.opengl.GL20;
 
 public class GameScreen implements Screen {
     /**
      * Instance of the singleton class {@link GameData}.
      */
     private final GameData gameData;
+
+    /**
+     * Instance of the stage being used on this screen.
+     * Used for adding pop up.
+     */
+    private Stage stage;
 
     /**
      * Instance of {@link WorldEntities} used for interacting with entities.
@@ -66,16 +86,24 @@ public class GameScreen implements Screen {
     private SpriteBatch batch;
 
     /**
+     * Instance of {@link ShapeRenderer} to use for drawing
+     * hitboxes during debug mode.
+     */
+    private ShapeRenderer debugHitboxRenderer;
+
+    /**
      * The width of the viewport in world units.
      * This is how much of the x-axis the player should see at once.
      */
-    private static final float VIEWPORT_WIDTH = 8;
+
+    private static final float VIEWPORT_WIDTH = 15;
 
     /**
      * The height of the viewport in world units.
      * This is how much of the y-axis the player should see at once.
      */
-    private static final float VIEWPORT_HEIGHT = 8;
+
+    private static final float VIEWPORT_HEIGHT = 15;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -95,12 +123,19 @@ public class GameScreen implements Screen {
      */
     private static final int MAP_HEIGHT_PIXELS = 150 * 16;
 
+
+    /**
+     * the HUD object for heads up display.
+     */
+    private final HUD hud = new HUD();
+
     /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
     public GameScreen() {
         gameData = GameData.getInstance();
+        debugHitboxRenderer = new ShapeRenderer();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
     }
@@ -119,9 +154,39 @@ public class GameScreen implements Screen {
             entity.start(worldEntities);
         }
 
+
+
         initCamera();
         initSpawner();
         initMap("main-map.tmx");
+
+        //Changes input to accept UI input. Stage must not get keyboard focus
+        // in order to move player while pop up is showing.
+        stage = new Stage(
+                new FitViewport(
+                        GameData.getInstance().getDisplayWidth(),
+                        GameData.getInstance().getDisplayHeight()));
+        stage.setKeyboardFocus(null);
+        stage.setScrollFocus(null);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(Gdx.input.getInputProcessor());
+        Gdx.input.setInputProcessor(multiplexer);
+
+        if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
+            EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
+                TextureAtlas atlas = new TextureAtlas(
+                        new FileHandle("GameEngine/src/main/resources/"
+                                + "skin/uiskin.atlas"));
+
+                LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!",
+                        new Skin(
+                                new FileHandle(
+                                        "GameEngine/src/main/resources/"
+                                                + "skin/uiskin.json"), atlas));
+                levelUpPopup.animateShow(stage);
+            });
+        }
     }
 
     /**
@@ -136,7 +201,8 @@ public class GameScreen implements Screen {
         for (IMap mapImpl : ServiceLoader.load(IMap.class)) {
             if (map == null) {
                 map = mapImpl;
-                map.loadMap(mapPath, UNIT_SCALE, worldObstacles);
+                map.loadMap(mapPath, UNIT_SCALE,
+                        worldObstacles, new TmxMapLoader());
             }
         }
         for (IPathFinder pathFinder : ServiceLoader.load(IPathFinder.class)) {
@@ -221,6 +287,7 @@ public class GameScreen implements Screen {
         draw();
         collisionCheck();
         GameData.getInstance().getGameKey().checkJustPressed();
+        hud.drawHUD(batch, worldEntities);
     }
 
     /**
@@ -238,6 +305,9 @@ public class GameScreen implements Screen {
         enemySpawnerUpdate(v);
 
         for (Entity entity : worldEntities.getEntities()) {
+
+            entity.update(v);
+
             if (entity instanceof Projectile) {
                 ((Projectile) entity).update();
             }
@@ -279,6 +349,7 @@ public class GameScreen implements Screen {
             map.renderBottom();
         }
 
+        batch.setProjectionMatrix(camera.combined);
         batch.begin(); // Begin drawing
 
         for (Entity entity : worldEntities.getEntities()) {
@@ -286,12 +357,46 @@ public class GameScreen implements Screen {
         }
 
         batch.end(); // End drawing
-
+      
         if (map != null) {
             map.renderTop();
         }
+        // Required for input events and tooltips to be processed.
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
 
+        if (gameData.isDebug()) {
+            debugDraw();
+        }
     }
+
+    private void debugDraw(){
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+        debugHitboxRenderer.setProjectionMatrix(camera.combined);
+        debugHitboxRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        for (Entity entity : worldEntities.getEntities()) {
+            if (entity.getHitbox() != null) {
+                debugHitboxRenderer.setColor(1f, 0f, 0f, 0.8f);
+                Rectangle rectangle = entity.getHitbox();
+                debugHitboxRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+            }
+        }
+
+        for (Rectangle obstacle : worldObstacles.getObstacles()) {
+            debugHitboxRenderer.setColor(1f, 0.5f, 0f, 0.8f);
+            debugHitboxRenderer.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        }
+
+        debugHitboxRenderer.end();
+        debugHitboxRenderer.flush();
+
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+
+
 
 
     /**
@@ -316,6 +421,7 @@ public class GameScreen implements Screen {
         viewport.update(width, height, true);
         gameData.setDisplayWidth(width);
         gameData.setDisplayHeight(height);
+        stage.getViewport().update(width, height, true);
     }
 
     /**
@@ -350,5 +456,10 @@ public class GameScreen implements Screen {
     public void dispose() {
         batch.dispose();
         map.getRenderer().dispose();
+        stage.dispose();
+        if (debugHitboxRenderer != null) {
+            debugHitboxRenderer.dispose();
+        }
     }
+
 }

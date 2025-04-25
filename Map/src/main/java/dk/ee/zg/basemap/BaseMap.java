@@ -28,6 +28,7 @@ public class BaseMap implements IMap {
      */
     private int objectsLayerIndex;
 
+
     /**
      * Sets this instance's {@link TiledMap} to the map found.
      * Creates a new {@link OrthogonalTiledMapRenderer}
@@ -38,15 +39,26 @@ public class BaseMap implements IMap {
      *                     (E.g. 1 / 32 means 32 pixels per unit)
      */
     @Override
-
     public void loadMap(final String mapName,
                         final float unitScale,
-                        final WorldObstacles worldObstacles) {
-        map = new TmxMapLoader().load(mapName);
-        renderer = new OrthogonalTiledMapRenderer(map, unitScale);
+                        final WorldObstacles worldObstacles,
+                        final TmxMapLoader mapLoader) {
+        map = mapLoader.load(mapName);
+        renderer = createRenderer(map, unitScale);
         getObstaclesFromLayer(map.getLayers().get(
                 "Collision"), worldObstacles, unitScale);
         objectsLayerIndex = map.getLayers().getIndex("Objects");
+    }
+
+    /**
+     * Creates a new Tiled Map Renderer for the given map and unitscale.
+     * @param newMap   The map which the renderers is for.
+     * @param unitScale The scale of units in the map.
+     * @return  A new {@link OrthogonalTiledMapRenderer} based on the map.
+     */
+    public OrthogonalTiledMapRenderer createRenderer(
+            final TiledMap newMap, final float unitScale) {
+        return new OrthogonalTiledMapRenderer(newMap, unitScale);
     }
 
     /**
@@ -59,8 +71,10 @@ public class BaseMap implements IMap {
         renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
         for (int i = 0; i < objectsLayerIndex; i++) {
-            renderer.renderTileLayer(
-                    (TiledMapTileLayer) map.getLayers().get(i));
+            if (map.getLayers().get(i) instanceof TiledMapTileLayer) {
+                renderer.renderTileLayer(
+                        (TiledMapTileLayer) map.getLayers().get(i));
+            }
         }
         renderer.getBatch().end();
     }
@@ -75,8 +89,10 @@ public class BaseMap implements IMap {
         renderer.getBatch().begin();
         renderer.setView(GameData.getInstance().getCamera());
         for (int i = objectsLayerIndex; i < map.getLayers().getCount(); i++) {
-            renderer.renderTileLayer(
-                    (TiledMapTileLayer) map.getLayers().get(i));
+            if (map.getLayers().get(i) instanceof TiledMapTileLayer) {
+                renderer.renderTileLayer(
+                        (TiledMapTileLayer) map.getLayers().get(i));
+            }
         }
         renderer.getBatch().end();
     }
