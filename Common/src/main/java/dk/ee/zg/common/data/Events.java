@@ -146,6 +146,38 @@ public class Events {
             this.evasion = evasion;
             this.healthRegen = healthRegen;
         }
+
+        public int getCritChance() {
+            return critChance;
+        }
+
+        public int getCritDamage() {
+            return critDamage;
+        }
+
+        public int getDefense() {
+            return defense;
+        }
+
+        public int getLifesteal() {
+            return lifesteal;
+        }
+
+        public int getPenetration() {
+            return penetration;
+        }
+
+        public int getRange() {
+            return range;
+        }
+
+        public int getEvasion() {
+            return evasion;
+        }
+
+        public int getHealthRegen() {
+            return healthRegen;
+        }
     }
 
 }

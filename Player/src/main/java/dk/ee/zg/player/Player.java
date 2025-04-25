@@ -104,7 +104,7 @@ public class Player extends Entity implements IAnimatable {
     private AnimationState currentState = AnimationState.IDLE;
 
     private Map<AnimationState, String> stateToAnimateMap;
-    private Map<String,String> directionAnimationMap;
+    private Map<String, String> directionAnimationMap;
 
     private AttackDirection facingDirection = AttackDirection.RIGHT;
 
@@ -129,7 +129,8 @@ public class Player extends Entity implements IAnimatable {
                   final int def, final int hpsteal, final int pen,
                   final int r, final int eva, final int hpRegen) {
         super(new Vector2(), 0, new Vector2(50, 50),
-                "Animations/Carry_Idle/Carry_Idle_Down-Sheet.png", EntityType.Player);
+                "Animations/Carry_Idle/Carry_Idle_Down-Sheet.png",
+                EntityType.Player);
         this.maxHP = maxLife;
         this.attackDamage = atkDamage;
         this.attackSpeed = atkSpeed;
@@ -144,7 +145,6 @@ public class Player extends Entity implements IAnimatable {
         this.evasion = eva;
         this.healthRegen = hpRegen;
         initEventListeners();
-      
         setHitbox(new Rectangle(0, 0, 0.5f, 0.75f));
 
         initializeAnimations();
@@ -162,6 +162,17 @@ public class Player extends Entity implements IAnimatable {
         EventManager.addListener(Events.EnemyKilledEvent.class,
                 enemyKilledEvent -> {
             gainExperience(enemyKilledEvent.getExperience());
+        });
+        EventManager.addListener(Events.EquipItemEvent.class,
+                equipItemEvent -> {
+            setCritChance(getCritChance() + equipItemEvent.getCritChance());
+            setDefense(getDefense() + equipItemEvent.getDefense());
+            setEvasion(getEvasion() + equipItemEvent.getEvasion());
+            setCritDamage(getCritDamage() + equipItemEvent.getCritDamage());
+            setHealthRegen(getHealthRegen() + equipItemEvent.getHealthRegen());
+            setLifesteal(getLifesteal() + equipItemEvent.getLifesteal());
+            setPenetration(getPenetration() + equipItemEvent.getPenetration());
+            setRange(getRange() + equipItemEvent.getRange());
         });
     }
 
