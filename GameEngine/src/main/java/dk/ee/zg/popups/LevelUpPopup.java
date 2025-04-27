@@ -71,6 +71,7 @@ public class LevelUpPopup extends Dialog {
 
         getTitleLabel().setAlignment(Align.center);
         this.setModal(false);
+        this.setMovable(false);
 
     }
 

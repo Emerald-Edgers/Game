@@ -35,4 +35,8 @@ public enum KeyAction {
      * Action for attacking with weapons basic attack.
      */
     Attack,
+    /**
+     * Action of pausing the game.
+     */
+    PAUSE,
 }

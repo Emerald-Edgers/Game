@@ -6,17 +6,23 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.UI.HUD;
 import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.EventManager;
 import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
+import dk.ee.zg.common.data.KeyAction;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.item.ItemManager;
@@ -37,9 +43,18 @@ import org.lwjgl.opengl.GL20;
 
 public class GameScreen implements Screen {
 
+    /**
+     * Value if game is running.
+     */
     static final int GAME_RUNNING = 0;
+    /**
+     * Value if game is paused.
+     */
     static final int GAME_PAUSED = 1;
 
+    /**
+     * State for checking if game is paused or running.
+     */
     private int state;
     /**
      * Instance of the singleton class {@link GameData}.
@@ -135,6 +150,16 @@ public class GameScreen implements Screen {
     private final HUD hud = new HUD();
 
     /**
+     * Skin used for styling UI Elements in the stage.
+     */
+    private Skin skin;
+
+    /**
+     * Window shown when pausing.
+     */
+    private Window pauseWindow;
+
+    /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
@@ -144,32 +169,11 @@ public class GameScreen implements Screen {
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
 
-        stage = new Stage(
-                new FitViewport(
-                        GameData.getInstance().getDisplayWidth(),
-                        GameData.getInstance().getDisplayHeight()));
-        stage.setKeyboardFocus(null);
-        stage.setScrollFocus(null);
-        InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(stage);
-        multiplexer.addProcessor(Gdx.input.getInputProcessor());
-        Gdx.input.setInputProcessor(multiplexer);
 
-        if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
-            EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
-                TextureAtlas atlas = new TextureAtlas(
-                        new FileHandle("GameEngine/src/main/resources/"
-                                + "skin/uiskin.atlas"));
-
-                LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!",
-                        new Skin(
-                                new FileHandle(
-                                        "GameEngine/src/main/resources/"
-                                                + "skin/uiskin.json"), atlas));
-                levelUpPopup.animateShow(stage);
-            });
-        }
+        setupStage();
+        createPauseWindow();
     }
+
 
 
     /**
@@ -184,8 +188,6 @@ public class GameScreen implements Screen {
                 : ServiceLoader.load(IGamePluginService.class)) {
             entity.start(worldEntities);
         }
-
-
 
         initCamera();
         initSpawner();
@@ -314,7 +316,6 @@ public class GameScreen implements Screen {
                 for (Entity entity : worldEntities.getEntities()) {
 
                     entity.update(v);
-
                     if (entity instanceof Projectile) {
                         ((Projectile) entity).update();
                     }
@@ -325,11 +326,20 @@ public class GameScreen implements Screen {
                         checkBounds();
                     }
                 }
-                //TODO optimize optimizeObstaclces to get called at a fixed interval.
                 worldObstacles.optimizeObstacles();
                 camera.update();
+                if (gameData.getGameKey().isPressed((gameData.getGameKey()
+                    .getActionToKey().get(KeyAction.PAUSE)))) {
+                    pause();
+                }
                 break;
             case GAME_PAUSED:
+                if (gameData.getGameKey().isPressed((gameData.getGameKey()
+                        .getActionToKey().get(KeyAction.PAUSE)))) {
+                    resume();
+                }
+                break;
+            default:
                 break;
         }
     }
@@ -368,20 +378,19 @@ public class GameScreen implements Screen {
         }
 
         batch.end(); // End drawing
-      
         if (map != null) {
             map.renderTop();
         }
-        // Required for input events and tooltips to be processed.
-        stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
 
         if (gameData.isDebug()) {
             debugDraw();
         }
+        // Required for input events and tooltips to be processed.
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
 
-    private void debugDraw(){
+    private void debugDraw() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -392,13 +401,19 @@ public class GameScreen implements Screen {
             if (entity.getHitbox() != null) {
                 debugHitboxRenderer.setColor(1f, 0f, 0f, 0.8f);
                 Rectangle rectangle = entity.getHitbox();
-                debugHitboxRenderer.rect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+                debugHitboxRenderer.rect(rectangle.x,
+                        rectangle.y,
+                        rectangle.width,
+                        rectangle.height);
             }
         }
 
         for (Rectangle obstacle : worldObstacles.getObstacles()) {
             debugHitboxRenderer.setColor(1f, 0.5f, 0f, 0.8f);
-            debugHitboxRenderer.rect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            debugHitboxRenderer.rect(obstacle.x,
+                    obstacle.y,
+                    obstacle.width,
+                    obstacle.height);
         }
 
         debugHitboxRenderer.end();
@@ -439,8 +454,12 @@ public class GameScreen implements Screen {
      * Automatically executed when game is paused.
      */
     @Override
-    public void pause () {
-        if (state == GAME_RUNNING) state = GAME_PAUSED;
+    public void pause() {
+        if (state == GAME_RUNNING) {
+            state = GAME_PAUSED;
+        }
+        pauseWindow.setVisible(true);
+        hud.stopStartTimer();
     }
 
     /**
@@ -448,7 +467,11 @@ public class GameScreen implements Screen {
      */
     @Override
     public void resume() {
-
+        if (state == GAME_PAUSED) {
+            state = GAME_RUNNING;
+        }
+        pauseWindow.setVisible(false);
+        hud.stopStartTimer();
     }
 
     /**
@@ -470,6 +493,58 @@ public class GameScreen implements Screen {
         stage.dispose();
         if (debugHitboxRenderer != null) {
             debugHitboxRenderer.dispose();
+        }
+    }
+
+    private void createPauseWindow() {
+        Window pause = new Window("PAUSED", skin);
+        pause.align(Align.center);
+        pause.padTop(100);
+        TextButton continueButton = new TextButton("Continue", skin);
+        continueButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(final InputEvent event,
+                                final float x, final float y) {
+                resume();
+                pause.setVisible(false);
+            }
+        });
+        pause.setZIndex(10000);
+        pause.add(continueButton).row();
+        pause.add(new TextButton("Exit", skin));
+        //pause.setSize(stage.getWidth() / 2f, stage.getHeight() / 2f);
+        pause.setPosition(stage.getWidth() / 2 - pause.getWidth() / 2,
+                stage.getHeight() / 2 - pause.getHeight() / 2);
+        pause.setResizable(false);
+        pause.setMovable(false);
+        pause.setVisible(false);
+        stage.addActor(pause);
+        pauseWindow = pause;
+    }
+
+
+    private void setupStage() {
+        stage = new Stage(
+                new FitViewport(
+                        GameData.getInstance().getDisplayWidth(),
+                        GameData.getInstance().getDisplayHeight()));
+        stage.setKeyboardFocus(null);
+        stage.setScrollFocus(null);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(Gdx.input.getInputProcessor());
+        Gdx.input.setInputProcessor(multiplexer);
+        TextureAtlas atlas = new TextureAtlas(
+                new FileHandle("GameEngine/src/main/resources/"
+                        + "skin/uiskin.atlas"));
+
+        skin = new Skin(new FileHandle("GameEngine/src/main/resources/"
+                + "skin/uiskin.json"), atlas);
+        if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
+            EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
+                LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!", skin);
+                levelUpPopup.animateShow(stage);
+            });
         }
     }
 

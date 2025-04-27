@@ -49,6 +49,10 @@ public class HUD {
      */
     private float elapsedTimeInSecs;
 
+    private float deltaTimeMultiplier = 1;
+
+    private boolean timerRunning = true;
+
 
 
     /**
@@ -163,7 +167,7 @@ public class HUD {
      */
     private void drawTimer(final SpriteBatch batch) {
         // Update timer
-        elapsedTimeInSecs += Gdx.graphics.getDeltaTime();
+        elapsedTimeInSecs += Gdx.graphics.getDeltaTime() * deltaTimeMultiplier;
 
         // Format time
         int minutes = (int) (elapsedTimeInSecs / 60);
@@ -196,5 +200,15 @@ public class HUD {
         generator.dispose();
 
         return font;
+    }
+
+    public void stopStartTimer(){
+        if (timerRunning){
+            deltaTimeMultiplier = 0;
+            timerRunning = false;
+        } else {
+            deltaTimeMultiplier = 1;
+            timerRunning = true;
+        }
     }
 }
