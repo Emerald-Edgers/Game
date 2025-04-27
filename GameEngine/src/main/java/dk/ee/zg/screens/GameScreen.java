@@ -36,6 +36,11 @@ import dk.ee.zg.popups.LevelUpPopup;
 import org.lwjgl.opengl.GL20;
 
 public class GameScreen implements Screen {
+
+    static final int GAME_RUNNING = 0;
+    static final int GAME_PAUSED = 1;
+
+    private int state;
     /**
      * Instance of the singleton class {@link GameData}.
      */
@@ -138,30 +143,7 @@ public class GameScreen implements Screen {
         debugHitboxRenderer = new ShapeRenderer();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
-    }
 
-
-    /**
-     * Automatically executed when screen is shown.
-     * Calls setup methods for the world, and entities in the world.
-     */
-    @Override
-    public void show() {
-        batch = new SpriteBatch(); // Create SpriteBatch
-
-        for (IGamePluginService entity
-                : ServiceLoader.load(IGamePluginService.class)) {
-            entity.start(worldEntities);
-        }
-
-
-
-        initCamera();
-        initSpawner();
-        initMap("main-map.tmx");
-
-        //Changes input to accept UI input. Stage must not get keyboard focus
-        // in order to move player while pop up is showing.
         stage = new Stage(
                 new FitViewport(
                         GameData.getInstance().getDisplayWidth(),
@@ -187,6 +169,30 @@ public class GameScreen implements Screen {
                 levelUpPopup.animateShow(stage);
             });
         }
+    }
+
+
+    /**
+     * Automatically executed when screen is shown.
+     * Calls setup methods for the world, and entities in the world.
+     */
+    @Override
+    public void show() {
+        batch = new SpriteBatch(); // Create SpriteBatch
+
+        for (IGamePluginService entity
+                : ServiceLoader.load(IGamePluginService.class)) {
+            entity.start(worldEntities);
+        }
+
+
+
+        initCamera();
+        initSpawner();
+        initMap("main-map.tmx");
+
+        //Changes input to accept UI input. Stage must not get keyboard focus
+        // in order to move player while pop up is showing.
     }
 
     /**
@@ -296,31 +302,36 @@ public class GameScreen implements Screen {
      * @param v The delta-time of the current frame.
      */
     private void update(final float v) {
+        switch (state) {
+            case GAME_RUNNING:
+                for (IEntityProcessService entity
+                        : ServiceLoader.load(IEntityProcessService.class)) {
+                    entity.process(worldEntities);
+                }
 
-        for (IEntityProcessService entity
-                : ServiceLoader.load(IEntityProcessService.class)) {
-            entity.process(worldEntities);
+                enemySpawnerUpdate(v);
+
+                for (Entity entity : worldEntities.getEntities()) {
+
+                    entity.update(v);
+
+                    if (entity instanceof Projectile) {
+                        ((Projectile) entity).update();
+                    }
+                    if (entity.getEntityType() == EntityType.Player) {
+                        float cameraX = entity.getPosition().x;
+                        float cameraY = entity.getPosition().y;
+                        camera.position.set(cameraX, cameraY, 0);
+                        checkBounds();
+                    }
+                }
+                //TODO optimize optimizeObstaclces to get called at a fixed interval.
+                worldObstacles.optimizeObstacles();
+                camera.update();
+                break;
+            case GAME_PAUSED:
+                break;
         }
-
-        enemySpawnerUpdate(v);
-
-        for (Entity entity : worldEntities.getEntities()) {
-
-            entity.update(v);
-
-            if (entity instanceof Projectile) {
-                ((Projectile) entity).update();
-            }
-            if (entity.getEntityType() == EntityType.Player) {
-                float cameraX = entity.getPosition().x;
-                float cameraY = entity.getPosition().y;
-                camera.position.set(cameraX, cameraY, 0);
-                checkBounds();
-            }
-        }
-        //TODO optimize optimizeObstaclces to get called at a fixed interval.
-        worldObstacles.optimizeObstacles();
-        camera.update();
     }
 
     /**
@@ -428,8 +439,8 @@ public class GameScreen implements Screen {
      * Automatically executed when game is paused.
      */
     @Override
-    public void pause() {
-
+    public void pause () {
+        if (state == GAME_RUNNING) state = GAME_PAUSED;
     }
 
     /**
