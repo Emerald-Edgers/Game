@@ -4,13 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -168,7 +171,6 @@ public class GameScreen implements Screen {
         debugHitboxRenderer = new ShapeRenderer();
         worldEntities = new WorldEntities();
         worldObstacles = new WorldObstacles();
-
 
         setupStage();
         createPauseWindow();
@@ -497,10 +499,23 @@ public class GameScreen implements Screen {
     }
 
     private void createPauseWindow() {
-        Window pause = new Window("PAUSED", skin);
-        pause.align(Align.center);
-        pause.padTop(100);
-        TextButton continueButton = new TextButton("Continue", skin);
+        Window pause = new Window("", skin);
+
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = skin.getFont("new");
+        pause.getTitleLabel().setSize(Gdx.graphics.getWidth(), pause.getRowHeight(0));
+        pause.getTitleLabel().setPosition(0,Gdx.graphics.getHeight()-pause.getRowHeight(0)*2);
+        pause.getTitleLabel().setAlignment(Align.center);
+        pause.getTitleLabel().setText("Paused");
+        pause.getTitleLabel().setStyle(labelStyle);
+        pause.getTitleTable().setSize(Gdx.graphics.getWidth(), 100);
+
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.up = skin.getDrawable("default-round");  // or whatever drawable you want
+        buttonStyle.down = skin.getDrawable("default-round-down");
+        buttonStyle.font = skin.getFont("new");
+
+        TextButton continueButton = new TextButton("Continue", buttonStyle);
         continueButton.addListener(new ClickListener() {
             @Override
             public void clicked(final InputEvent event,
@@ -509,15 +524,18 @@ public class GameScreen implements Screen {
                 pause.setVisible(false);
             }
         });
-        pause.setZIndex(10000);
         pause.add(continueButton).row();
-        pause.add(new TextButton("Exit", skin));
-        //pause.setSize(stage.getWidth() / 2f, stage.getHeight() / 2f);
+        pause.row().pad(20f);
+
+        pause.add(new TextButton("Exit", buttonStyle)).row();
+
+        pause.setSize(stage.getWidth() / 3f, stage.getHeight() / 3f);
         pause.setPosition(stage.getWidth() / 2 - pause.getWidth() / 2,
                 stage.getHeight() / 2 - pause.getHeight() / 2);
         pause.setResizable(false);
         pause.setMovable(false);
         pause.setVisible(false);
+        pause.setZIndex(1000);
         stage.addActor(pause);
         pauseWindow = pause;
     }
@@ -540,12 +558,48 @@ public class GameScreen implements Screen {
 
         skin = new Skin(new FileHandle("GameEngine/src/main/resources/"
                 + "skin/uiskin.json"), atlas);
+        loadFonts(skin);
         if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
             EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
                 LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!", skin);
                 levelUpPopup.animateShow(stage);
             });
         }
+    }
+    /**
+     *
+     * Loads fonts for use with various text objects in the scene.
+     * Fonts are added to the local instance of {@link Skin}
+     *
+     * @param baseSkin instance which fonts should be saved to.
+     */
+    private void loadFonts(final Skin baseSkin) {
+        FreeTypeFontGenerator fontGenerator;
+        fontGenerator = new FreeTypeFontGenerator(
+                new FileHandle("GameEngine/src/main/resources"
+                        + "/CinzelDecorative-Regular.ttf")
+        );
+        FreeTypeFontGenerator.FreeTypeFontParameter regularParams
+                = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        regularParams.size = 20;
+
+        BitmapFont font = fontGenerator.generateFont(regularParams);
+
+        baseSkin.add("new", font, BitmapFont.class);
+
+        fontGenerator = new FreeTypeFontGenerator(
+                new FileHandle("GameEngine/src/main/resources"
+                        + "/CinzelDecorative-Bold.ttf")
+        );
+        FreeTypeFontGenerator.FreeTypeFontParameter boldParams
+                = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        boldParams.size = 20;
+
+        BitmapFont boldFont = fontGenerator.generateFont(boldParams);
+
+        baseSkin.add("new", boldFont, BitmapFont.class);
+
+        fontGenerator.dispose();
     }
 
 }

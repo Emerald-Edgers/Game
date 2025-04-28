@@ -4,15 +4,11 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
-import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import dk.ee.zg.common.item.Item;
 import dk.ee.zg.common.item.ItemManager;
 import java.util.List;
@@ -49,13 +45,16 @@ public class LevelUpPopup extends Dialog {
     }
 
     {
-        List<Item> itemList = ItemManager.getInstance().createItemSelection(3);
-
-        text("Choose an Item");
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = this.getSkin().getFont("new");
+        this.getTitleLabel().setStyle(labelStyle);
+        Label label = new Label("Choose Item!", labelStyle);
+        text(label);
 
         TooltipManager.getInstance().instant();
         TooltipManager.getInstance().offsetY = -30f;
-
+        List<Item> itemList = ItemManager.getInstance().createItemSelection(3);
+        float imageSize = 100f;
         for (Item item : itemList) {
             Drawable drawable =
                     new TextureRegionDrawable(item.getTexture());
@@ -63,13 +62,17 @@ public class LevelUpPopup extends Dialog {
             TextTooltip tooltip = new TextTooltip(item.getDescription(),
                     getSkin());
             imageButton.addListener(tooltip);
-            imageButton.pad(5f);
+            imageButton.pad(0f, 20f, 100f, 20f);
+            imageButton.setSize(imageSize, imageSize);
+            imageButton.getImage().setScaling(Scaling.fill);
+            imageButton.getImageCell().minSize(imageSize, imageSize);
             imageButton.setScale(0f);
             imageButton.getColor().a = 0f;
-            button(imageButton, item);
+            button(imageButton, item).setSize(imageSize, imageSize);
         }
 
         getTitleLabel().setAlignment(Align.center);
+        getTitleTable().setScale(0.75f);
         this.setModal(false);
         this.setMovable(false);
 
@@ -96,11 +99,13 @@ public class LevelUpPopup extends Dialog {
 
         this.show(stage);
         stage.act(); // Force layout
+        this.setZIndex(0);
 
-        // Position it in center manually
-        float x = (stage.getWidth() - getWidth()) / 2f;
-        float y = (stage.getHeight() - getHeight()) / 2f;
-        this.setPosition(x, y);
+
+        this.setSize(stage.getWidth() / 3.5f,
+                stage.getHeight() / 3.5f);
+        this.setPosition(stage.getWidth() / 2 - this.getWidth() / 2,
+                stage.getHeight() / 2 - this.getHeight() / 2);
 
         // Set origin to center for scaling
         this.setOrigin(Align.center);
@@ -112,16 +117,16 @@ public class LevelUpPopup extends Dialog {
                 ),
                 Actions.run(this::animateItemButtons)
         ));
+
     }
 
     private void animateItemButtons() {
         Table buttonTable = getButtonTable(); // Default button table in dialog
-        float delay = 0.5f;
-        float delayStep = 0.5f;
+        float delay = 0.25f;
+        float delayStep = 0.25f;
 
         for (Actor actor : buttonTable.getChildren()) {
             if (actor instanceof ImageButton) {
-                actor.setScale(0f);
                 actor.addAction(Actions.sequence(
                         Actions.delay(delay),
                         Actions.parallel(
