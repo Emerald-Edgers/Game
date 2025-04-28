@@ -163,6 +163,11 @@ public class GameScreen implements Screen {
     private Window pauseWindow;
 
     /**
+     * Value for amount of popups on screen on the same time.
+     */
+    private int levelUpPopupsShowing;
+
+    /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
      */
@@ -332,6 +337,7 @@ public class GameScreen implements Screen {
                 camera.update();
                 if (gameData.getGameKey().isPressed((gameData.getGameKey()
                     .getActionToKey().get(KeyAction.PAUSE)))) {
+                    pauseWindow.setVisible(true);
                     pause();
                 }
                 break;
@@ -459,9 +465,8 @@ public class GameScreen implements Screen {
     public void pause() {
         if (state == GAME_RUNNING) {
             state = GAME_PAUSED;
+            hud.stopStartTimer();
         }
-        pauseWindow.setVisible(true);
-        hud.stopStartTimer();
     }
 
     /**
@@ -470,10 +475,12 @@ public class GameScreen implements Screen {
     @Override
     public void resume() {
         if (state == GAME_PAUSED) {
-            state = GAME_RUNNING;
+            if (levelUpPopupsShowing == 0) {
+                state = GAME_RUNNING;
+                hud.stopStartTimer();
+            }
+            pauseWindow.setVisible(false);
         }
-        pauseWindow.setVisible(false);
-        hud.stopStartTimer();
     }
 
     /**
@@ -502,16 +509,19 @@ public class GameScreen implements Screen {
         Window pause = new Window("", skin);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = skin.getFont("new");
-        pause.getTitleLabel().setSize(Gdx.graphics.getWidth(), pause.getRowHeight(0));
-        pause.getTitleLabel().setPosition(0,Gdx.graphics.getHeight()-pause.getRowHeight(0)*2);
+        labelStyle.font = skin.getFont("new-bold");
+        pause.getTitleLabel().setSize(Gdx.graphics.getWidth(),
+                pause.getRowHeight(0));
+        pause.getTitleLabel().setPosition(0,
+                Gdx.graphics.getHeight() - pause.getRowHeight(0) * 2);
         pause.getTitleLabel().setAlignment(Align.center);
         pause.getTitleLabel().setText("Paused");
         pause.getTitleLabel().setStyle(labelStyle);
         pause.getTitleTable().setSize(Gdx.graphics.getWidth(), 100);
 
-        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        buttonStyle.up = skin.getDrawable("default-round");  // or whatever drawable you want
+        TextButton.TextButtonStyle buttonStyle =
+                new TextButton.TextButtonStyle();
+        buttonStyle.up = skin.getDrawable("default-round");
         buttonStyle.down = skin.getDrawable("default-round-down");
         buttonStyle.font = skin.getFont("new");
 
@@ -561,8 +571,14 @@ public class GameScreen implements Screen {
         loadFonts(skin);
         if (!ItemManager.getInstance().getLoadedItems().isEmpty()) {
             EventManager.addListener(Events.PlayerLevelUpEvent.class, event -> {
-                LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!", skin);
+                LevelUpPopup levelUpPopup = new LevelUpPopup("Level Up!", skin,
+                        () -> {
+                    levelUpPopupsShowing--;
+                    resume();
+                });
                 levelUpPopup.animateShow(stage);
+                levelUpPopupsShowing++;
+                pause();
             });
         }
     }
@@ -593,11 +609,11 @@ public class GameScreen implements Screen {
         );
         FreeTypeFontGenerator.FreeTypeFontParameter boldParams
                 = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        boldParams.size = 20;
+        boldParams.size = 12;
 
         BitmapFont boldFont = fontGenerator.generateFont(boldParams);
 
-        baseSkin.add("new", boldFont, BitmapFont.class);
+        baseSkin.add("new-bold", boldFont, BitmapFont.class);
 
         fontGenerator.dispose();
     }

@@ -49,8 +49,14 @@ public class HUD {
      */
     private float elapsedTimeInSecs;
 
+    /**
+     * Value to multiply the deltatime with, in order to be able to stop timer.
+     */
     private float deltaTimeMultiplier = 1;
 
+    /**
+     * Makes it able to start and stop timer.
+     */
     private boolean timerRunning = true;
 
 
@@ -202,8 +208,11 @@ public class HUD {
         return font;
     }
 
-    public void stopStartTimer(){
-        if (timerRunning){
+    /**
+     * Method for stopping and starting the timer.
+     */
+    public void stopStartTimer() {
+        if (timerRunning) {
             deltaTimeMultiplier = 0;
             timerRunning = false;
         } else {

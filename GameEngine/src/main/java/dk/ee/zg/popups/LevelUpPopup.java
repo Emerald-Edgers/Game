@@ -4,7 +4,13 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -16,12 +22,22 @@ import java.util.List;
 public class LevelUpPopup extends Dialog {
 
     /**
+     * Makes the Dialog able to run a runnable when it is closed.
+     */
+    private Runnable onClose;
+
+    /**
      * Constructor for LevelPupUp.
      * @param title Title of the dialog box.
      * @param skin Skin of the dialog box
+     * @param onClose which action should be run when dialog is closed.
      */
-    public LevelUpPopup(final String title, final Skin skin) {
+    @SuppressWarnings("checkstyle:HiddenField")
+    public LevelUpPopup(final String title,
+                        final Skin skin,
+                        final Runnable onClose) {
         super(title, skin);
+        this.onClose = onClose;
     }
 
     /**
@@ -46,9 +62,10 @@ public class LevelUpPopup extends Dialog {
 
     {
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = this.getSkin().getFont("new");
+        labelStyle.font = this.getSkin().getFont("new-bold");
         this.getTitleLabel().setStyle(labelStyle);
-        Label label = new Label("Choose Item!", labelStyle);
+        labelStyle.font = this.getSkin().getFont("new");
+        Label label = new Label("Choose An Item!", labelStyle);
         text(label);
 
         TooltipManager.getInstance().instant();
@@ -86,6 +103,7 @@ public class LevelUpPopup extends Dialog {
     protected void result(final Object object) {
         Item item = (Item) object;
         ItemManager.getInstance().equipItem(item);
+        onClose.run();
         this.hide(null);
     }
 
