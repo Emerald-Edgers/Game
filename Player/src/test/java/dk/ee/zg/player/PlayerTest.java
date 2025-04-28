@@ -61,11 +61,19 @@ class PlayerTest {
     }
 
     @Test
-    void testPlayerShouldLevelUpWhenAbove100XpIsReached() {
+    void testPlayerShouldLevelUpWhenAbove2000XpIsReached() {
         player.setLevel(1);
-        EventManager.triggerEvent(new Events.EnemyKilledEvent(101, UUID.randomUUID()));
+        EventManager.triggerEvent(new Events.EnemyKilledEvent(2001, UUID.randomUUID()));
 
         assertEquals(2, player.getLevel());
+    }
+
+    @Test
+    void testPlayerShouldLevelUpMultipleTimes() {
+        player.setLevel(1);
+        EventManager.triggerEvent(new Events.EnemyKilledEvent(99999, UUID.randomUUID()));
+
+        assertTrue(player.getLevel() > 2);
     }
 
     @Test
@@ -85,7 +93,7 @@ class PlayerTest {
             levelUpCalled.set(true);
         });
 
-        EventManager.triggerEvent(new Events.EnemyKilledEvent(101, UUID.randomUUID()));
+        EventManager.triggerEvent(new Events.EnemyKilledEvent(100001, UUID.randomUUID()));
 
 
         assertTrue(levelUpCalled.get());
