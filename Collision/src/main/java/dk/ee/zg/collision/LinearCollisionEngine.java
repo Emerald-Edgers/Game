@@ -53,7 +53,7 @@ public class LinearCollisionEngine implements ICollisionEngine {
             for (Rectangle rect : worldObstacles.getVisibleObstacles()) {
                 if (collidesWithRectangle(e1, rect)) {
                     if (e1.getEntityType() == EntityType.Projectile) {
-                        resolveCollisionProjectileObstacle(e1 , worldEntities);
+                        resolveCollisionProjectileObstacle(e1, worldEntities);
                     }
                     resolveCollisionObstacles(e1, rect);
                 }
@@ -92,7 +92,6 @@ public class LinearCollisionEngine implements ICollisionEngine {
 
 
     private void resolveCollisionProjectileObstacle(final Entity projectile, WorldEntities worldEntities) {
-        System.out.println("Projectile hit something");
         worldEntities.removeEntity(projectile.getId());
         //TODO: HIT PROJECTILE
     }

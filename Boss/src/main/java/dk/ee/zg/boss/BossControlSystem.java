@@ -7,6 +7,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import dk.ee.zg.boss.ranged.Projectile;
+import dk.ee.zg.common.enemy.data.BossActions;
+import dk.ee.zg.common.enemy.interfaces.IEnemyNetwork;
+import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -14,6 +17,7 @@ import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.player.Player;
 
 import java.util.Optional;
+import java.util.ServiceLoader;
 
 
 public class BossControlSystem implements IEntityProcessService {
@@ -22,35 +26,51 @@ public class BossControlSystem implements IEntityProcessService {
      * The base moving vector is 0,0, which means not moving.
      */
     private static Vector2 dir = new Vector2(0, 0);
+
     /**
-     * Cooldown for the melee attack,
-     * used to prevent multiple attacks in a short time.
+     * Cooldown for the melee attack.
      */
     private static float melAttackCooldown = 2f;
+
+    /**
+     * Cooldown for the aoe attack.
+     */
+    private static float aoeCooldown = 4f;
+
+    /**
+     * Cooldown for the ranged attack
+     */
+    private static float rangedCooldown = 6f;
+
     /**
      * The player object, used to determine the direction of the attack.
      */
     private Entity player;
 
+    /**
+     * The logic network to be used for making decisions.
+     */
+    private IEnemyNetwork logicNetwork;
+
     private static float animationChangeCooldown = 1000f;
     private AnimationState requestedAnimationState = null;
-
     private boolean deathPlayed = false;
-
 
 
     /**
      * Entrance to the boss control system for controlling the boss.
      * like moving or using attack's,
+     *
      * @param world - object of WorldEntities,
      *              Contains all the entities in the world.
      */
     @Override
     public void process(final WorldEntities world) {
-
         BossControlSystem.setMoveDirection(Direction.DOWN);
 
         melAttackCooldown -= Gdx.graphics.getDeltaTime();
+        aoeCooldown -= Gdx.graphics.getDeltaTime();
+        rangedCooldown -= Gdx.graphics.getDeltaTime();
         animationChangeCooldown -= Gdx.graphics.getDeltaTime();
 
         if (player == null) {
@@ -59,35 +79,164 @@ public class BossControlSystem implements IEntityProcessService {
             tempPlayer.ifPresent(entity -> player = entity);
         }
 
+        Optional<IEnemyNetwork> logicNetwork =
+                ServiceLoader.load(IEnemyNetwork.class).findFirst();
 
-        for (Entity bossEntity : world.getEntities(Boss.class)) {
-            Boss boss = (Boss) bossEntity;
+        for (Entity boss : world.getEntities(Boss.class)) {
+            Boss bossEntity = (Boss) boss;
+            updateBossAnimation(bossEntity);
+            deathLogic(world, bossEntity);
 
-            updateBossAnimation(boss);
 
-            if (deathPlayed && boss.isAnimationFinished()) {
-                world.removeEntity(bossEntity.getId());
-            }
-
-            if (boss.getCurrentState() == AnimationState.DEATH) {
-                Animation<TextureRegion> deathAnimation = boss.getAnimations().get("DEATH");
-                if (deathAnimation != null && deathAnimation.isAnimationFinished(boss.getStateTime())) {
-                    world.removeEntity(bossEntity.getId());
-                }
+            if (logicNetwork.isPresent()) {
+                aiLogic(logicNetwork.get(), world, bossEntity);
             } else {
-                setBossAnimationState(boss, AnimationState.IDLE);
+                basicLogic(world, bossEntity);
             }
-
-            //move(boss, dir);
-
-            if (melAttackCooldown <= 0) {
-                //setBossAnimationState(boss, AnimationState.ATTACK);
-                rangedAttack(boss, world);
-                melAttackCooldown = 6f;
-            }
-
         }
 
+    }
+
+    private void deathLogic(final WorldEntities world, final Boss boss) {
+        if (deathPlayed && boss.isAnimationFinished()) {
+            world.removeEntity(boss.getId());
+        }
+        if (boss.getCurrentState() == AnimationState.DEATH) {
+            Animation<TextureRegion> deathAnimation =
+                    boss.getAnimations().get("DEATH");
+            if (deathAnimation != null && deathAnimation.isAnimationFinished(boss.getStateTime())) {
+                world.removeEntity(boss.getId());
+            }
+        } else {
+            setBossAnimationState(boss, AnimationState.IDLE);
+        }
+    }
+
+
+    /**
+     * The logic used when an instance of {@link IEnemyNetwork} is found.
+     * This logic is meant to be more complex and use AI.
+     * @param logicNetwork  The instance to depend on.
+     * @param world The world in which entities are added.
+     *              Must be able to spawn new entities into the world.
+     * @param boss  The boss itself, used to determine what/who to act on.
+     */
+    private void aiLogic(final IEnemyNetwork logicNetwork,
+                         final WorldEntities world, final Boss boss) {
+        double playerDistance = 0.0;
+        Direction playerDir = Direction.NONE;
+
+        if (player != null) {
+            playerDistance = player.getPosition().dst(boss.getPosition());
+            playerDir = determinePlayerDir(boss);
+        }
+        boolean meleeReady = melAttackCooldown <= 0;
+        boolean aoeReady = aoeCooldown <= 0;
+        boolean rangedReady = rangedCooldown <= 0;
+
+        BossActions action = logicNetwork.decideAction(
+                meleeReady, aoeReady, rangedReady,
+                boss.getHp(), playerDistance);
+        switch (action) {
+            case FLEE:
+                fleeMove(boss);
+                break;
+            case ADVANCE:
+                advanceMove(boss);
+            case MELEE:
+                meleeAttack(boss, playerDir);
+            case AOE:
+                aoeAttack(boss);
+                break;
+            case RANGE:
+                rangedAttack(boss, world);
+                break;
+        }
+    }
+
+    /**
+     * The logic to use whenever the boss needs to flee.
+     * @param boss  The boss to move with.
+     */
+    private void fleeMove(Boss boss) {
+        if (player == null) {
+            return;
+        }
+
+        Vector2 bossPos = boss.getPosition();
+
+        Vector2 dirToPlayer = new Vector2(
+                player.getPosition().x - bossPos.x,
+                player.getPosition().y - bossPos.y
+        );
+
+        dirToPlayer.nor();
+
+        Vector2 fleeDir = new Vector2(-dirToPlayer.x, -dirToPlayer.y);
+
+        Vector2 targetPos = new Vector2(
+                bossPos.x + fleeDir.x * 25,
+                bossPos.y + fleeDir.y * 25
+        );
+
+        setBossAnimationState(boss, AnimationState.RUN);
+        move(boss, targetPos);
+    }
+
+    /**
+     * The logic to use whenever the boss needs to advance
+     * @param boss The boss to move with.
+     */
+    private void advanceMove(Boss boss) {
+        if (player == null) {
+            return;
+        }
+        Optional<IPathFinder> pathFinder =
+                ServiceLoader.load(IPathFinder.class).findFirst();
+
+        setBossAnimationState(boss, AnimationState.RUN);
+        if (pathFinder.isPresent()) {
+            boss.moveWithPathFinding(pathFinder.get(), player);
+        } else {
+            move(boss, player.getPosition());
+        }
+    }
+
+    /**
+     * Determines the direction from the boss to the player.
+     * @param boss The boss to determine from.
+     * @return A {@link Direction} value.
+     */
+    private Direction determinePlayerDir(Boss boss) {
+        Vector2 playerDir = new Vector2(player.getPosition())
+                .sub(boss.getPosition());
+        playerDir.nor();
+
+        // Av godav det er Boegesvang der har skrevet det her.
+        if (Math.abs(playerDir.x) > Math.abs(playerDir.y)) {
+            if (playerDir.x > 0) {
+                return Direction.RIGHT;
+            } else {
+                return Direction.LEFT;
+            }
+        } else {
+            if (playerDir.y > 0) {
+                return Direction.DOWN;
+            } else {
+                return Direction.UP;
+            }
+        }
+    }
+
+    /**
+     * Basic logic for the boss, Fallback if no {@link IEnemyNetwork} is found.
+     *
+     * @param world The world which contains entities.
+     */
+    private void basicLogic(final WorldEntities world, final Boss boss) {
+        if (rangedCooldown <= 0) {
+            rangedAttack(boss, world);
+        }
     }
 
     private boolean setBossAnimationState(Boss boss, AnimationState state) {
@@ -98,7 +247,8 @@ public class BossControlSystem implements IEntityProcessService {
         }
 
         if (currentState == AnimationState.ATTACK) {
-            Animation<TextureRegion> currentAnimation = boss.getAnimations().get("ATTACK");
+            Animation<TextureRegion> currentAnimation =
+                    boss.getAnimations().get("ATTACK");
             if (currentState != null && !currentAnimation.isAnimationFinished(boss.getStateTime())) {
                 return false;
             }
@@ -111,7 +261,6 @@ public class BossControlSystem implements IEntityProcessService {
         if (animationChangeCooldown <= 0) {
             if (!deathPlayed) {
                 setBossAnimationState(boss, AnimationState.DEATH);
-                System.out.println("DeathPlayed");
                 deathPlayed = true;
             }
         } else if (requestedAnimationState != null) {
@@ -126,24 +275,30 @@ public class BossControlSystem implements IEntityProcessService {
 
     /**
      * Primary method for moving the boss.
-     * @param boss - The boss that should move
-     * @param dirVec - The vector values in which the boss moves
+     *
+     * @param boss   - The boss that should move
+     * @param target The target Coordinate
      */
-    public void move(final Boss boss, final Vector2 dirVec) {
-        Vector2 direction = new Vector2(dirVec);
-        Vector2 vec = boss.getPosition();
+    public void move(final Boss boss, final Vector2 target) {
+        Vector2 bossPos = boss.getPosition();
+        Vector2 dir = new Vector2(
+                target.x - bossPos.x, target.y - bossPos.y
+        );
+        dir.nor();
+        float speed = boss.getMoveSpeed();
 
-        vec.add(direction.scl(
-                boss.getMoveSpeed() * Gdx.graphics.getDeltaTime()));
+        Vector2 newPosition = new Vector2(
+                bossPos.x + dir.x * speed * Gdx.graphics.getDeltaTime(),
+                bossPos.y + dir.y * speed * Gdx.graphics.getDeltaTime()
 
-        boss.setPosition(vec);
+        );
 
-        //setBossAnimationState(boss, AnimationState.RUN);
-
+        boss.setPosition(newPosition);
     }
 
     /**
      * Method for setting which Vector values the boss should move in.
+     *
      * @param direction Takes the enum direction and uses it to determine
      *                  the vector values
      */
@@ -196,10 +351,11 @@ public class BossControlSystem implements IEntityProcessService {
     /**
      * Melee attack for the boss object, close non-aoe attack.
      * in form of a rectangle hitbox
-     * @param boss - Boss object which should use the attack
+     *
+     * @param boss      - Boss object which should use the attack
      * @param direction - Direction of the attack
      * @return - Returns a rectangle in the direction of the attack
-     *              with the correct offset
+     * with the correct offset
      */
     public Rectangle meleeAttack(final Boss boss, final Direction direction) {
 
@@ -242,15 +398,15 @@ public class BossControlSystem implements IEntityProcessService {
                 width, height
         );
 
-        //System.out.println("Boss melee attacked");
-
+        melAttackCooldown = 2f;
         return meleeAttackArea;
 
     }
 
     /**
      * Ranged attack for the boss object, Shoots a fireball towards the player.
-     * @param boss - Boss object which should use the attack
+     *
+     * @param boss  - Boss object which should use the attack
      * @param world Object of worldEntities since
      *              it has to know the player entity to throw it towards
      */
@@ -274,20 +430,21 @@ public class BossControlSystem implements IEntityProcessService {
                         projectileDir, speed, world, player);
                 world.addEntity(projectile);
             }
-        },animationTimer);
+        }, animationTimer);
+        rangedCooldown = 4f;
     }
 
     /**
      * AOE attack for the boss object, in form of a rectangle around it.
+     *
      * @param boss the boss at where this attack should be used.
      * @return returns a rectangle that should have middle at the
      * center of the boss
      */
     public Rectangle aoeAttack(final Boss boss) {
-
         Vector2 bossPos = boss.getPosition();
-        float width = 6f;
-        float height = 6f;
+        float width = 12f;
+        float height = 12f;
 
         Rectangle aoeAttackArea = new Rectangle(
                 bossPos.x - width / 2,
@@ -295,10 +452,7 @@ public class BossControlSystem implements IEntityProcessService {
                 width,
                 height
         );
-
-        System.out.println("Boss aoe attacked");
-
+        aoeCooldown = 4f;
         return aoeAttackArea;
     }
-
 }

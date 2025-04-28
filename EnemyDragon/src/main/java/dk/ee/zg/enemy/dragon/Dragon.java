@@ -1,5 +1,6 @@
 package dk.ee.zg.enemy.dragon;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.data.Enemy;
 import dk.ee.zg.common.map.data.EntityType;
@@ -24,5 +25,6 @@ public class Dragon extends Enemy {
                 "dragonEnemy.png", EntityType.Enemy,
                 attackDamage, attackSpeed, moveSpeed, hitpoints,
                 defense, cost);
+        this.setHitbox(new Rectangle(0, 0, 0.6f, 0.8f));
     }
 }

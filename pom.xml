@@ -25,6 +25,7 @@
         <module>BaseItems</module>
         <module>EnemyDragon</module>
         <module>CommonTest</module>
+        <module>BossAI</module>
     </modules>
 
     <properties>

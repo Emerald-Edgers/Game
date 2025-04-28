@@ -223,7 +223,6 @@ public class PlayerControlSystem implements IEntityProcessService {
                                     attackHitbox, worldEntities.getEntities());
 
                     for (Entity e : enemiesHit) {
-                        System.out.println("Hit Enemy");
                         e.hit(player.get().getAttackDamage());
                     }
                 }
