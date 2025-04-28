@@ -90,43 +90,57 @@ public class BayesianNode {
     }
 
     /**
-     * Get the current state of this node
+     * Get the current state of this node.
+     * @return A string representing the current state of the node.
      */
     public String getCurrentState() {
         return currentState;
     }
 
+    /**
+     * Gets the name of this node.
+     * @return A string representing the name of the node.
+     */
     public String getName() {
         return name;
     }
 
     /**
-     * Set evidence for this node (observed state)
+     * Set evidence for this node (observed state).
+     * @param state A string representing the observed state of the node.
      */
-    public void setEvidence(String state) {
+    public void setEvidence(final String state) {
         if (states.contains(state)) {
             this.currentState = state;
         }
     }
 
-    public void setParents(List<BayesianNode> parents) {
-        this.parents = parents;
+    /**
+     * Set the list of parent nodes.
+     * @param newParents The list of parent nodes.
+     */
+    public void setParents(final List<BayesianNode> newParents) {
+        this.parents = newParents;
     }
 
     /**
-     * Set the conditional probability table
+     * Set the conditional probability table.
      * The key format should be:
      * - For root nodes: "state"
      * - For child nodes: "parentState1_parentState2_..._state"
+     * @param newCpt The conditional probability table.
      */
-    public void setCpt(Map<String, Double> cpt) {
-        this.cpt = cpt;
+    public void setCpt(final Map<String, Double> newCpt) {
+        this.cpt = newCpt;
     }
 
     /**
-     * Helper method to add a single entry to the CPT
+     * Helper method to add a single entry to the CPT.
+     * @param key        The key of the entry.
+     *                  Should be a string representation of the state.
+     * @param probability The probability of the entry.
      */
-    public void addCptEntry(String key, Double probability) {
+    public void addCptEntry(final String key, final Double probability) {
         if (this.cpt == null) {
             this.cpt = new HashMap<>();
         }
