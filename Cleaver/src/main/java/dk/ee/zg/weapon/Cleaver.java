@@ -23,7 +23,7 @@ public class Cleaver extends Weapon {
         this.setMaxHP(120);
         this.setAttackDamage(20);
         this.setAttackSpeed(5);
-        this.setMoveSpeed(7);
+        this.setMoveSpeed(5);
     }
 
     /**
@@ -34,8 +34,8 @@ public class Cleaver extends Weapon {
      */
     @Override
     public Rectangle attack(final Vector2 playerPos, final Vector2 playerSize) {
-        float attackOffsetX = 0;
-        float attackOffsetY = 0;
+        float attackOffsetX = 0.5f;
+        float attackOffsetY = 0.5f;
         float width = 1;
         float height = 1;
         switch (getAttackDirection()) {

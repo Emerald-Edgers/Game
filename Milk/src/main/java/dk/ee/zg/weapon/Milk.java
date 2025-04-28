@@ -27,7 +27,7 @@ public class Milk extends Weapon {
     }
 
     /**
-     * cleaver attack - sweep like attack hit box.
+     * milk attack - short range wide attack.
      * @param playerPos - position of player : {@link Vector2}
      * @param playerSize - size of player : {@link Vector2}
      * @return - returns hitbox
@@ -36,8 +36,8 @@ public class Milk extends Weapon {
     public Rectangle attack(final Vector2 playerPos, final Vector2 playerSize) {
         float attackOffsetX = 0;
         float attackOffsetY = 0;
-        float width = 0.4f;
-        float height = 0.4f;
+        float width = 1f;
+        float height = 0.2f;
         switch (getAttackDirection()) {
             case LEFT -> {
                 height = 2;
