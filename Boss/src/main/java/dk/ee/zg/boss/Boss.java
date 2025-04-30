@@ -40,8 +40,9 @@ public class Boss extends Enemy implements IAnimatable {
 
     public void initializeAnimations() {
         createAnimation("IDLE", "Idle-Sheet-Boss.png", 8, 1, 1f/12f, Animation.PlayMode.LOOP);
-        createAnimation("ATTACK", "Ranged-Attack-Boss.png",18,1,1f/12f, Animation.PlayMode.NORMAL);
+        createAnimation("MELEEATTACK", "Ranged-Attack-Boss.png",18,1,1f/12f, Animation.PlayMode.NORMAL);
         createAnimation("DEATH", "Death-Sheet-Boss.png",6,1,1f/6f, Animation.PlayMode.NORMAL);
+        createAnimation("AOEATTACK", "AOE-Attack-Boss.png",19,1,1f/12f, Animation.PlayMode.NORMAL);
     }
 
     public void setState(AnimationState state) {

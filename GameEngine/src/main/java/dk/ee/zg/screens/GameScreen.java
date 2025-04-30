@@ -299,7 +299,7 @@ public class GameScreen implements Screen {
 
         for (IEntityProcessService entity
                 : ServiceLoader.load(IEntityProcessService.class)) {
-            entity.process(worldEntities);
+            entity.process(worldEntities,worldObstacles);
         }
 
         enemySpawnerUpdate(v);

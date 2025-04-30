@@ -7,6 +7,7 @@ import dk.ee.zg.common.enemy.interfaces.IEnemy;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.player.Player;
 
@@ -48,7 +49,7 @@ public class DragonControlSystem implements IEntityProcessService, IEnemy {
      *                      contains a map of all entities on map
      */
     @Override
-    public void process(final WorldEntities worldEntities) {
+    public void process(final WorldEntities worldEntities, final WorldObstacles worldObstacles) {
         if (player == null) {
             Optional<Entity> tempPlayer = worldEntities.getEntities(
                     Player.class).stream().findFirst();

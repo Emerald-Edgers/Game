@@ -5,17 +5,15 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.data.KeyAction;
-import dk.ee.zg.common.map.data.AnimationState;
-import dk.ee.zg.common.map.data.Entity;
-import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.data.*;
+import dk.ee.zg.common.map.data.WorldObstacles;
+//import dk.ee.zg.common.map.services.EntityMovementService;
 import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.common.weapon.AttackDirection;
 import dk.ee.zg.common.weapon.Weapon;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.ServiceLoader;
+import java.util.*;
 
 public class PlayerControlSystem implements IEntityProcessService {
 
@@ -75,7 +73,7 @@ public class PlayerControlSystem implements IEntityProcessService {
      *                      contains a map of all entities on map
      */
     @Override
-    public void process(final WorldEntities worldEntities) {
+    public void process(final WorldEntities worldEntities, final WorldObstacles worldObstacles) {
 
         Optional<Player> player = worldEntities.getEntityByClass(Player.class);
 
@@ -166,7 +164,7 @@ public class PlayerControlSystem implements IEntityProcessService {
 
         AttackDirection currentDirection = AttackDirection.valueOf(player1.getFacingDirection().name());
 
-        move(player1,dirVec);
+        move(player1,dirVec,worldObstacles);
 
         if (isAttacking) {
             attack(worldEntities);
@@ -206,7 +204,7 @@ public class PlayerControlSystem implements IEntityProcessService {
                 player.get().getHitbox().getSize(size);
                 attackHitbox = weapon.attack(
                         center, size);
-                setPlayerAnimationState(player1, AnimationState.ATTACK, weapon.getAttackDirection());
+                setPlayerAnimationState(player1, AnimationState.MELEEATTACK, weapon.getAttackDirection());
 
                 isAttacking = false;
               
@@ -237,22 +235,66 @@ public class PlayerControlSystem implements IEntityProcessService {
      * @param player - player to move
      * @param dirVec - direction vector to use
      */
-    private void move(final Player player, final Vector2 dirVec) {
+    private void move(final Player player, final Vector2 dirVec, final WorldObstacles worldObstacles) {
         Vector2 vec = player.getPosition();
+        Rectangle hitbox = player.getHitbox();
+        Rectangle tempHitBox = new Rectangle(hitbox);
 
-        vec.add(dirVec.scl(
-                player.getMoveSpeed() * Gdx.graphics.getDeltaTime()));
+        // Calculate the intended move
+        float moveSpeed = player.getMoveSpeed() * Gdx.graphics.getDeltaTime();
+        Vector2 moveVec = new Vector2(dirVec).nor().scl(moveSpeed);
 
+        // Try to move on both axes
+        boolean canMoveX = true;
+        boolean canMoveY = true;
 
-        player.setPosition(vec);
+        // First check X-axis movement
+        tempHitBox.x = hitbox.x + moveVec.x;
+        tempHitBox.y = hitbox.y;
+
+        for (Rectangle obstacle : worldObstacles.getVisibleObstacles()) {
+            if (tempHitBox.overlaps(obstacle)) {
+                canMoveX = false;
+                break;
+            }
+        }
+
+        // Then check Y-axis movement
+        tempHitBox.x = hitbox.x;
+        tempHitBox.y = hitbox.y + moveVec.y;
+
+        for (Rectangle obstacle : worldObstacles.getVisibleObstacles()) {
+            if (tempHitBox.overlaps(obstacle)) {
+                canMoveY = false;
+                break;
+            }
+        }
+
+        // Apply movement based on what's possible
+        Vector2 finalMove = new Vector2();
+
+        if (canMoveX) {
+            finalMove.x = moveVec.x;
+        }
+
+        if (canMoveY) {
+            finalMove.y = moveVec.y;
+        }
+
+        // Update position if we can move in at least one direction
+        if (canMoveX || canMoveY) {
+            vec.add(finalMove);
+            player.setPosition(vec);
+        }
     }
+
 
     private void setPlayerAnimationState(Player player, AnimationState state) {
         player.setState(state, player.getFacingDirection());
     }
 
     private void setPlayerAnimationState(Player player, AnimationState state, AttackDirection direction) {
-        if (player.getCurrentState() == AnimationState.ATTACK && !player.isAnimationFinished()) {
+        if (player.getCurrentState() == AnimationState.MELEEATTACK && !player.isAnimationFinished()) {
             return;
         }
         player.setState(state, direction);

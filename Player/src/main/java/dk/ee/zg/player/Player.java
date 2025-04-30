@@ -317,9 +317,9 @@ public class Player extends Entity implements IAnimatable {
         createAnimation("IDLE_SIDE","Animations/Carry_Idle/Carry_Idle_Side-Sheet.png",4,1,0.1f, Animation.PlayMode.LOOP);
         //createAnimation("IDLE_UP","Animations/Carry_Idle/Carry_Idle_Up-Sheet.png",4,1,0.1f, Animation.PlayMode.LOOP);
 
-        createAnimation("ATTACK_SIDE","Animations/Pierce_Base/Pierce_Side-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
-        createAnimation("ATTACK_UP","Animations/Pierce_Base/Pierce_Top-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
-        createAnimation("ATTACK_DOWN","Animations/Pierce_Base/Pierce_Down-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
+        createAnimation("MELEEATTACK_SIDE","Animations/Pierce_Base/Pierce_Side-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
+        createAnimation("MELEEATTACK_UP","Animations/Pierce_Base/Pierce_Top-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
+        createAnimation("MELEEATTACK_DOWN","Animations/Pierce_Base/Pierce_Down-Sheet.png",8,1,0.1f,Animation.PlayMode.NORMAL);
 
         createAnimation("RUN_DOWN","Animations/Carry_Run/Carry_Run_Down-Sheet.png",6,1,0.1f, Animation.PlayMode.LOOP);
         createAnimation("RUN_UP","Animations/Carry_Run/Carry_Run_Up-Sheet.png",6,1,0.1f,Animation.PlayMode.LOOP);
@@ -329,7 +329,7 @@ public class Player extends Entity implements IAnimatable {
 
         stateToAnimateMap.put(AnimationState.IDLE,"IDLE_DOWN");
         stateToAnimateMap.put(AnimationState.RUN,"RUN_DOWN");
-        stateToAnimateMap.put(AnimationState.ATTACK,"ATTACK_SIDE");
+        stateToAnimateMap.put(AnimationState.MELEEATTACK,"ATTACK_SIDE");
 
         directionAnimationMap = new HashMap<>();
 
@@ -343,10 +343,10 @@ public class Player extends Entity implements IAnimatable {
         directionAnimationMap.put("RUN_" + AttackDirection.RIGHT.name(), "RUN_SIDE");
         directionAnimationMap.put("RUN_" + AttackDirection.LEFT.name(), "RUN_SIDE");
 
-        directionAnimationMap.put("ATTACK_" + AttackDirection.UP.name(), "ATTACK_UP");
-        directionAnimationMap.put("ATTACK_" + AttackDirection.DOWN.name(), "ATTACK_DOWN");
-        directionAnimationMap.put("ATTACK_" + AttackDirection.RIGHT.name(), "ATTACK_SIDE");
-        directionAnimationMap.put("ATTACK_" + AttackDirection.LEFT.name(), "ATTACK_SIDE");
+        directionAnimationMap.put("MELEEATTACK_" + AttackDirection.UP.name(), "MELEEATTACK_UP");
+        directionAnimationMap.put("MELEEATTACK_" + AttackDirection.DOWN.name(), "MELEEATTACK_DOWN");
+        directionAnimationMap.put("MELEEATTACK_" + AttackDirection.RIGHT.name(), "MELEEATTACK_SIDE");
+        directionAnimationMap.put("MELEEATTACK_" + AttackDirection.LEFT.name(), "MELEEATTACK_SIDE");
 
 
 

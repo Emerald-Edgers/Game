@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IAnimatable;
 import dk.ee.zg.common.map.data.AnimationState;
-import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 import dk.ee.zg.common.enemy.data.Enemy;
 
@@ -60,7 +59,7 @@ public class Skeleton extends Enemy implements IAnimatable {
                 case RUN:
                     setCurrentAnimation("RUN");
                     break;
-                case ATTACK:
+                case MELEEATTACK:
                     setCurrentAnimation("ATTACK");
                     break;
             }

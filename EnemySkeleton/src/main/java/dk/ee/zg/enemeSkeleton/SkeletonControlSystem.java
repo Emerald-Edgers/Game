@@ -10,6 +10,7 @@ import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.data.WorldObstacles;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.player.Player;
 
@@ -56,7 +57,7 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
      *                     contains a map of all entities on map
      */
     @Override
-    public void process(final WorldEntities world) {
+    public void process(final WorldEntities world, final WorldObstacles worldObstacles) {
 
         if (player == null) {
             Optional<Entity> tempPlayer = world.getEntities(
@@ -128,7 +129,7 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
         if(currentState == AnimationState.DEATH) {
             return false;
         }
-        if (currentState == AnimationState.ATTACK) {
+        if (currentState == AnimationState.MELEEATTACK) {
             Animation<TextureRegion> currentAnimation = skeleton.getAnimations().get("ATTACK");
             if (currentAnimation != null && !currentAnimation.isAnimationFinished(skeleton.getStateTime())) {
                 return false;

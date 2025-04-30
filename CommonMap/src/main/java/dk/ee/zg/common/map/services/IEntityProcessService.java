@@ -1,6 +1,7 @@
 package dk.ee.zg.common.map.services;
 
 import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.data.WorldObstacles;
 
 public interface IEntityProcessService {
     /**
@@ -8,5 +9,5 @@ public interface IEntityProcessService {
      * @param worldEntities - Object of WorldEntities,
      *                      contains a map of all entities on map
      */
-    void process(WorldEntities worldEntities);
+    void process(WorldEntities worldEntities, WorldObstacles worldObstacles);
 }

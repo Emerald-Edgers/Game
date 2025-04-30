@@ -10,10 +10,14 @@ import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.data.WorldObstacles;
+import dk.ee.zg.common.map.services.ICollisionEngine;
 import dk.ee.zg.common.map.services.IEntityProcessService;
 import dk.ee.zg.player.Player;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.ServiceLoader;
 
 
 public class BossControlSystem implements IEntityProcessService {
@@ -46,7 +50,7 @@ public class BossControlSystem implements IEntityProcessService {
      *              Contains all the entities in the world.
      */
     @Override
-    public void process(final WorldEntities world) {
+    public void process(final WorldEntities world, final WorldObstacles worldObstacles) {
 
         BossControlSystem.setMoveDirection(Direction.DOWN);
 
@@ -82,7 +86,7 @@ public class BossControlSystem implements IEntityProcessService {
 
             if (melAttackCooldown <= 0) {
                 //setBossAnimationState(boss, AnimationState.ATTACK);
-                rangedAttack(boss, world);
+                aoeAttack(boss, world);
                 melAttackCooldown = 6f;
             }
 
@@ -97,14 +101,20 @@ public class BossControlSystem implements IEntityProcessService {
             return false;
         }
 
-        if (currentState == AnimationState.ATTACK) {
-            Animation<TextureRegion> currentAnimation = boss.getAnimations().get("ATTACK");
+        boolean isAttackState = isAttackState(currentState);
+
+        if (isAttackState && currentState != null) {
+            Animation<TextureRegion> currentAnimation = boss.getAnimations().get(currentState.toString());
             if (currentState != null && !currentAnimation.isAnimationFinished(boss.getStateTime())) {
                 return false;
             }
         }
         boss.setState(state);
         return true;
+    }
+
+    private boolean isAttackState(AnimationState state) {
+        return state != null && state.toString().contains("ATTACK");
     }
 
     private void updateBossAnimation(Boss boss) {
@@ -255,7 +265,7 @@ public class BossControlSystem implements IEntityProcessService {
      *              it has to know the player entity to throw it towards
      */
     public void rangedAttack(final Boss boss, final WorldEntities world) {
-        setBossAnimationState(boss, AnimationState.ATTACK);
+        setBossAnimationState(boss, AnimationState.MELEEATTACK);
 
         float animationTimer = 0.80f;
         Timer.schedule(new Timer.Task() {
@@ -283,22 +293,53 @@ public class BossControlSystem implements IEntityProcessService {
      * @return returns a rectangle that should have middle at the
      * center of the boss
      */
-    public Rectangle aoeAttack(final Boss boss) {
+    public void aoeAttack(final Boss boss,final WorldEntities worldEntities) {
+        setBossAnimationState(boss, AnimationState.AOEATTACK);
 
-        Vector2 bossPos = boss.getPosition();
-        float width = 6f;
-        float height = 6f;
+        float animationTimer = 0.5f;
 
-        Rectangle aoeAttackArea = new Rectangle(
-                bossPos.x - width / 2,
-                bossPos.y - height / 2,
-                width,
-                height
-        );
+        Timer.schedule(new Timer.Task() {
 
-        System.out.println("Boss aoe attacked");
+            @Override
+            public void run() {
+                Optional<Player> player = worldEntities.getEntityByClass(Player.class);
 
-        return aoeAttackArea;
+                if (player.isPresent()) {
+                    Player player1 = player.get();
+                }
+
+                Vector2 bossPos = boss.getPosition();
+                float width = 6f;
+                float height = 6f;
+
+                Rectangle aoeAttackArea = new Rectangle(
+                        bossPos.x - width / 2,
+                        bossPos.y - height / 2,
+                        width,
+                        height
+                );
+
+                if (aoeAttackArea != null) {
+                    Optional<ICollisionEngine> collisionEngine = ServiceLoader.load(ICollisionEngine.class).findFirst();
+                    if (collisionEngine.isPresent()) {
+                        List<Entity> playerHit = collisionEngine.get().rectangleCollidesWithEntities(aoeAttackArea, worldEntities.getEntities());
+
+                        for (Entity entity : playerHit) {
+                            if (entity.getClass().equals(Player.class)) {
+                                System.out.println("PlayerHit");
+                                entity.hit(boss.getAttackDamage());
+                            }
+                        }
+                    }
+                }
+
+
+                System.out.println("Boss aoe attacked");
+
+            }
+        },animationTimer);
+
+        //return aoeAttackArea;
     }
 
 }

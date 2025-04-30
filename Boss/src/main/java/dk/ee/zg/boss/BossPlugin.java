@@ -18,7 +18,7 @@ public class BossPlugin implements IGamePluginService {
      */
     @Override
     public void start(final WorldEntities worldEntities) {
-        boss = new Boss(1, 5, 2, 100, 1);
+        boss = new Boss(50, 5, 2, 100, 1);
         boss.setPosition(new Vector2(25, 37.5f));
 
         worldEntities.addEntity(boss);

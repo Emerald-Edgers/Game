@@ -33,6 +33,7 @@ public class Entity {
     private String currentAnimation;
     private float stateTime;
     private Rectangle hitbox;
+    private Rectangle collisionHitbox;
 
     /**
      * hp is the current amount of health, an entity has.
