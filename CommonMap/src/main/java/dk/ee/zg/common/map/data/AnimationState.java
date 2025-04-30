@@ -4,6 +4,7 @@ public enum AnimationState {
     IDLE,
     RUN,
     MELEEATTACK,
+    RANGEDATTACK,
     DEATH,
     AOEATTACK
 }

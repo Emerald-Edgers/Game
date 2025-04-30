@@ -86,7 +86,7 @@ public class BossControlSystem implements IEntityProcessService {
 
             if (melAttackCooldown <= 0) {
                 //setBossAnimationState(boss, AnimationState.ATTACK);
-                aoeAttack(boss, world);
+                meleeAttack(boss, Direction.DOWN);
                 melAttackCooldown = 6f;
             }
 
@@ -212,6 +212,7 @@ public class BossControlSystem implements IEntityProcessService {
      *              with the correct offset
      */
     public Rectangle meleeAttack(final Boss boss, final Direction direction) {
+        setBossAnimationState(boss, AnimationState.MELEEATTACK);
 
         Vector2 bossPos = boss.getPosition();
         float attackOffsetX = 0;
@@ -265,7 +266,7 @@ public class BossControlSystem implements IEntityProcessService {
      *              it has to know the player entity to throw it towards
      */
     public void rangedAttack(final Boss boss, final WorldEntities world) {
-        setBossAnimationState(boss, AnimationState.MELEEATTACK);
+        setBossAnimationState(boss, AnimationState.RANGEDATTACK);
 
         float animationTimer = 0.80f;
         Timer.schedule(new Timer.Task() {
