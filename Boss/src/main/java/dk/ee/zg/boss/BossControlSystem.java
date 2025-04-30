@@ -68,10 +68,11 @@ public class BossControlSystem implements IEntityProcessService {
             Boss boss = (Boss) bossEntity;
 
             updateBossAnimation(boss);
-
+            /*
             if (deathPlayed && boss.isAnimationFinished()) {
                 world.removeEntity(bossEntity.getId());
             }
+             */
 
             if (boss.getCurrentState() == AnimationState.DEATH) {
                 Animation<TextureRegion> deathAnimation = boss.getAnimations().get("DEATH");
@@ -139,17 +140,52 @@ public class BossControlSystem implements IEntityProcessService {
      * @param boss - The boss that should move
      * @param dirVec - The vector values in which the boss moves
      */
-    public void move(final Boss boss, final Vector2 dirVec) {
-        Vector2 direction = new Vector2(dirVec);
+    public void move(final Boss boss, final Vector2 dirVec, WorldObstacles worldObstacles) {
+
         Vector2 vec = boss.getPosition();
+        Rectangle hitbox = boss.getHitbox();
+        Rectangle tempHitbox = new Rectangle(hitbox);
 
-        vec.add(direction.scl(
-                boss.getMoveSpeed() * Gdx.graphics.getDeltaTime()));
+        float speed = boss.getMoveSpeed() * Gdx.graphics.getDeltaTime();
+        Vector2 moveVec = new Vector2(dirVec).nor().scl(speed);
 
-        boss.setPosition(vec);
+        boolean canMoveX = true;
+        boolean canMoveY = true;
 
-        //setBossAnimationState(boss, AnimationState.RUN);
+        tempHitbox.x = hitbox.x + moveVec.x;
+        tempHitbox.y = hitbox.y;
 
+        for (Rectangle obstacle : worldObstacles.getVisibleObstacles()) {
+            if (tempHitbox.overlaps(obstacle)) {
+                canMoveX = false;
+                break;
+            }
+        }
+
+        tempHitbox.x = hitbox.x;
+        tempHitbox.y = hitbox.y + moveVec.y;
+
+        for (Rectangle obstacle : worldObstacles.getVisibleObstacles()) {
+            if (tempHitbox.overlaps(obstacle)) {
+                canMoveY = false;
+                break;
+            }
+        }
+
+        Vector2 finalMove = new Vector2();
+
+        if (canMoveX) {
+            finalMove.x = moveVec.x;
+        }
+
+        if (canMoveY) {
+            finalMove.y = moveVec.y;
+        }
+
+        if (canMoveX || canMoveY) {
+            vec.add(finalMove);
+            boss.setPosition(vec);
+        }
     }
 
     /**

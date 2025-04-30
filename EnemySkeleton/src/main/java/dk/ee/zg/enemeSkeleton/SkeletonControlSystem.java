@@ -81,7 +81,7 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
             if (pathFinder.isPresent()) {
                 skeleton.moveWithPathFinding(pathFinder.get(), player);
             } else {
-                move(skeleton);
+                move(skeleton,worldObstacles);
             }
         }
 
@@ -104,9 +104,12 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
      * Moves the skeleton based on the player's position.
      * @param skeleton {@link Skeleton}
      */
-    private void move(final Skeleton skeleton) {
+    private void move(final Skeleton skeleton, final WorldObstacles worldObstacles) {
 
         Vector2 skeletonPos = skeleton.getPosition();
+        Rectangle hitbox = skeleton.getHitbox();
+        Rectangle tempHitBox = new Rectangle(hitbox);
+
         Vector2 playerPos = player.getPosition();
 
         Vector2 dir = new Vector2(
@@ -114,12 +117,43 @@ public class SkeletonControlSystem implements IEntityProcessService, IEnemy {
         dir.nor();
         float speed = skeleton.getMoveSpeed();
 
-        Vector2 newPosition = new Vector2(
-                skeletonPos.x + dir.x * speed * Gdx.graphics.getDeltaTime(),
-                skeletonPos.y + dir.y * speed * Gdx.graphics.getDeltaTime()
-        );
+        boolean canMoveX = true;
+        boolean canMoveY = true;
 
-        skeleton.setPosition(newPosition);
+        tempHitBox.x = hitbox.x + dir.x;
+        tempHitBox.y = hitbox.y + dir.y;
+
+        for (Rectangle obstacle : worldObstacles.getVisibleObstacles()) {
+            if (tempHitBox.overlaps(obstacle)) {
+                canMoveX = false;
+                break;
+            }
+        }
+
+        tempHitBox.y = hitbox.y + dir.y;
+        tempHitBox.x = hitbox.x;
+
+        for (Rectangle obstacle : worldObstacles.getVisibleObstacles()) {
+            if (tempHitBox.overlaps(obstacle)) {
+                canMoveY = false;
+                break;
+            }
+        }
+
+        Vector2 finalMove = new Vector2();
+
+        if(canMoveX) {
+            finalMove.x = dir.x;
+        }
+
+        if (canMoveY) {
+            finalMove.y = dir.y;
+        }
+
+        if (canMoveX || canMoveY) {
+            skeletonPos.add(finalMove);
+            skeleton.setPosition(skeletonPos);
+        }
 
     }
 
