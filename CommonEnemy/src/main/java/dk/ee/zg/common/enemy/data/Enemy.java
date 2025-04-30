@@ -7,7 +7,6 @@ import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.EntityType;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -147,7 +146,7 @@ public abstract class Enemy extends Entity {
      * vector 2 positions from pathfinding,
      * translated to smaller steps.
      */
-    private Deque<Vector2> steps = new LinkedList<>(); // Stores smaller steps
+    private List<Vector2> steps = new LinkedList<>(); // Stores smaller steps
     /**
      * move method for using pathfinding.
      * @param pathFinder - instance of pathfinder impl

@@ -272,4 +272,22 @@ public class LinearCollisionEngine implements ICollisionEngine {
         return entitiesCollidedWith;
     }
 
+    /**
+     * Checks if a rectangle overlaps with any rectangles in list.
+     * @param rectangle The rectangle to base the check upon
+     * @param rectangles The rectangles to check against.
+     * @return Am optional of the first rectangle collided with.
+     */
+    @Override
+    public Optional<Rectangle> rectangleCollidesWithRectangles(
+            final Rectangle rectangle, final List<Rectangle> rectangles) {
+        for (Rectangle rec : rectangles) {
+            if (rectangle.overlaps(rec)) {
+               return Optional.of(rec);
+            }
+        }
+        return Optional.empty();
+    }
+
+
 }

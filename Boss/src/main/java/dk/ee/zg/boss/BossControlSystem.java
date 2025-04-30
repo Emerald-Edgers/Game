@@ -141,7 +141,6 @@ public class BossControlSystem implements IEntityProcessService {
      * @param dirVec - The vector values in which the boss moves
      */
     public void move(final Boss boss, final Vector2 dirVec, WorldObstacles worldObstacles) {
-
         Vector2 vec = boss.getPosition();
         Rectangle hitbox = boss.getHitbox();
         Rectangle tempHitbox = new Rectangle(hitbox);

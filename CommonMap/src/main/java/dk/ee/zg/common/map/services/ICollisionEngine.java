@@ -59,4 +59,14 @@ public interface ICollisionEngine {
     List<Entity> rectangleCollidesWithEntities(
             Rectangle rectangle, List<Entity> entities);
 
+    /**
+     * Checks if a given rectangle collides with another rectangle in a list.
+     * @param rectangle The rectangle to base the check upon
+     * @param rectangles The rectangles to check against.
+     * @return - Optional of the first rectangle to have
+     * collided with else empty.
+     */
+    Optional<Rectangle> rectangleCollidesWithRectangles(
+            Rectangle rectangle, List<Rectangle> rectangles);
+
 }
