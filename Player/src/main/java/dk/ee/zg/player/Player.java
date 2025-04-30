@@ -202,12 +202,10 @@ public class Player extends Entity implements IAnimatable {
         int levelups = (int) experience / 1000;
         if (level != 0) {
             levelups = (int) ((experience - (level * 1000)) / 1000);
-			System.out.println(experience);
         }
 
         for (int i = 0; i < levelups; i++) {
             levelUp();
-			System.out.println("levelling up");
         }
     }
 
