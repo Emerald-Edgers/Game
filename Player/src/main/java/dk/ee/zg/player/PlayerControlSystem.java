@@ -240,15 +240,12 @@ public class PlayerControlSystem implements IEntityProcessService {
         Rectangle hitbox = player.getHitbox();
         Rectangle tempHitBox = new Rectangle(hitbox);
 
-        // Calculate the intended move
         float moveSpeed = player.getMoveSpeed() * Gdx.graphics.getDeltaTime();
         Vector2 moveVec = new Vector2(dirVec).nor().scl(moveSpeed);
 
-        // Try to move on both axes
         boolean canMoveX = true;
         boolean canMoveY = true;
 
-        // First check X-axis movement
         tempHitBox.x = hitbox.x + moveVec.x;
         tempHitBox.y = hitbox.y;
 
@@ -259,7 +256,6 @@ public class PlayerControlSystem implements IEntityProcessService {
             }
         }
 
-        // Then check Y-axis movement
         tempHitBox.x = hitbox.x;
         tempHitBox.y = hitbox.y + moveVec.y;
 
@@ -270,7 +266,6 @@ public class PlayerControlSystem implements IEntityProcessService {
             }
         }
 
-        // Apply movement based on what's possible
         Vector2 finalMove = new Vector2();
 
         if (canMoveX) {
@@ -281,7 +276,6 @@ public class PlayerControlSystem implements IEntityProcessService {
             finalMove.y = moveVec.y;
         }
 
-        // Update position if we can move in at least one direction
         if (canMoveX || canMoveY) {
             vec.add(finalMove);
             player.setPosition(vec);
