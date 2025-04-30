@@ -1,5 +1,7 @@
 package dk.ee.zg.common.data;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import java.util.UUID;
 
 public class Events {
@@ -73,7 +75,10 @@ public class Events {
      * standardized event in the game's event handling system.
      */
     public static final class EquipItemEvent implements IEvent {
-
+        /**
+         * texture of item sprite.
+         */
+        private Texture texture;
         /**
          * Critical hit chance percentage.
          */
@@ -130,13 +135,15 @@ public class Events {
          * @param range        the range stat contributed by the item.
          * @param evasion      the evasion stat from the item.
          * @param healthRegen  the health regeneration rate granted by the item
+         * @param txture      the texture of item sprite.
          */
         @SuppressWarnings({"checkstyle:ParameterNumber",
                 "checkstyle:HiddenField"})
         public EquipItemEvent(final int critChance, final int critDamage,
                               final int defense, final int lifesteal,
                               final int penetration, final int range,
-                              final int evasion, final int healthRegen) {
+                              final int evasion, final int healthRegen,
+                              final Texture txture) {
             this.critChance = critChance;
             this.critDamage = critDamage;
             this.defense = defense;
@@ -145,6 +152,11 @@ public class Events {
             this.range = range;
             this.evasion = evasion;
             this.healthRegen = healthRegen;
+            this.texture = txture;
+        }
+
+        public Texture getTexture() {
+            return texture;
         }
 
         public int getCritChance() {

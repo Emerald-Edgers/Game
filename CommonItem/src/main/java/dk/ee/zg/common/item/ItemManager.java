@@ -90,7 +90,8 @@ public final class ItemManager {
                 item.getPenetration(),
                 item.getRange(),
                 item.getEvasion(),
-                item.getHealthRegen()));
+                item.getHealthRegen(),
+                item.getTexture()));
     }
 
     /**
