@@ -1,5 +1,6 @@
 package dk.ee.zg.common.map.data;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -33,6 +34,18 @@ public class Entity {
     private String currentAnimation;
     private float stateTime;
     private Rectangle hitbox;
+    /**
+     * The current flash animation time.
+     */
+    private float damageFlashTime = 0f;
+    /**
+     * The duration of the flash.
+     */
+    private static final float MAX_FLASH_DURATION = 0.3f;
+    /**
+     * The color of the sprite and batch. Default is white = no color change.
+     */
+    private Color color = Color.WHITE;
 
     /**
      * hp is the current amount of health, an entity has.
@@ -168,6 +181,19 @@ public class Entity {
 
     public void update(float delta) {
         stateTime += delta;
+        if (damageFlashTime > 0) {
+            damageFlashTime -= delta;
+            float alpha = damageFlashTime / MAX_FLASH_DURATION;
+            color = new Color(
+                    1.0f,
+                    1.0f - alpha,
+                    1.0f - alpha,
+                    1.0f
+            );
+            if (damageFlashTime <= 0) {
+                color = Color.WHITE;
+            }
+        }
     }
 
     public void draw(SpriteBatch batch) {
@@ -182,7 +208,7 @@ public class Entity {
             Vector2 position = getPosition();
             float x = position.x - width / 2;
             float y = position.y - height / 2;
-
+            batch.setColor(color);
             batch.draw(
                     currentFrame,
                     x, y,
@@ -194,6 +220,7 @@ public class Entity {
 
             currentFrame.flip(sprite.isFlipX(), sprite.isFlipY());
         } else {
+            sprite.setColor(color);
             sprite.setScale(scale.x,scale.y);
             sprite.setRotation(rotation);
             sprite.draw(batch); // Draw the sprite
@@ -209,6 +236,8 @@ public class Entity {
     public void hit(final int damage) {
         if (entityType != EntityType.Obstacle) {
             this.hp -= damage;
+            color = Color.RED;
+            this.damageFlashTime = MAX_FLASH_DURATION;
             //if dead, trigger enemykilledevent
             if (this.hp <= 0) {
                 EventManager.triggerEvent(new Events.EnemyKilledEvent(100, this.id));
