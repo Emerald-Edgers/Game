@@ -276,7 +276,6 @@ public class BossControlSystem implements IEntityProcessService {
                 .sub(boss.getPosition());
         playerDir.nor();
 
-        // Av godav det er Boegesvang der har skrevet det her.
         if (Math.abs(playerDir.x) > Math.abs(playerDir.y)) {
             if (playerDir.x > 0) {
                 return Direction.RIGHT;
