@@ -54,10 +54,22 @@ public class HUD {
      * elapsed time in game.
      */
     private float elapsedTimeInSecs;
+
+    /**
+     * Value to multiply the deltatime with, in order to be able to stop timer.
+     */
+    private float deltaTimeMultiplier = 1;
+
+    /**
+     * Makes it able to start and stop timer.
+     */
+    private boolean timerRunning = true;
+  
     /**
      * List of item textures.
      */
     private List<Texture> itemImgsToRender = new ArrayList<Texture>();
+
 
     /**
      * constructor, sets up camera and renderer.
@@ -215,7 +227,7 @@ public class HUD {
      */
     private void drawTimer(final SpriteBatch batch) {
         // Update timer
-        elapsedTimeInSecs += Gdx.graphics.getDeltaTime();
+        elapsedTimeInSecs += Gdx.graphics.getDeltaTime() * deltaTimeMultiplier;
 
         // Format time
         int minutes = (int) (elapsedTimeInSecs / 60);
@@ -248,5 +260,18 @@ public class HUD {
         generator.dispose();
 
         return font;
+    }
+
+    /**
+     * Method for stopping and starting the timer.
+     */
+    public void stopStartTimer() {
+        if (timerRunning) {
+            deltaTimeMultiplier = 0;
+            timerRunning = false;
+        } else {
+            deltaTimeMultiplier = 1;
+            timerRunning = true;
+        }
     }
 }
