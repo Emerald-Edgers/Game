@@ -32,6 +32,7 @@ public class GameKey {
         bindActionToKey(KeyAction.SELECT, Input.Keys.ENTER);
         bindActionToKey(KeyAction.INTERACT, Input.Keys.E);
         bindActionToKey(KeyAction.Attack, Input.Keys.SPACE);
+        bindActionToKey(KeyAction.PAUSE, Input.Keys.ESCAPE);
     }
 
     /**
