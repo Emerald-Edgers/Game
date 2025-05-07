@@ -1,7 +1,6 @@
-package dk.ee.zg.common.enemy.interfaces;
+package dk.ee.zg.boss.interfaces;
 
-import dk.ee.zg.common.enemy.data.BossActions;
-import dk.ee.zg.common.enemy.data.Enemy;
+import dk.ee.zg.boss.BossActions;
 
 public interface IEnemyNetwork {
     void buildNetwork();

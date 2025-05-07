@@ -25,7 +25,7 @@ import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.EventManager;
 import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
-import dk.ee.zg.common.enemy.interfaces.IEnemyNetwork;
+import dk.ee.zg.boss.interfaces.IEnemyNetwork;
 import dk.ee.zg.common.data.KeyAction;
 import dk.ee.zg.common.enemy.interfaces.IEnemySpawner;
 import dk.ee.zg.common.enemy.interfaces.IPathFinder;
