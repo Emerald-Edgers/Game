@@ -17,7 +17,7 @@ public class CritChanceItem extends Item {
                 new Vector2(32f, 32f),
                 "Focus your strikes with unmatched precision."
                         + " Increases critical hit chance.",
-                10,   // critChance
+                0.1,   // critChance
                 0,    // critDamage multiplier
                 0,    // defense
                 0,    // lifesteal

@@ -39,7 +39,7 @@ public abstract class Item {
     /**
      * Critical hit chance percentage.
      */
-    private int critChance;
+    private double critChance;
 
     /**
      * Critical hit damage multiplier.
@@ -95,7 +95,7 @@ public abstract class Item {
     @SuppressWarnings("checkstyle:ParameterNumber")
     public Item(final UUID itemId, final String spriteFilePath,
                 final Vector2 itemScale, final String itemDescription,
-                final int itemCritChance, final int itemCritDamage,
+                final double itemCritChance, final int itemCritDamage,
                 final int itemDefense, final int itemLifesteal,
                 final int itemPenetration, final int itemRange,
                 final int itemEvasion, final int itemHealthRegen) {
@@ -146,7 +146,7 @@ public abstract class Item {
     /**
      * @return item crit chance.
      */
-    public int getCritChance() {
+    public double getCritChance() {
         return critChance;
     }
 

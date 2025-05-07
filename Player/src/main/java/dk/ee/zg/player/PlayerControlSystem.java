@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.data.KeyAction;
+import dk.ee.zg.common.enemy.data.Enemy;
 import dk.ee.zg.common.map.data.AnimationState;
 import dk.ee.zg.common.map.data.Entity;
 import dk.ee.zg.common.map.data.WorldEntities;
@@ -77,13 +78,21 @@ public class PlayerControlSystem implements IEntityProcessService {
     @Override
     public void process(final WorldEntities worldEntities) {
 
+
         Optional<Player> player = worldEntities.getEntityByClass(Player.class);
 
         if (!player.isPresent()) {
             return;
         }
 
+
         Player player1 = player.get();
+
+        if (player1.getHp() > 0) {
+            double regen = player1.getHealthRegen() * Gdx.graphics.getDeltaTime();
+            double hp = Math.min(player1.getMaxHP(), player1.getHp() + regen);
+            player1.setHp(hp);
+        }
 
         //if attack was just pressed
         if (gameData.getGameKey().isPressed(gameData.getGameKey()
@@ -223,7 +232,21 @@ public class PlayerControlSystem implements IEntityProcessService {
                                     attackHitbox, worldEntities.getEntities());
 
                     for (Entity e : enemiesHit) {
-                        e.hit(player.get().getAttackDamage());
+                        if (e instanceof Enemy) {
+                            Enemy t = (Enemy) e;
+                            Player p = player.get();
+                            double effDefense = Math.max(
+                                    0, t.getDefense() - p.getPenetration());
+                            double baseDamage = p.getAttackDamage() -
+                                    (effDefense * 0.25);
+                            boolean isCrit = Math.random() < p.getCritChance();
+
+                            double finalDamage = baseDamage *
+                                    (isCrit ? p.getCritDamage() : 1.0);
+                            e.hit((int) finalDamage);
+                        } else {
+                            e.hit(player.get().getAttackDamage());
+                        }
                     }
                 }
             }

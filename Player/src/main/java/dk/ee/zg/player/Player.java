@@ -64,12 +64,12 @@ public class Player extends Entity implements IAnimatable {
      * critChance is the chance of dealing a crit hit.
      * used to calculate critical hit on enemy.
      */
-    private int critChance;
+    private double critChance;
     /**
      * critDamage is the damage inflicted by dealing a crit hit.
      * used to calculate critical hit damage on enemy.
      */
-    private int critDamage;
+    private double critDamage;
     /**
      * defense is the players' hit weakener.
      * used to calculate damage inflicted on player from enemy.
@@ -125,7 +125,7 @@ public class Player extends Entity implements IAnimatable {
      * @param hpRegen {@link Player#healthRegen}
      */
     public Player(final int maxLife, final int atkDamage, final int atkSpeed,
-                  final int mvSpeed, final int crChance, final int crDamage,
+                  final int mvSpeed, final double crChance, final double crDamage,
                   final int def, final int hpsteal, final int pen,
                   final int r, final int eva, final int hpRegen) {
         super(new Vector2(), 0, new Vector2(50, 50),
@@ -244,19 +244,19 @@ public class Player extends Entity implements IAnimatable {
         return moveSpeed;
     }
 
-    public final int getCritChance() {
+    public final double getCritChance() {
         return critChance;
     }
 
-    public final void setCritChance(final int i) {
+    public final void setCritChance(final double i) {
         this.critChance = i;
     }
 
-    public final int getCritDamage() {
+    public final double getCritDamage() {
         return critDamage;
     }
 
-    public final void setCritDamage(final int i) {
+    public final void setCritDamage(final double i) {
         this.critDamage = i;
     }
 

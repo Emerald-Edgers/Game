@@ -21,7 +21,7 @@ public class DragonPlugin implements IEnemyCreator {
      */
     @Override
     public void spawn(final float x, final float y, final WorldEntities world) {
-        Dragon dragon = new Dragon(20, 15, 3, 150, 15, cost, new Vector2(x, y));
+        Dragon dragon = new Dragon(20, 15, 3, 40, 1, cost, new Vector2(x, y));
 
         world.addEntity(dragon);
     }

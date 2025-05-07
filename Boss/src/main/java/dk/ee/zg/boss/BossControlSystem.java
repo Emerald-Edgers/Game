@@ -429,7 +429,7 @@ public class BossControlSystem implements IEntityProcessService {
     private void aoeAttack(final WorldEntities world, final Boss boss) {
         Rectangle attackHitbox = calcAoeAttack(boss);
         setBossAnimationState(boss, AnimationState.ATTACK);
-        damageHurtPlayers(attackHitbox, world, boss.getAttackDamage());
+        damageHurtPlayers(attackHitbox, world, boss.getAttackDamage() / 2);
         aoeCooldown = 4f;
         applyMovementPenalty = true;
     }

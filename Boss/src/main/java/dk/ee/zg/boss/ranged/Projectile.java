@@ -112,7 +112,7 @@ public class Projectile extends Entity implements IAnimatable {
     private void resolveCollision() {
         if (collisionEngine.collidesWithEntity(
                 this, player)) {
-            //TODO: Implement Hit
+            player.hit(25);
         }
     }
 

@@ -169,7 +169,7 @@ public class HUD {
      */
     private void drawHPBar() {
         float maxHP = player.getMaxHP();
-        float currentHP = player.getHp();
+        double currentHP = player.getHp();
 
         float barWidth = 320;
         float barHeight = 20;
@@ -184,7 +184,7 @@ public class HUD {
 
         // Foreground (red, scaled to %)
         shapeRenderer.setColor(Color.RED);
-        shapeRenderer.rect(x, y, (currentHP / maxHP) * barWidth, barHeight);
+        shapeRenderer.rect(x, y, (float) (currentHP / maxHP) * barWidth, barHeight);
         shapeRenderer.end();
 
     }
