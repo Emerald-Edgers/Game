@@ -13,6 +13,7 @@ import dk.ee.zg.common.map.data.EntityType;
 public class Boss extends Enemy implements IAnimatable {
     private AnimationState currentState = AnimationState.IDLE;
 
+
     /**
      * constructor for the boss, utilizes super class Enemy.
      * {@link Entity}

@@ -27,6 +27,7 @@
         <module>Cleaver</module>
         <module>Milk</module>
         <module>CommonTest</module>
+        <module>BossAI</module>
     </modules>
 
     <properties>

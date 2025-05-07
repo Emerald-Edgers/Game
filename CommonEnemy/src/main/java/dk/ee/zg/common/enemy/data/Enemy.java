@@ -23,10 +23,7 @@ public abstract class Enemy extends Entity {
      * How fast the skeletons should move.
      */
     private int moveSpeed;
-    /**
-     * How much damage the skeleton should be able to take.
-     */
-    private int hitpoints;
+
     /**
      * How much damage the skeleton negates each attack.
      */
@@ -48,7 +45,7 @@ public abstract class Enemy extends Entity {
      * @param aDamage {@link Enemy#attackDamage }
      * @param aSpeed {@link Enemy#attackSpeed }
      * @param mSpeed {@link Enemy#moveSpeed}
-     * @param hp {@link Enemy#hitpoints}
+     * @param hp {@link Entity#setHp(int)}
      * @param def {@link Enemy#defense}
      * @param val {@link Enemy#cost }
      */
@@ -62,7 +59,7 @@ public abstract class Enemy extends Entity {
         this.attackDamage = aDamage;
         this.attackSpeed = aSpeed;
         this.moveSpeed = mSpeed;
-        this.hitpoints = hp;
+        this.setHp(hp);
         this.defense = def;
         this.cost = val;
     }
@@ -89,14 +86,6 @@ public abstract class Enemy extends Entity {
 
     public final void setMoveSpeed(final int i) {
         this.moveSpeed = i;
-    }
-
-    public final int getHitpoints() {
-        return hitpoints;
-    }
-
-    public final void setHitpoints(final int i) {
-        this.hitpoints = i;
     }
 
     public final int getDefense() {
