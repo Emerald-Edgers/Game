@@ -252,7 +252,7 @@ public class Entity {
 
     public Map<String, Animation<TextureRegion>> getAnimations() {
         return animations;
-    };
+    }
 
     public float getStateTime() {
         return stateTime;

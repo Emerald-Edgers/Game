@@ -58,7 +58,7 @@ public class Sword extends Weapon {
             }
             case DOWN -> {
                 width = 2;
-                attackOffsetY = -playerSize.y / 2 -  0.25f;
+                attackOffsetY = -playerSize.y / 2 - 0.25f;
                 attackOffsetX = -(playerSize.x / 2) - width / 2;
             }
             default -> { }

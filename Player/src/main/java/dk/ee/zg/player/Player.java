@@ -382,6 +382,23 @@ public class Player extends Entity implements IAnimatable {
     }
 
     @Override
+    public void hit(int damage) {
+        double evadeChance = Math.random();
+        if (evadeChance < (double) (this.evasion) / 100) {
+            return;
+        }
+
+        double defenseFactor = 1 - (Math.tanh(this.defense / 50.0) * 0.8);
+        int actualDmg = (int) (damage * defenseFactor);
+
+        setHp(getHp() - actualDmg);
+
+        if (getHp() <= 0) {
+            System.exit(1);
+        }
+    }
+
+    @Override
     public void setState(AnimationState state) {
         setState(state,facingDirection);
     }

@@ -218,7 +218,7 @@ public class PlayerControlSystem implements IEntityProcessService {
                 setPlayerAnimationState(player1, AnimationState.ATTACK, weapon.getAttackDirection());
 
                 isAttacking = false;
-              
+
             } else if (!isAttacking) {
                 attackHitbox = null;
             }
@@ -232,6 +232,10 @@ public class PlayerControlSystem implements IEntityProcessService {
                                     attackHitbox, worldEntities.getEntities());
 
                     for (Entity e : enemiesHit) {
+                        double lifestealHp = Math.min(
+                                player1.getMaxHP(), player1.getHp() +
+                                        player1.getLifesteal());
+                        player1.setHp(lifestealHp);
                         if (e instanceof Enemy) {
                             Enemy t = (Enemy) e;
                             Player p = player.get();

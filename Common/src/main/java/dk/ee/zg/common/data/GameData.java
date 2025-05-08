@@ -51,7 +51,7 @@ public final class GameData {
     /**
      * The maximum fps the game should run at.
      */
-    private static final int MAXFPS = 30;
+    private static final int MAXFPS = 60;
 
     /**
      * The amount of pixels a singular unit represents.
@@ -63,7 +63,7 @@ public final class GameData {
     /**
      * Debug mode, draws various helper visuals for debugging the game.
      */
-    private static final boolean DEBUG_MODE = true;
+    private static final boolean DEBUG_MODE = false;
 
 
     private GameData() {
