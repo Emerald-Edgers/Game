@@ -21,7 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import dk.ee.zg.UI.HUD;
-import dk.ee.zg.boss.ranged.Projectile;
 import dk.ee.zg.common.data.EventManager;
 import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
@@ -323,9 +322,7 @@ public class GameScreen implements Screen {
                 for (Entity entity : worldEntities.getEntities()) {
 
                     entity.update(v);
-                    if (entity instanceof Projectile) {
-                        ((Projectile) entity).update();
-                    }
+
                     if (entity.getEntityType() == EntityType.Player) {
                         float cameraX = entity.getPosition().x;
                         float cameraY = entity.getPosition().y;
