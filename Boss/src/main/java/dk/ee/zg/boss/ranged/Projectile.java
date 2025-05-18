@@ -95,8 +95,8 @@ public class Projectile extends Entity implements IAnimatable {
     /**
      * Updates the position of the projectile.
      */
-    public void update() {
-        float delta = Gdx.graphics.getDeltaTime();
+    @Override
+    public void update(float delta) {
         Vector2 pos = getPosition();
         pos.add(direction.x * speed * delta, direction.y * speed * delta);
         setPosition(pos);
