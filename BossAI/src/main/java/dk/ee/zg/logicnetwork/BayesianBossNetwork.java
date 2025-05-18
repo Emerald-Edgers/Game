@@ -1,7 +1,7 @@
 package dk.ee.zg.logicnetwork;
 
-import dk.ee.zg.boss.interfaces.IEnemyNetwork;
-import dk.ee.zg.boss.BossActions;
+import dk.ee.zg.common.boss.interfaces.IEnemyNetwork;
+import dk.ee.zg.common.boss.data.BossActions;
 
 import java.util.Arrays;
 import java.util.List;

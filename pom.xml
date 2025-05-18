@@ -28,6 +28,7 @@
         <module>Milk</module>
         <module>CommonTest</module>
         <module>BossAI</module>
+        <module>CommonBoss</module>
     </modules>
 
     <properties>
