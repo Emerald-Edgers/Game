@@ -74,7 +74,6 @@ public class AIPathFinding implements IPathFinder {
         this.map = tiledMap;
         TiledMapTileLayer tileLayer = (TiledMapTileLayer)
                 tiledMap.getLayers().get("Collision");
-
         int mapWidth = tileLayer.getWidth();
         int mapHeight = tileLayer.getHeight();
         walkableGrid = new boolean[mapWidth][mapHeight];
@@ -84,15 +83,12 @@ public class AIPathFinding implements IPathFinder {
                 walkableGrid[x][y] = true;
             }
         }
-
         float tileWidth = tileLayer.getTileWidth() * gameData.getUNIT_SCALE();
         float tileHeight = tileLayer.getTileHeight() * gameData.getUNIT_SCALE();
         // Mark cells where obstacle is as non-walkable
         for (Rectangle obstacle : obstacles.getObstacles()) {
-
             int x = (int) (obstacle.x / tileWidth);
             int y = (int) (obstacle.y / tileHeight);
-
             if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight) {
                 walkableGrid[x][y] = false;
             }
@@ -165,7 +161,6 @@ public class AIPathFinding implements IPathFinder {
                 }
 
             }
-
 
         }
         //failure
