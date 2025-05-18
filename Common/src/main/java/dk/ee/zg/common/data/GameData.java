@@ -63,7 +63,7 @@ public final class GameData {
     /**
      * Debug mode, draws various helper visuals for debugging the game.
      */
-    private static final boolean DEBUG_MODE = true;
+    private static final boolean DEBUG_MODE = false;
 
 
     private GameData() {

@@ -45,7 +45,7 @@ public abstract class Enemy extends Entity {
      * @param aDamage {@link Enemy#attackDamage }
      * @param aSpeed {@link Enemy#attackSpeed }
      * @param mSpeed {@link Enemy#moveSpeed}
-     * @param hp {@link Entity#setHp(int)}
+     * @param hp {@link Entity#setHp(double)}
      * @param def {@link Enemy#defense}
      * @param val {@link Enemy#cost }
      */

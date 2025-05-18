@@ -1,6 +1,5 @@
 package dk.ee.zg.boss;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.map.data.WorldEntities;
 import dk.ee.zg.common.map.services.IGamePluginService;
@@ -18,11 +17,9 @@ public class BossPlugin implements IGamePluginService {
      */
     @Override
     public void start(final WorldEntities worldEntities) {
-        boss = new Boss(1, 5, 2, 100, 1);
+        boss = new Boss(35, 5, 2, 500, 1);
         boss.setPosition(new Vector2(25, 37.5f));
-
         worldEntities.addEntity(boss);
-
     }
 
 

@@ -19,8 +19,8 @@ public class PlayerPlugin implements IGamePluginService {
      */
     @Override
     public void start(final WorldEntities worldEntities) {
-        player = new Player(1, 1, 1, 10, 1, 1,
-                1, 1, 1, 1, 1, 1);
+        player = new Player(1, 10, 1, 10, 0.1, 2,
+                5, 1, 5, 1, 1, 1);
         player.setScale(new Vector2(1 / 32f, 1 / 32f));
         player.setPosition(new Vector2(25, 25));
         player.setWeapon(WeaponManager.getInstance().getWeaponSelected());

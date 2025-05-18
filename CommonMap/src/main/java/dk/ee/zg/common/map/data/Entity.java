@@ -50,7 +50,7 @@ public class Entity {
     /**
      * hp is the current amount of health, an entity has.
      */
-    private int hp;
+    private double hp;
 
     public Sprite getSprite() {
         return sprite;
@@ -171,11 +171,11 @@ public class Entity {
         this.sprite_path = sprite_path;
     }
 
-    public int getHp() {
+    public double getHp() {
         return hp;
     }
 
-    public void setHp(final int hp) {
+    public void setHp(final double hp) {
         this.hp = hp;
     }
 
@@ -240,7 +240,8 @@ public class Entity {
             this.damageFlashTime = MAX_FLASH_DURATION;
             //if dead, trigger enemykilledevent
             if (this.hp <= 0) {
-                EventManager.triggerEvent(new Events.EnemyKilledEvent(100, this.id));
+                int xp = (int) (Math.random() * 750);
+                EventManager.triggerEvent(new Events.EnemyKilledEvent(xp, this.id));
             }
         }
     }
@@ -251,11 +252,12 @@ public class Entity {
 
     public Map<String, Animation<TextureRegion>> getAnimations() {
         return animations;
-    };
+    }
 
     public float getStateTime() {
         return stateTime;
     }
+
 
 
 }

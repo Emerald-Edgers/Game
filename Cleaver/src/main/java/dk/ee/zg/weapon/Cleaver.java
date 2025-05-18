@@ -56,7 +56,7 @@ public class Cleaver extends Weapon {
             }
             case DOWN -> {
                 width = 2;
-                attackOffsetY = -playerSize.y / 2 -  0.25f;
+                attackOffsetY = -playerSize.y / 2 -  1f;
                 attackOffsetX = -(playerSize.x / 2) - width / 2;
             }
             default -> { }

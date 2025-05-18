@@ -82,7 +82,7 @@ public class Events {
         /**
          * Critical hit chance percentage.
          */
-        private int critChance;
+        private double critChance;
 
         /**
          * Critical hit damage multiplier.
@@ -139,7 +139,7 @@ public class Events {
          */
         @SuppressWarnings({"checkstyle:ParameterNumber",
                 "checkstyle:HiddenField"})
-        public EquipItemEvent(final int critChance, final int critDamage,
+        public EquipItemEvent(final double critChance, final int critDamage,
                               final int defense, final int lifesteal,
                               final int penetration, final int range,
                               final int evasion, final int healthRegen,
@@ -159,7 +159,7 @@ public class Events {
             return texture;
         }
 
-        public int getCritChance() {
+        public double getCritChance() {
             return critChance;
         }
 
