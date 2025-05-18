@@ -1,4 +1,4 @@
-package dk.ee.zg.boss;
+package dk.ee.zg.common.boss.data;
 
 public enum BossActions {
     FLEE,

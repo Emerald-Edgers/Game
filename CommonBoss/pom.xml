@@ -7,14 +7,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>BossAI</artifactId>
+    <artifactId>CommonBoss</artifactId>
     <packaging>jar</packaging>
+    <name>CommonBoss</name>
 
     <dependencies>
-        <dependency>
-            <groupId>dk.ee.zg</groupId>
-            <artifactId>CommonBoss</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 </project>
