@@ -36,7 +36,6 @@
             <groupId>dk.ee.zg</groupId>
             <artifactId>CommonEnemy</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
