@@ -51,7 +51,7 @@ public final class GameData {
     /**
      * The maximum fps the game should run at.
      */
-    private static final int MAXFPS = 60;
+    private static final int MAXFPS = 30;
 
     /**
      * The amount of pixels a singular unit represents.

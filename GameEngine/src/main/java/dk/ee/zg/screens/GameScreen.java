@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -168,6 +169,8 @@ public class GameScreen implements Screen {
      */
     private int levelUpPopupsShowing;
 
+    private FPSLogger fpsLogger;
+
     /**
      * Constructor for GameScreen.
      * Instantiates required values for the rest of the class.
@@ -180,6 +183,10 @@ public class GameScreen implements Screen {
 
         setupStage();
         createPauseWindow();
+
+        if (gameData.isDebug()) {
+            fpsLogger = new FPSLogger();
+        }
     }
 
 
@@ -434,6 +441,7 @@ public class GameScreen implements Screen {
         debugHitboxRenderer.flush();
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
+        fpsLogger.log();
     }
 
 
