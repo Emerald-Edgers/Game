@@ -3,8 +3,9 @@ package dk.ee.zg.enemy.dragon;
 import com.badlogic.gdx.math.Vector2;
 import dk.ee.zg.common.enemy.interfaces.IEnemyCreator;
 import dk.ee.zg.common.map.data.WorldEntities;
+import dk.ee.zg.common.map.services.IGamePluginService;
 
-public class DragonPlugin implements IEnemyCreator {
+public class DragonPlugin implements IEnemyCreator, IGamePluginService {
 
     /**
      * The cost of the enemy.
@@ -34,5 +35,17 @@ public class DragonPlugin implements IEnemyCreator {
     @Override
     public float getEnemyCost() {
         return cost;
+    }
+
+    @Override
+    public void start(WorldEntities worldEntities) {
+        for(int i = 0; i <= 25; i++) {
+            spawn(10, 10, worldEntities);
+        }
+    }
+
+    @Override
+    public void stop(WorldEntities worldEntities) {
+
     }
 }
