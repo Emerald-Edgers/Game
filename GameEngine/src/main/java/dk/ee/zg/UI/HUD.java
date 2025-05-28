@@ -13,7 +13,6 @@ import dk.ee.zg.common.data.EventManager;
 import dk.ee.zg.common.data.Events;
 import dk.ee.zg.common.data.GameData;
 import dk.ee.zg.common.map.data.WorldEntities;
-import dk.ee.zg.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +37,6 @@ public class HUD {
      */
     private int SCREEN_HEIGHT =
             GameData.getInstance().getDisplayHeight();
-    /**
-     * player instance, used for HUD.
-     */
-    private Player player;
     /**
      * font for lvl text.
      */
@@ -98,15 +93,6 @@ public class HUD {
             GameData.getInstance().getDisplayWidth();
         SCREEN_HEIGHT =
             GameData.getInstance().getDisplayHeight();
-
-        //get player instance if null
-        if (player == null) {
-            Optional<Player> optionalPlayer =
-                    worldEntities.getEntityByClass(Player.class);
-            if (optionalPlayer.isPresent()) {
-                player = optionalPlayer.get();
-            }
-        }
 
         camera.setToOrtho(true, SCREEN_WIDTH, SCREEN_HEIGHT);
         // set projection matrixes
@@ -168,8 +154,9 @@ public class HUD {
      * draw method for HP Bar.
      */
     private void drawHPBar() {
-        float maxHP = player.getMaxHP();
-        double currentHP = player.getHp();
+        GameData gameData = GameData.getInstance();
+        float maxHP = gameData.getPlayerMaxHp();
+        double currentHP = gameData.getPlayerHp();
 
         float barWidth = 320;
         float barHeight = 20;
@@ -194,7 +181,8 @@ public class HUD {
      * @param batch spritebatch to draw on.
      */
     private void drawXPBar(final SpriteBatch batch) {
-        float currentXP = player.getExperience();
+        GameData gameData = GameData.getInstance();
+        float currentXP = gameData.getPlayerXp();
         float barHeight = 10;
         float x = 0;
         float y = 0;
@@ -207,7 +195,7 @@ public class HUD {
 
         // Foreground (blue, scaled to %)
         float currentXpToLvlThreshold = currentXP
-                - (float) ((player.getLevel()) * 1000);
+                - (float) ((gameData.getPlayerLvl()) * 1000);
         float xpPercentage = currentXpToLvlThreshold / 1000;
         shapeRenderer.setColor(Color.BLUE);
         shapeRenderer.rect(x, y, xpPercentage * SCREEN_WIDTH, barHeight);
@@ -215,7 +203,7 @@ public class HUD {
 
         //text
         batch.begin();
-        lvlFont.draw(batch, "LVL: " + player.getLevel(),
+        lvlFont.draw(batch, "LVL: " + gameData.getPlayerLvl(),
                 (SCREEN_WIDTH / 2f) - 64, (SCREEN_HEIGHT / 2f) + 64);
         batch.end();
     }

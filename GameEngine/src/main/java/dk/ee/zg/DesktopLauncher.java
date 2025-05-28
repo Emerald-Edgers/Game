@@ -38,6 +38,7 @@ public final class DesktopLauncher {
 
         config.setForegroundFPS(gameData.getMAXFPS());
         config.setIdleFPS(gameData.getMAXFPS());
+        config.useVsync(false);
 
         return config;
     }

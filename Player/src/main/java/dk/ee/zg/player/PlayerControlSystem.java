@@ -88,6 +88,11 @@ public class PlayerControlSystem implements IEntityProcessService {
 
         Player player1 = player.get();
 
+        gameData.setPlayerMaxHp(player1.getMaxHP());
+        gameData.setPlayerHp(player1.getHp());
+        gameData.setPlayerXp(player1.getExperience());
+        gameData.setPlayerLvl(player1.getLevel());
+
         if (player1.getHp() > 0) {
             double regen = player1.getHealthRegen() * Gdx.graphics.getDeltaTime();
             double hp = Math.min(player1.getMaxHP(), player1.getHp() + regen);
