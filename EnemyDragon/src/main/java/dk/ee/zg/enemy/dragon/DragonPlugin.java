@@ -39,7 +39,7 @@ public class DragonPlugin implements IEnemyCreator, IGamePluginService {
 
     @Override
     public void start(WorldEntities worldEntities) {
-        for(int i = 0; i <= 25; i++) {
+        for(int i = 0; i <= 1; i++) {
             spawn(10, 10, worldEntities);
         }
     }

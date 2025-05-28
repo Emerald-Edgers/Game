@@ -163,7 +163,6 @@ public abstract class Item {
     public int getDefense() {
         return defense;
     }
-
     /**
      * @return item lifesteal.
      */

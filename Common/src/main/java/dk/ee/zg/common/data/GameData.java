@@ -49,6 +49,26 @@ public final class GameData {
     private Game game;
 
     /**
+     * The players max hp.
+     */
+    private int playerMaxHp = 1;
+
+    /**
+     * The players current hp.
+     */
+    private double playerHp = 1;
+
+    /**
+     * The players xp.
+     */
+    private float playerXp = 1;
+
+    /**
+     * The players lvl.
+     */
+    private int playerLvl = 1;
+
+    /**
      * The maximum fps the game should run at.
      */
     private static final int MAXFPS = 0;
@@ -165,4 +185,35 @@ public final class GameData {
         return DEBUG_MODE;
     }
 
+    public int getPlayerMaxHp() {
+        return playerMaxHp;
+    }
+
+    public void setPlayerMaxHp(int playerMaxHp) {
+        this.playerMaxHp = playerMaxHp;
+    }
+
+    public double getPlayerHp() {
+        return playerHp;
+    }
+
+    public void setPlayerHp(double playerHp) {
+        this.playerHp = playerHp;
+    }
+
+    public float getPlayerXp() {
+        return playerXp;
+    }
+
+    public void setPlayerXp(float playerXp) {
+        this.playerXp = playerXp;
+    }
+
+    public int getPlayerLvl() {
+        return playerLvl;
+    }
+
+    public void setPlayerLvl(int playerLvl) {
+        this.playerLvl = playerLvl;
+    }
 }
