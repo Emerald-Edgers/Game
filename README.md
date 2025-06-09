@@ -32,7 +32,7 @@ Build the project by running `mvn clean install` from the project root.
 
 
 ### Running
-Run the project with `java -cp "mods-mvn/*" dk.ee.zg.Game` From the project root.
+Run the project with `java -cp "mods-mvn/*" dk.ee.zg.DesktopLauncher` From the project root.
 Alternatively use the provided script: [run.sh](run.sh)
 
 ### Development
@@ -42,7 +42,7 @@ The script executes the following commands:
 
 ```sh
 mvn clean install
-java -cp "mods-mvn/*" dk.ee.zg.Game
+java -cp "mods-mvn/*" dk.ee.zg.DesktopLauncher
 ```
 
 #### Intellij IDEA
